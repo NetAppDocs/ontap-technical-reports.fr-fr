@@ -1,0 +1,35 @@
+---
+layout: landing-page 
+sidebar: sidebar 
+keywords: Technical Reports, TR, NetApp TR, ONTAP TR, ONTAP, ONTAP 9, best practices, best-practices 
+permalink: industry-solutions.html 
+summary: Ces rapports techniques présentent les solutions du secteur avec NetApp ONTAP, ainsi que les pratiques recommandées 
+---
+= Rapports techniques sur les solutions du secteur
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+Nous proposons des solutions de stockage de données spécifiques à chaque secteur avec l'appui de partenaires stratégiques pour répondre aux défis des entreprises.
+
+
+
+== L'EDA
+
+link:https://www.netapp.com/pdf.html?item=/media/19368-tr-4617.pdf["Meilleures pratiques d'automatisation de la conception électronique en ONTAP"^]
+Découvrez les pratiques recommandées et les conseils d'implémentation fournis avec NetApp ONTAP pour l'automatisation de la conception électronique (EDA), les workloads FlexGroup volumes, qui sont parfaits pour gérer la surcharge élevée de métadonnées dans les environnements EDA.
+
+
+
+== Santé
+
+link:https://www.netapp.com/pdf.html?item=/media/17137-tr3928pdf.pdf["Meilleures pratiques NetApp pour Epic"^]
+Epic fabrique des logiciels pour le secteur de la santé. Découvrez les pratiques recommandées pour l'intégration du stockage NetApp aux environnements logiciels Epic.
+
+link:https://www.netapp.com/pdf.html?item=/media/86527-tr-4975.pdf["FlexPod : Epic pour les grands hôpitaux"^]
+Découvrez les performances de bout en bout de FlexPod, démontrant le besoin d'une application de dossier médical électronique (DME) avec une base de données inter-systèmes, en mettant l'accent sur la disposition du stockage et les meilleures pratiques pour la configuration de dossiers médicaux électroniques sur une solution FlexPod pour les grands hôpitaux.

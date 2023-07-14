@@ -1,0 +1,31 @@
+---
+layout: landing-page 
+sidebar: sidebar 
+keywords: Technical Reports, TR, NetApp TR, ONTAP TR, ONTAP, ONTAP 9, best practices, best-practices 
+permalink: tiering.html 
+summary: Ces rapports techniques présentent la hiérarchisation dans NetApp ONTAP, ainsi que les pratiques recommandées. 
+---
+= Rapports techniques sur la hiérarchisation
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+
+
+[role="lead"]
+Grâce à la solution de Tiering des données FabricPool, l'expérience utilisateur globale des systèmes Flash est améliorée et l'architecture des applications à des fins d'efficacité du stockage n'est pas complexe. FabricPool réduit l'empreinte du stockage et les coûts associés de l'environnement d'un système. Les données actives restent sur les disques SSD haute performance. Les données inactives sont envoyées vers un stockage objet à faible coût tout en préservant les fonctionnalités d'efficacité du stockage.
+
+[NOTE]
+====
+Ces rapports techniques se développent sur le link:https://docs.netapp.com/us-en/ontap/fabricpool/index.html["ONTAP FabricPool"] documentation produit.
+
+====
+link:https://www.netapp.com/pdf.html?item=/media/17239-tr4598.pdf["Tr-4598 : meilleures pratiques de FabricPool"^]
+Découvrez les fonctionnalités, les exigences, l'implémentation et les pratiques recommandées pour FabricPool.
+
+link:https://www.netapp.com/pdf.html?item=/media/19403-tr-4826.pdf["Tr-4826 : guide de recommandations NetApp FabricPool avec StorageGRID"^]
+Découvrez les pratiques recommandées pour le déploiement et le dimensionnement de StorageGRID en tant que niveau de capacité pour le composant ONTAP FabricPool. Ce document présente également les principales fonctionnalités, les exigences, l'implémentation et les pratiques recommandées lors de l'utilisation de StorageGRID.
+
+link:https://www.netapp.com/pdf.html?item=/media/9138-tr4695.pdf["Tr-4695 : hiérarchisation du stockage de base de données avec NetApp FabricPool"^]
+Découvrez les avantages et les options de configuration de FabricPool avec diverses bases de données, notamment le système de gestion de bases de données relationnelles (SGBDR) d'Oracle.

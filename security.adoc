@@ -1,0 +1,71 @@
+---
+layout: landing-page 
+sidebar: sidebar 
+keywords: Technical Reports, TR, NetApp TR, ONTAP TR, ONTAP, ONTAP 9, MAV, MFA, Ransomware, Security, best practices, best-practices, tamperproof, tamper proof, tamperproof snapshots tamper-proof snapshots 
+permalink: security.html 
+summary: Ces rapports techniques présentent la sécurité dans NetApp ONTAP, ainsi que les pratiques recommandées. 
+---
+= Rapports techniques sur la sécurité
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP continue d'évoluer, et la sécurité fait partie intégrante de la solution. Les dernières versions d'ONTAP comprennent bon nombre de nouvelles fonctions de sécurité essentielles pour protéger les données de l'entreprise dans le cloud hybride, éviter les attaques par ransomware et se conformer aux pratiques recommandées par le secteur. Ces nouvelles fonctionnalités contribuent également à l'adoption d'un modèle « zéro confiance ».
+
+[NOTE]
+====
+Ces rapports techniques se développent sur le link:https://docs.netapp.com/us-en/ontap/security-encryption/index.html["Sécurité et chiffrement des données ONTAP"] documentation produit.
+
+====
+
+
+== Attaques par ransomware
+
+link:https://www.netapp.com/pdf.html?item=/media/7334-tr4572.pdf["Tr-4572 : la solution NetApp pour ransomware"^]
+Découvrez l'évolution des ransomwares et comment identifier les attaques, prévenir la propagation et restaurer les données aussi rapidement que possible grâce à la solution NetApp pour ransomware. Les conseils et solutions fournis dans ce document sont conçus pour aider les entreprises à disposer de solutions de cyberrésilience tout en respectant leurs objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.
+
+link:https://www.netapp.com/pdf.html?item=/media/6158-tr4526.pdf["Tr-4526 : stockage WORM conforme avec NetApp SnapLock"^]
+De nombreuses entreprises ont recours au stockage des données WORM (Write Once, Read Many) pour respecter les exigences de conformité réglementaires, ou simplement pour ajouter une couche supplémentaire à leur stratégie de protection des données. Découvrez comment intégrer SnapLock, la solution WORM de ONTAP, dans des environnements qui nécessitent le stockage de données WORM.
+
+
+
+== Zéro confiance
+
+link:https://www.netapp.com/pdf.html?item=/media/19756-tr-4829.pdf["Tr-4829 : NetApp et zéro confiance"^]
+La solution « zéro confiance » s'est traditionnellement orientée réseau pour structurer les microsegments et le périmètre (MCAP) afin de protéger les données, les services, les applications ou les ressources grâce à des contrôles appelés « passerelle de segmentation ». ONTAP adopte une approche « zéro confiance » centrée sur les données, dans laquelle le système de gestion du stockage devient la passerelle de segmentation pour protéger et surveiller l'accès aux données de nos clients. Le moteur « zéro confiance » FPolicy et l'écosystème de partenaires FPolicy deviennent un centre de contrôle pour obtenir une compréhension détaillée des modèles d'accès aux données normaux et aberrants et identifier les menaces internes.
+
+
+
+== Authentification multifacteur
+
+link:https://www.netapp.com/pdf.html?item=/media/17055-tr4647.pdf["Tr-4647 : guide d'implémentation et des bonnes pratiques pour l'authentification multifacteur dans ONTAP"^]
+Découvrez la fonctionnalité d'authentification multifacteur d'ONTAP pour un accès administratif via System Manager, Active IQ Unified Manager et l'authentification CLI ONTAP Secure Shell (SSH).
+
+link:https://www.netapp.com/pdf.html?item=/media/17036-tr4717.pdf["Tr-4717 : authentification ONTAP SSH avec une carte d'accès commune"^]
+Découvrez comment configurer et tester des clients SSH tiers, en association avec le logiciel ActivClient, pour authentifier un administrateur de stockage ONTAP via la clé publique stockée sur une carte d'accès commun (CAC) lorsqu'elle est configurée dans ONTAP.
+
+
+
+== Colocation
+
+link:https://www.netapp.com/pdf.html?item=/media/16886-tr-4160.pdf["Tr-4160 : Colocation sécurisée dans ONTAP"^]
+Découvrez comment implémenter la colocation sécurisée à l'aide des VM de stockage dans ONTAP, y compris les considérations de conception et les pratiques recommandées.
+
+
+
+== Journalisation
+
+link:https://www.netapp.com/pdf.html?item=/media/16880-tr-4303.pdf["Tr-4303 : connexion à ONTAP"^]
+Découvrez comment définir les différents journaux générés par ONTAP, les fonctionnalités proposées, et comment afficher les journaux et y accéder.
+
+
+
+== Normes
+
+link:https://www.netapp.com/pdf.html?item=/media/17180-tr4401.pdf["Tr-4401 : PCI-DSS 4.0 et ONTAP"^]
+Découvrez comment valider un système par rapport à la norme PCI DSS 4.0 et répondre aux exigences des contrôles que vous appliquez à un système NetApp ONTAP.

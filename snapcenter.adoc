@@ -1,0 +1,70 @@
+---
+layout: landing-page 
+sidebar: sidebar 
+keywords: Technical Reports, TR, NetApp TR, ONTAP TR, ONTAP, ONTAP 9, best practices, best-practices 
+permalink: snapcenter.html 
+summary: Ces rapports techniques présentent le SnapCenter avec NetApp ONTAP, ainsi que les pratiques recommandées. 
+---
+= Rapports techniques sur SnapCenter
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+SnapCenter fournit une plateforme unifiée qui assure la cohérence de la protection des données et de la gestion des clones au niveau des applications. SnapCenter simplifie la sauvegarde, la restauration et la gestion du cycle de vie des clones avec des workflows intégrés aux applications. En outre, grâce à la gestion des données de stockage, SnapCenter améliore la performance et la disponibilité, tout en réduisant le temps consacré au développement et aux tests.
+
+[NOTE]
+====
+Ces rapports techniques se développent sur le link:https://docs.netapp.com/us-en/snapcenter/index.html["SnapCenter"] documentation produit.
+
+====
+
+
+== SnapCenter pour Oracle
+
+link:https://www.netapp.com/pdf.html?item=/media/12403-tr4700.pdf["Tr-4700 : plug-in SnapCenter pour les meilleures pratiques relatives aux bases de données Oracle"^]
+NetApp SnapCenter est une plateforme unifiée et évolutive de protection des données cohérente avec Oracle qui automatise les opérations complexes grâce à un contrôle et une surveillance centralisés. Découvrez les pratiques recommandées pour le déploiement de bases de données Oracle avec SnapCenter.
+
+link:https://docs.netapp.com/us-en/netapp-solutions/databases/snapctr_svcs_ora.html["Tr-4964 : sauvegarde, restauration et clonage des bases de données Oracle avec les services SnapCenter"]
+Découvrez comment configurer les services SnapCenter pour sauvegarder, restaurer et cloner les bases de données Oracle déployées dans Amazon FSX pour le stockage ONTAP et les instances de calcul EC2. Bien qu'il soit beaucoup plus facile à configurer et à utiliser, les services SnapCenter fournissent des fonctionnalités clés via l'interface SnapCenter.
+
+
+
+== SnapCenter pour Microsoft SQL Server
+
+link:https://www.netapp.com/pdf.html?item=/media/12400-tr4714.pdf["Tr-4714 : meilleures pratiques pour Microsoft SQL Server avec NetApp SnapCenter"^]
+Découvrez comment déployer avec succès Microsoft SQL Server sur un système de stockage NetApp à l'aide de SnapCenter pour la protection des données.
+
+
+
+== SnapCenter pour Microsoft Exchange Server
+
+link:https://www.netapp.com/es/pdf.html?item=/es/media/12398-tr-4681.pdf["Tr-4681 : meilleures pratiques pour Microsoft Exchange Server utilisant NetApp SnapCenter"^]
+Découvrez comment déployer Microsoft Exchange Server sur un système de stockage NetApp à l'aide de SnapCenter pour la protection des données.
+
+
+
+== SnapCenter pour SAP HANA
+
+link:https://docs.netapp.com/us-en/netapp-solutions-sap/backup/amazon-fsx-overview.html["Tr-4926 : SAP HANA sur Amazon FSX pour NetApp ONTAP - sauvegarde et restauration avec SnapCenter"]
+Découvrez les pratiques recommandées pour la protection des données SAP HANA dans Amazon FSX pour NetApp ONTAP et SnapCenter. Il aborde les concepts SnapCenter, les recommandations relatives à la configuration et les flux de production des opérations, notamment les opérations de configuration et de sauvegarde, pour les opérations de restauration et de reprise.
+
+link:https://docs.netapp.com/us-en/netapp-solutions-sap/lifecycle/sc-copy-clone-introduction.html["Tr-4667 : automatisation des opérations de copie et de clonage du système SAP HANA avec SnapCenter"]
+Le clonage du stockage SnapCenter et la possibilité de définir de manière flexible des opérations de préclonage et de post-clonage permettent aux administrateurs de base SAP d'accélérer et d'automatiser les opérations de copie, de clonage ou d'actualisation du système SAP. Découvrez maintenant la possibilité de choisir une sauvegarde Snapshot SnapCenter sur un système de stockage primaire ou secondaire vous permet de répondre à vos utilisations les plus importantes, notamment la corruption logique, les tests de reprise d'activité ou la mise à jour d'un système d'assurance qualité SAP.
+
+link:https://www.netapp.com/pdf.html?item=/media/17030-tr4719.pdf["Tr-4719 : réplication du système SAP HANA, sauvegarde et restauration avec SnapCenter"^]
+Découvrez comment la technologie SnapCenter et le plug-in SAP HANA peuvent être utilisés pour la sauvegarde et la restauration dans un environnement de réplication système SAP HANA.
+
+link:https://docs.netapp.com/us-en/netapp-solutions-sap/lifecycle/sc-copy-clone-introduction.html["Tr-4667 : automatisation des opérations de copie et de clonage du système SAP HANA avec SnapCenter"]
+La possibilité de créer des sauvegardes Snapshot NetApp cohérentes au niveau des applications sur la couche de stockage constitue la base des opérations de copie du système et de clonage du système. Les sauvegardes Snapshot basées sur le stockage sont créées à l'aide du plug-in NetApp SnapCenter pour SAP HANA et des interfaces fournies par la base de données SAP HANA. SnapCenter enregistre les sauvegardes Snapshot dans le catalogue de sauvegardes SAP HANA afin que les sauvegardes puissent être utilisées pour la restauration et la restauration, ainsi que pour les opérations de clonage.
+
+
+
+== Guide de renforcement SnapCenter
+
+link:https://www.netapp.com/pdf.html?item=/media/82393-tr-4957.pdf["Tr-4957 : guide sur le renforcement de la sécurité pour NetApp SnapCenter"^]
+Découvrez comment configurer SnapCenter pour aider les entreprises à atteindre les objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.

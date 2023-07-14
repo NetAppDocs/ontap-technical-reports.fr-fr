@@ -1,0 +1,73 @@
+---
+layout: landing-page 
+sidebar: sidebar 
+keywords: Technical Reports, TR, NetApp TR, ONTAP TR, ONTAP, ONTAP 9, best practices, best-practices 
+permalink: apps-dbs.html 
+summary: Ces rapports techniques présentent les applications et les bases de données sur ONTAP, ainsi que les pratiques recommandées 
+---
+= Rapports techniques sur les applications et les bases de données
+:hardbreaks:
+:allow-uri-read: 
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ./media/
+
+
+[role="lead"]
+ONTAP constitue le socle de la gestion et de la protection des données pour de nombreuses applications d'entreprise et technologies de base de données. Les rapports techniques suivants fournissent des conseils sur les pratiques recommandées par NetApp et les procédures d'implémentation pour Microsoft SQL Server, MySQL, Oracle et PostgreSQL.
+
+
+
+== Microsoft SQL Server
+
+link:https://www.netapp.com/pdf.html?item=/media/8585-tr4590.pdf["Tr-4590 : guide des meilleures pratiques pour Microsoft SQL Server avec ONTAP"^]
+Découvrez comment les administrateurs du stockage et des bases de données peuvent réussir le déploiement de Microsoft SQL Server sur un système de stockage ONTAP.
+
+link:https://www.netapp.com/pdf.html?item=/media/12400-tr4714.pdf["Tr-4714 : meilleures pratiques pour Microsoft SQL Server avec SnapCenter"^]
+Apprenez à déployer Microsoft SQL Server sur un système de stockage ONTAP à l'aide de la technologie SnapCenter pour la protection des données.
+
+
+
+== MySQL
+
+link:https://www.netapp.com/pdf.html?item=/media/16423-tr-4722pdf.pdf["Base de données MySQL sur ONTAP"^]
+MySQL et ses variantes, dont MariaDB et Percona, sont largement utilisés pour de nombreuses applications d'entreprise. Ces applications vont des sites de réseaux sociaux mondiaux, des systèmes de commerce électronique massifs aux systèmes d'hébergement SMB contenant des milliers d'instances de base de données. Découvrez la configuration requise et les conseils d'ajustement et de configuration du stockage pour le déploiement de MySQL sur ONTAP.
+
+
+
+== Oracle
+
+link:https://www.netapp.com/pdf.html?item=/media/8744-tr3633pdf.pdf["Tr-3633 : bases de données Oracle sur ONTAP"^]
+Découvrez les pratiques recommandées pour déployer Oracle sur un système de stockage ONTAP par les administrateurs de bases de données et de stockage.
+
+link:https://www.netapp.com/pdf.html?item=/media/85630-tr-4969.pdf["Tr-4969 : performances des bases de données Oracle sur les systèmes AFF A-Series et C-Series"^]
+ONTAP est une puissante plateforme de gestion des données dont les fonctionnalités natives comprennent la compression à la volée, les mises à niveau matérielles sans interruption et l'importation d'un LUN à partir d'une baie de stockage étrangère. Il est possible de mettre en cluster jusqu'à 24 nœuds pour assurer le service de données simultanément via les protocoles NFS (Network File System), SMB (Server message Block), iSCSI, FC (Fibre Channel) et NVMe (Nonvolatile Memory Express). De plus, la technologie Snapshot constitue la base de la création de dizaines de milliers de sauvegardes en ligne et de clones de bases de données entièrement opérationnels. Outre l'ensemble de fonctionnalités avancées de ONTAP, les besoins des utilisateurs sont très variés, notamment en termes de taille, de performances et de protection des données. Découvrez les performances des bases de données sans système d'exploitation grâce aux systèmes de stockage AFF, y compris Les Gammes A-Series et C-Series. Elles couvrent les valeurs maximales et la différence pratique entre les deux options AFF.
+
+link:https://www.netapp.com/pdf.html?item=/media/85629-tr-4971.pdf["Tr-4971 : performances des bases de données Oracle virtualisées sur les systèmes AFF A-Series et C-Series"^]
+ONTAP est une puissante plateforme de gestion des données dont les fonctionnalités natives comprennent la compression à la volée, les mises à niveau matérielles sans interruption et l'importation d'un LUN à partir d'une baie de stockage étrangère. Il est possible de mettre en cluster jusqu'à 24 nœuds pour assurer le service de données simultanément via les protocoles NFS (Network File System), SMB (Server message Block), iSCSI, Fibre Channel FC) et NVMe (Nonvolatile Memory Express). De plus, la technologie Snapshot constitue la base de la création de dizaines de milliers de sauvegardes en ligne et de clones de bases de données entièrement opérationnels. Outre l'ensemble de fonctionnalités avancées de ONTAP, les besoins des utilisateurs sont très variés, notamment en termes de taille, de performances et de protection des données. Découvrez les performances des bases de données virtualisées grâce aux systèmes de stockage AFF, y compris Les Gammes A-Series et C-Series. Elles couvrent les valeurs maximales et la différence pratique entre les deux options AFF.
+
+link:https://www.netapp.com/pdf.html?item=/media/19666-tr-4591.pdf["Tr-4591 : protection des données Oracle : sauvegarde, restauration, réplication et reprise après incident"^]
+Découvrez les pratiques recommandées pour permettre aux administrateurs du stockage et des bases de données de sauvegarder, restaurer, répliquer et fournir une reprise après incident dans Oracle sur le stockage ONTAP.
+
+link:https://www.netapp.com/pdf.html?item=/media/8583-tr4592.pdf["Tr-4592 : Oracle sur MetroCluster"^]
+Découvrez les pratiques recommandées, les procédures de test et d'autres considérations à prendre en compte pour l'utilisation de bases de données Oracle sur une fonctionnalité de réplication synchrone MetroCluster.
+
+link:https://www.netapp.com/pdf.html?item=/media/19750-tr-4534.pdf["Tr-4534 : migration des bases de données Oracle vers des systèmes de stockage ONTAP"^]
+Découvrez les facteurs généraux à prendre en compte lors de la planification d'une stratégie de migration, les trois niveaux de déplacement des données et quelques-unes des procédures disponibles.
+
+link:https://www.netapp.com/pdf.html?item=/media/9138-tr4695.pdf["Tr-4695 : hiérarchisation du stockage de base de données avec FabricPool"^]
+Découvrez les avantages et les options de configuration de FabricPool avec diverses bases de données, notamment le système de gestion de bases de données relationnelles (SGBDR) d'Oracle.
+
+link:https://www.netapp.com/pdf.html?item=/media/40384-tr-4899.pdf["Tr-4899 : basculement transparent des applications de la base de données Oracle avec SnapMirror Business Continuity"^]
+SnapMirror Business Continuity (SM-BC) et Oracle Real application Cluster (RAC) assurent un basculement transparent des applications et la continuité en cas de panne sur site ou de véritable incident. Découvrez les conseils de configuration et les pratiques recommandées pour une baie de stockage AFF avec SM-BC comme composant de stockage d'Oracle RAC.
+
+link:https://www.netapp.com/pdf.html?item=/media/21901-tr-4876.pdf["Tr-4876 : meilleures pratiques de déploiement et de colocation Oracle avec la solution ONTAP"^]
+Découvrez les pratiques recommandées par la solution pour provisionner, gérer et protéger les bases de données Oracle mutualisées à l'aide du stockage ONTAP afin d'optimiser les avantages des bases de données Oracle mutualisées et des fonctionnalités du logiciel ONTAP.
+
+
+
+== PostgreSQL
+
+link:https://www.netapp.com/pdf.html?item=/media/17140-tr4770.pdf["Tr-4770 : base de données PostgreSQL sur ONTAP"^]
+PostgreSQL est fourni avec des variantes incluant PostgreSQL, PostgreSQL plus et EDB Postgres Advanced Server (EPAS). PostgreSQL est généralement déployé en tant que base de données interne pour les applications à plusieurs niveaux. Il est pris en charge par les logiciels middleware courants (tels que PHP, Java, Python, Tcl/TK, ODBC, Et JDBC) et a toujours été un choix populaire pour les systèmes de gestion de bases de données open source. Découvrez les exigences de configuration et les conseils sur l'ajustement et la configuration du stockage pour le déploiement de PostgreSQL sur ONTAP.
