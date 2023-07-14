@@ -3,7 +3,7 @@ layout: landing-page
 sidebar: sidebar 
 keywords: Technical Reports, TR, NetApp TR, ONTAP TR, ONTAP, ONTAP 9, best practices, best-practices 
 permalink: index.html 
-summary: Ces rapports techniques présentent le ONTAP et les pratiques recommandées 
+summary: 'Les rapports techniques ONTAP fournissent des informations supplémentaires sur la planification et l"optimisation des déploiements ONTAP dans différents écosystèmes ou avec différents protocoles, ainsi que les pratiques recommandées pour les fonctionnalités ONTAP.' 
 ---
 = Rapports techniques sur ONTAP
 :hardbreaks:
