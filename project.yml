@@ -11,29 +11,29 @@ sidebar:
   entries:
   - title: Rapports techniques sur ONTAP
     url: "/index.html"
-  - title: Rapports techniques sur les applications et les bases de données
+  - title: Applications et bases de données
     url: "/apps-dbs.html"
-  - title: Rapports techniques sur la continuité de l'activité
+  - title: Continuité de l'activité
     url: "/business-continuity.html"
-  - title: Rapports techniques sur la protection des données et la reprise après incident
+  - title: Protection des données et reprise d'activité
     url: "/data-protection-disaster-recovery.html"
-  - title: Rapports techniques sur FlexCache et FlexGroup volumes
+  - title: Volumes FlexCache et FlexGroup
     url: "/nas-containers.html"
-  - title: Rapports techniques sur NAS
+  - title: NAS
     url: "/nas.html"
-  - title: Rapports techniques sur la mise en réseau
+  - title: Mise en réseau
     url: "/networking.html"
-  - title: Rapports techniques SUR LES SAN
+  - title: SAN
     url: "/san.html"
-  - title: Rapports techniques sur la sécurité
+  - title: Sécurité
     url: "/security.html"
   - title: Guides de renforcement de la sécurité
     url: "/security-hardening-guides.html"
-  - title: Rapports techniques sur SnapCenter
+  - title: SnapCenter
     url: "/snapcenter.html"
-  - title: Rapports techniques sur la hiérarchisation
+  - title: Tiering
     url: "/tiering.html"
-  - title: Rapports techniques sur la virtualisation
+  - title: Virtualisation
     url: "/virtualization.html"
   - title: Mentions légales
     url: "/legal-notices.html"
