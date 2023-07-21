@@ -28,9 +28,6 @@ Découvrez les protocoles de niveau bloc dans ONTAP ainsi que des recommandation
 link:https://www.netapp.com/pdf.html?item=/media/10681-tr4684.pdf["Tr-4684 : implémentation et configuration de SAN modernes avec NVMe over Fabrics (NVMe-of)"^]
 Découvrez comment implémenter et configurer le transport NVMe over Fabrics (NVMe over Fibre Channel et NVMe over TCP). Il aborde des thèmes tels que la conception, l'implémentation, la configuration, les instructions de gestion, ainsi que les pratiques recommandées pour créer des solutions SAN modernes haute disponibilité et haute performance basées sur les protocoles et les transports NVMe.
 
-link:https://www.netapp.com/pdf.html?item=/media/10379-tr4515.pdf["Tr-4515 : systèmes de baies 100 % SAN (ASA) ONTAP AFF"^]
-Découvrez les systèmes de baies SAN 100 % Flash (ASA) NetApp AFF et comment les implémenter en fonction des pratiques recommandées pour les configurations SAN stratégiques disponibles en continu.
-
 link:https://www.netapp.com/pdf.html?item=/media/85671-tr-4968.pdf["Tr-4968 : disponibilité et intégrité des données des baies 100 % SAN NetApp"^]
 Découvrez comment les différentes fonctionnalités de protection et d'intégrité des données des systèmes SAN fonctionnent pour optimiser la continuité des applications, ainsi que les pratiques recommandées pour la conception, l'implémentation et la gestion d'un réseau SAN.
 
