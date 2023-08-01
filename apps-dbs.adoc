@@ -14,7 +14,7 @@ summary: Ces rapports techniques présentent les applications et les bases de do
 
 
 [role="lead"]
-ONTAP constitue le socle de la gestion et de la protection des données pour de nombreuses applications d'entreprise et technologies de base de données. Les rapports techniques suivants fournissent des conseils sur les pratiques recommandées par NetApp et les procédures d'implémentation pour Microsoft SQL Server, MySQL, Oracle et PostgreSQL.
+ONTAP constitue le socle de la gestion et de la protection des données pour de nombreuses applications d'entreprise et technologies de base de données. Ces rapports techniques fournissent des conseils sur les pratiques recommandées par NetApp et les procédures d'implémentation pour Microsoft SQL Server, MySQL, Oracle, PostgreSQL et SAP HANA.
 
 
 
