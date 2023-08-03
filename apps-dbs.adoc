@@ -21,7 +21,7 @@ ONTAP constitue le socle de la gestion et de la protection des données pour de 
 == Microsoft SQL Server
 
 link:https://www.netapp.com/pdf.html?item=/media/88704-tr-4976-virtualized-microsoft-sql-server-performance-on-netapp-aff-a-series-and-c-series.pdf["Tr-4976 : performances de Microsoft SQL Server virtualisé sur les systèmes NetApp AFF A-Series et C-Series"^]
-Découvrez les performances de Microsoft SQL Server sur les systèmes NetApp AFF de la gamme ASeries et AFF C-Series, et comment choisir le système adapté à vos besoins de stockage en fonction de l'utilisation des charges de travail.
+Découvrez les caractéristiques de performances de Microsoft SQL Server avec les systèmes NetApp AFF A-Series et C-Series, ainsi que des conseils pour sélectionner le système adapté à la charge de travail.
 
 link:https://www.netapp.com/pdf.html?item=/media/8585-tr4590.pdf["Tr-4590 : guide des meilleures pratiques pour Microsoft SQL Server avec ONTAP"^]
 Découvrez comment les administrateurs du stockage et des bases de données peuvent réussir le déploiement de Microsoft SQL Server sur un système de stockage ONTAP.
