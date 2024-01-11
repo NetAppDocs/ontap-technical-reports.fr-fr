@@ -8,19 +8,16 @@ indexpage:
   tiles:
   - title: Applications et bases de données
     links:
-    - title: Bases de données Microsoft SQL Server sur ONTAP
-      url: apps-dbs.html
+    - title: Microsoft SQL Server sur ONTAP
+      url: apps-dbs.html#microsoft-sql-server
     - title: Bases de données MySQL sur ONTAP
-      url: apps-dbs.html
+      url: apps-dbs.html#mysql
     - title: Bases de données Oracle sur ONTAP
-      url: apps-dbs.html
+      url: apps-dbs.html#oracle
     - title: Bases de données PostgreSQL sur ONTAP
-      url: apps-dbs.html
+      url: apps-dbs.html#postgresql
     - title: SAP HANA sur ONTAP
-      url: apps-dbs.html
-    - title: Rapports techniques supplémentaires sur les applications et les bases
-        de données
-      url: apps-dbs.html
+      url: apps-dbs.html#sap-hana
   - title: Continuité de l'activité
     links:
     - title: Continuité de l'activité SnapMirror (SM-BC)
