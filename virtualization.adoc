@@ -18,20 +18,20 @@ Les solutions de virtualisation NetApp vous aident à tirer le meilleur parti de
 
 Ces rapports techniques se développent sur le link:https://docs.netapp.com/us-en/ontap-tools-vmware-vsphere/index.html["Les outils ONTAP pour VMware vSphere"] documentation produit.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vsphere/overview.html["Tr-4597 : VMware vSphere pour ONTAP"]
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vmware-vsphere-overview.html["Tr-4597 : VMware vSphere pour ONTAP"]
  ONTAP est une solution de stockage leader pour les environnements VMware vSphere depuis près de vingt ans et continue d'ajouter des fonctionnalités innovantes pour simplifier la gestion tout en réduisant les coûts. Ce document présente la solution ONTAP pour vSphere, notamment les dernières informations sur les produits et les pratiques recommandées, afin de rationaliser le déploiement, de réduire les risques et de simplifier la gestion.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vvols/overview.html["Tr-4400 : volumes virtuels VMware vSphere (vVols) avec NetApp ONTAP"]
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vmware-vvols-overview.html["Tr-4400 : volumes virtuels VMware vSphere (vVols) avec NetApp ONTAP"]
 ONTAP est une solution de stockage leader pour les environnements VMware vSphere depuis plus de vingt ans et continue d'ajouter des fonctionnalités innovantes pour simplifier la gestion tout en réduisant les coûts. Ce document présente les fonctionnalités de ONTAP pour les volumes virtuels VMware vSphere (vVols), notamment les dernières informations sur les produits et les cas d'utilisation, ainsi que les pratiques recommandées et d'autres informations permettant de rationaliser le déploiement et de réduire les erreurs.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/srm/overview.html["Tr-4900 : VMware site Recovery Manager avec NetApp ONTAP"]
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vmware-srm-overview.html["Tr-4900 : VMware site Recovery Manager avec NetApp ONTAP"]
 Depuis son introduction dans le data Center moderne en 2002, ONTAP est une solution de stockage leader pour les environnements VMware vSphere. De plus, il continue d'ajouter des fonctionnalités innovantes pour simplifier la gestion tout en réduisant les coûts. Ce document présente la solution ONTAP pour VMware site Recovery Manager (SRM), le logiciel de reprise après incident de pointe de VMware, qui inclut les dernières informations produit et les pratiques recommandées pour rationaliser le déploiement, réduire les risques et simplifier la gestion au quotidien.
 
 link:https://docs.netapp.com/us-en/netapp-solutions/virtualization/vsphere_auto_introduction.html["Introduction à l'automatisation pour ONTAP et vSphere"]
 Depuis les premiers jours de VMware ESX, l'automatisation fait partie intégrante de la gestion des environnements VMware. La possibilité de déployer une infrastructure en tant que code et d'étendre les pratiques aux opérations de cloud privé permet de réduire les problèmes liés à l'évolutivité, à la flexibilité, au provisionnement automatique et à l'efficacité. Ce document présente la solution ONTAP pour l'automatisation de l'environnement ONTAP et VMware vSphere.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/security/tools.html["WP-7353 : outils ONTAP pour VMware vSphere - sécurité des produits"]
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vmware-security-tools.html["WP-7353 : outils ONTAP pour VMware vSphere - sécurité des produits"]
 Ce document décrit les techniques et la technologie utilisées pour sécuriser les outils ONTAP pour VMware vSphere 9.X contre les menaces existantes et émergentes dans les environnements produits.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/security/snapcenter.html["WP-7355 : plug-in SnapCenter VMware vSphere : sécurité des produits"]
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vmware-security-snapcenter.html["WP-7355 : plug-in SnapCenter VMware vSphere : sécurité des produits"]
 Ce document décrit les techniques et la technologie utilisées pour sécuriser le plug-in NetApp SnapCenter pour VMware vSphere 4.X contre les menaces existantes et émergentes dans les environnements produits.
