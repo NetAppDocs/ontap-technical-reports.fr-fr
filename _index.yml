@@ -1,5 +1,12 @@
 ---
 indexpage:
+  title: Rapports techniques de ONTAP
+  summary: Les rapports techniques ONTAP fournissent des informations supplémentaires
+    sur la planification et l'optimisation des déploiements ONTAP au sein de différents
+    écosystèmes ou avec différents protocoles. Certains rapports techniques ONTAP
+    présentent le contexte architectural et les pratiques recommandées pour les fonctionnalités
+    et fonctionnalités de ONTAP.
+  keywords: ONTAP 9, ONTAP, Technical Reports, TR,
   lead: Les rapports techniques ONTAP fournissent des informations supplémentaires
     sur la planification et l'optimisation des déploiements ONTAP au sein de différents
     écosystèmes ou avec différents protocoles. Certains rapports techniques ONTAP
