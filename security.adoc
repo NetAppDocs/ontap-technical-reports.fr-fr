@@ -57,13 +57,6 @@ Découvrez comment implémenter la colocation sécurisée à l'aide des VM de st
 
 
 
-== Journalisation
-
-link:https://www.netapp.com/pdf.html?item=/media/103610-tr-4303i-0514-logging-in-clustered-dot.pdf["Tr-4303 : connexion à ONTAP"^]
-Découvrez comment définir les différents journaux générés par ONTAP, les fonctionnalités proposées, et comment afficher les journaux et y accéder.
-
-
-
 == Normes
 
 link:https://www.netapp.com/pdf.html?item=/media/17180-tr4401.pdf["Tr-4401 : PCI-DSS 4.0 et ONTAP"^]
