@@ -35,3 +35,6 @@ Ce document décrit les techniques et la technologie utilisées pour sécuriser 
 
 link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vmware-security-snapcenter.html["WP-7355 : plug-in SnapCenter VMware vSphere : sécurité des produits"]
 Ce document décrit les techniques et la technologie utilisées pour sécuriser le plug-in NetApp SnapCenter pour VMware vSphere 4.X contre les menaces existantes et émergentes dans les environnements produits.
+
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/microsoft/win_overview.html["Tr-4568 : instructions de déploiement de NetApp et meilleures pratiques de stockage pour Windows Server"]
+Microsoft Windows Server est un système d'exploitation professionnel qui couvre la mise en réseau, la sécurité, la virtualisation, le cloud, l'infrastructure de postes de travail virtuels, protection de l'accès, protection des informations, services web, infrastructure de plate-forme applicative, etc. Ce document est axé sur Microsoft Windows, en mettant particulièrement l'accent sur la technologie de virtualisation Hyper-V, y compris les dernières informations sur les produits et les pratiques recommandées, afin de rationaliser le déploiement, de réduire les risques et de simplifier la gestion.
