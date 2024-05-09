@@ -467,4 +467,8 @@ Découvrez les pratiques recommandées pour permettre aux administrateurs du sto
   <block id="11001fb821f9ba1fb2e3a93608a688cb" category="paragraph"><block ref="c141febea7d2bd403fd12cb6dd24d35c" category="inline-link-macro-rx"></block>
 Microsoft Windows Server est un système d'exploitation professionnel qui couvre la mise en réseau, la sécurité, la virtualisation, le cloud, l'infrastructure de postes de travail virtuels, protection de l'accès, protection des informations, services web, infrastructure de plate-forme applicative, etc. Ce document est axé sur Microsoft Windows, en mettant particulièrement l'accent sur la technologie de virtualisation Hyper-V, y compris les dernières informations sur les produits et les pratiques recommandées, afin de rationaliser le déploiement, de réduire les risques et de simplifier la gestion.</block>
   <block id="b0da974886af36b76614baf1f4df0289" category="sidebar">Microsoft Windows Server (Hyper-V)</block>
+  <block id="ea80e7a221b7d29abbf2b1def0f49eff" category="inline-link-macro">Guide sur le renforcement de la sécurité des outils ONTAP pour VMware</block>
+  <block id="f0363ce68d8f8c316c89e502fa07f4a6" category="paragraph"><block ref="5b7528c0e47af54726e633b3e59db241" category="inline-link-macro-rx"></block>
+Découvrez comment configurer les outils ONTAP pour VMware vSphere pour aider les entreprises à atteindre les objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.</block>
+  <block id="47d29daaa26fbfa9c9a069d4cd023ac1" category="sidebar">Guide de renforcement de la sécurité des outils ONTAP pour VMware vSphere</block>
 </blocks>
