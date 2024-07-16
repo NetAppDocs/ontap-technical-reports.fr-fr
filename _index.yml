@@ -93,7 +93,7 @@ indexpage:
     - title: La solution NetApp pour ransomware
       url: security.html
     - title: NetApp et le modèle « zéro confiance »
-      url: security.html
+      url: https://docs.netapp.com/us-en/ontap/zero-trust/zero-trust-overview.html
     - title: Stockage WORM conforme avec NetApp SnapLock
       url: security.html
     - title: Authentification (SSH, MFA)
