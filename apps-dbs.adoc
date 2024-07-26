@@ -76,8 +76,7 @@ ONTAP est une puissante plateforme de gestion des données dont les fonctionnali
 link:https://www.netapp.com/pdf.html?item=/media/9138-tr4695.pdf["Tr-4695 : hiérarchisation du stockage de base de données avec FabricPool"^]
 Découvrez les avantages et les options de configuration de FabricPool avec diverses bases de données, notamment le système de gestion de bases de données relationnelles (SGBDR) d'Oracle.
 
-link:https://www.netapp.com/pdf.html?item=/media/40384-tr-4899.pdf["Tr-4899 : basculement transparent des applications de la base de données Oracle avec SnapMirror Business Continuity"^]
-SnapMirror Business Continuity (SM-BC) et Oracle Real application Cluster (RAC) assurent un basculement transparent des applications et la continuité en cas de panne sur site ou de véritable incident. Découvrez les conseils de configuration et les pratiques recommandées pour une baie de stockage AFF avec SM-BC comme composant de stockage d'Oracle RAC.
+link:https://www.netapp.com/pdf.html?item=/media/40384-tr-4899.pdf["Tr-4899 : basculement transparent des applications de la base de données Oracle avec synchronisation active SnapMirror"^] La synchronisation active SnapMirror (anciennement SM-BC) et Oracle Real application Cluster (RAC) permettent un basculement transparent des applications et une continuité en cas de panne sur site ou d'incident. Découvrez les conseils de configuration et les pratiques recommandées pour une baie de stockage AFF avec SnapMirror Active Sync comme composant de stockage d'Oracle RAC.
 
 link:https://www.netapp.com/pdf.html?item=/media/21901-tr-4876.pdf["Tr-4876 : meilleures pratiques de déploiement et de colocation Oracle avec la solution ONTAP"^]
 Découvrez les pratiques recommandées par la solution pour provisionner, gérer et protéger les bases de données Oracle mutualisées à l'aide du stockage ONTAP afin d'optimiser les avantages des bases de données Oracle mutualisées et des fonctionnalités du logiciel ONTAP.
