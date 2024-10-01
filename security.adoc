@@ -18,9 +18,15 @@ ONTAP continue d'évoluer, et la sécurité fait partie intégrante de la soluti
 
 [NOTE]
 ====
-Ces rapports techniques se développent sur le link:https://docs.netapp.com/us-en/ontap/security-encryption/index.html["Sécurité et chiffrement des données ONTAP"] documentation produit.
+Ces rapports techniques sont détaillés dans link:https://docs.netapp.com/us-en/ontap/security-encryption/index.html["Sécurité et chiffrement des données ONTAP"^]la documentation produit.
 
 ====
+
+
+== Cyber-coffre ONTAP
+
+link:https://docs.netapp.com/us-en/netapp-solutions/cyber-vault/ontap-cyber-vault-overview.html["Cyber-coffre ONTAP"^] Le cyber-coffre basé sur ONTAP de NetApp offre aux entreprises une solution complète et flexible pour protéger leurs données les plus stratégiques. En exploitant la « Air gapping » logique associée à des méthodologies de renforcement solides, ONTAP vous permet de créer des environnements de stockage isolés et sécurisés, résilients face aux cybermenaces en constante évolution. Avec ONTAP, vous pouvez assurer la confidentialité, l'intégrité et la disponibilité de vos données tout en conservant l'agilité et l'efficacité de votre infrastructure de stockage.
+
 
 
 == Attaques par ransomware

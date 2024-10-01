@@ -92,6 +92,8 @@ indexpage:
     links:
     - title: Guides de renforcement de la sécurité
       url: security-hardening-guides.html
+    - title: Cyber-coffre ONTAP
+      url: https://docs.netapp.com/us-en/netapp-solutions/cyber-vault/ontap-cyber-vault-overview.html
     - title: La solution NetApp pour ransomware
       url: https://docs.netapp.com/us-en/ontap/ransomware-solutions/ransomware-overview.html
     - title: NetApp et le modèle « zéro confiance »
