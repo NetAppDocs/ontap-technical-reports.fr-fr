@@ -14,7 +14,7 @@ summary: Ces rapports techniques présentent les applications et les bases de do
 
 
 [role="lead"]
-ONTAP constitue le socle de la gestion et de la protection des données pour de nombreuses applications d'entreprise et technologies de base de données. Ces rapports techniques fournissent des conseils sur les pratiques recommandées par NetApp et les procédures d'implémentation pour Microsoft SQL Server, MySQL, Oracle, PostgreSQL et SAP HANA.
+ONTAP constitue le socle de la gestion et de la protection des données pour de nombreuses applications d'entreprise et technologies de base de données. Ces rapports techniques fournissent des conseils sur les pratiques recommandées par NetApp et les procédures d'implémentation pour Microsoft SQL Server, MySQL, Oracle, PostgreSQL, SAP HANA et Epic.
 
 
 
@@ -22,8 +22,7 @@ ONTAP constitue le socle de la gestion et de la protection des données pour de 
 
 SQL Server constitue le socle de la plateforme de données Microsoft. Il apporte les performances stratégiques grâce aux technologies in-memory et permet d'obtenir plus rapidement des informations sur toutes les données, qu'elles soient sur site ou dans le cloud.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/mssql/mssql-overview.html["Bonne pratique pour Microsoft SQL Server avec ONTAP"]
-Découvrez comment les administrateurs du stockage et des bases de données peuvent réussir le déploiement de Microsoft SQL Server sur un système de stockage ONTAP.
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/mssql/mssql-overview.html["Bonne pratique pour Microsoft SQL Server avec ONTAP"^] Découvrez comment les administrateurs du stockage et des bases de données peuvent réussir le déploiement de Microsoft SQL Server sur un système de stockage ONTAP.
 
 
 NOTE: Cette documentation remplace le rapport technique _TR-4590 : guide des meilleures pratiques pour Microsoft SQL Server avec ONTAP._
@@ -40,8 +39,7 @@ Apprenez à déployer Microsoft SQL Server sur un système de stockage ONTAP à 
 
 Ce document décrit la configuration requise et fournit des conseils sur le réglage et la configuration du stockage pour le déploiement de MySQL sur ONTAP.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/mysql/mysql-overview.html["Base de données MySQL sur les bonnes pratiques NetApp ONTAP"]
-MySQL et ses variantes, dont MariaDB et Percona, sont largement utilisés pour de nombreuses applications d'entreprise. Ces applications vont des sites de réseaux sociaux mondiaux, des systèmes de commerce électronique massifs aux systèmes d'hébergement SMB contenant des milliers d'instances de base de données. Découvrez la configuration requise et les conseils d'ajustement et de configuration du stockage pour le déploiement de MySQL sur ONTAP.
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/mysql/mysql-overview.html["Base de données MySQL sur les bonnes pratiques NetApp ONTAP"^] MySQL et ses variantes, dont MariaDB et Percona, sont largement utilisés pour de nombreuses applications d'entreprise. Ces applications vont des sites de réseaux sociaux mondiaux, des systèmes de commerce électronique massifs aux systèmes d'hébergement SMB contenant des milliers d'instances de base de données. Découvrez la configuration requise et les conseils d'ajustement et de configuration du stockage pour le déploiement de MySQL sur ONTAP.
 
 
 NOTE: Cette documentation remplace le rapport technique _TR-4722 : base de données MySQL sur les meilleures pratiques NetApp ONTAP._
@@ -52,17 +50,13 @@ NOTE: Cette documentation remplace le rapport technique _TR-4722 : base de donn�
 
 ONTAP est conçu pour les bases de données Oracle. Pendant des décennies, ONTAP a été optimisé pour les demandes uniques d'E/S de bases de données relationnelles. Plusieurs fonctionnalités ONTAP ont été créées spécifiquement pour répondre aux besoins des bases de données Oracle, et même à la demande d'Oracle Inc. Elle-même.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/oracle/oracle-overview.html["Bases de données Oracle sur ONTAP"]
-Découvrez les pratiques recommandées pour déployer Oracle sur un système de stockage ONTAP par les administrateurs de bases de données et de stockage.
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/oracle/oracle-overview.html["Bases de données Oracle sur ONTAP"^] Découvrez les pratiques recommandées pour déployer Oracle sur un système de stockage ONTAP par les administrateurs de bases de données et de stockage.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/oracle/oracle-dp-overview.html["Protection des données Oracle avec ONTAP"]
-Découvrez les pratiques recommandées pour permettre aux administrateurs du stockage et des bases de données de sauvegarder, restaurer, répliquer et fournir une reprise après incident dans Oracle sur le stockage ONTAP.
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/oracle/oracle-dp-overview.html["Protection des données Oracle avec ONTAP"^] Découvrez les pratiques recommandées pour permettre aux administrateurs du stockage et des bases de données de sauvegarder, restaurer, répliquer et fournir une reprise après incident dans Oracle sur le stockage ONTAP.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/oracle/oracle-dr-overview.html["Reprise après incident Oracle avec ONTAP"]
-Découvrez les pratiques recommandées, les procédures de test et d'autres considérations à prendre en compte pour l'exploitation de bases de données Oracle sur une continuité de l'activité MetroCluster et SnapMirror.
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/oracle/oracle-dr-overview.html["Reprise après incident Oracle avec ONTAP"^] Découvrez les pratiques recommandées, les procédures de test et d'autres considérations à prendre en compte pour l'exploitation de bases de données Oracle sur une continuité de l'activité MetroCluster et SnapMirror.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/oracle/oracle-migration-overview.html["Migration des bases de données Oracle vers des systèmes de stockage ONTAP"]
-Découvrez les facteurs généraux à prendre en compte lors de la planification d'une stratégie de migration, les trois niveaux de déplacement des données et quelques-unes des procédures disponibles.
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/oracle/oracle-migration-overview.html["Migration des bases de données Oracle vers des systèmes de stockage ONTAP"^] Découvrez les facteurs généraux à prendre en compte lors de la planification d'une stratégie de migration, les trois niveaux de déplacement des données et quelques-unes des procédures disponibles.
 
 
 NOTE: La documentation décrite ci-dessus remplace les rapports techniques _TR-3633 : bases de données Oracle sur ONTAP ; TR-4591 : protection des données Oracle : sauvegarde, restauration, réplication ; TR-4592 : Oracle sur MetroCluster ; et TR-4534 : migration des bases de données Oracle vers des systèmes de stockage NetApp_
@@ -87,16 +81,22 @@ Découvrez les pratiques recommandées par la solution pour provisionner, gérer
 
 PostgreSQL est fourni avec des variantes incluant PostgreSQL, PostgreSQL plus et EDB Postgres Advanced Server (EPAS). PostgreSQL est généralement déployé en tant que base de données interne pour les applications multiniveaux. NetApp ONTAP constitue un excellent choix pour l'exécution des bases de données PostgreSQL et ses fonctionnalités de gestion des données fiables, performantes et efficaces.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/postgres/postgres-overview.html["Base de données PostgreSQL sur les bonnes pratiques ONTAP"]
-PostgreSQL est fourni avec des variantes incluant PostgreSQL, PostgreSQL plus et EDB Postgres Advanced Server (EPAS). PostgreSQL est généralement déployé en tant que base de données interne pour les applications à plusieurs niveaux. Il est pris en charge par les logiciels middleware courants (tels que PHP, Java, Python, Tcl/TK, ODBC, Et JDBC) et a toujours été un choix populaire pour les systèmes de gestion de bases de données open source. Découvrez les exigences de configuration et les conseils sur l'ajustement et la configuration du stockage pour le déploiement de PostgreSQL sur ONTAP.
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/postgres/postgres-overview.html["Base de données PostgreSQL sur les bonnes pratiques ONTAP"^] PostgreSQL est fourni avec des variantes incluant PostgreSQL, PostgreSQL plus et EDB Postgres Advanced Server (EPAS). PostgreSQL est généralement déployé en tant que base de données interne pour les applications à plusieurs niveaux. Il est pris en charge par les logiciels middleware courants (tels que PHP, Java, Python, Tcl/TK, ODBC, Et JDBC) et a toujours été un choix populaire pour les systèmes de gestion de bases de données open source. Découvrez les exigences de configuration et les conseils sur l'ajustement et la configuration du stockage pour le déploiement de PostgreSQL sur ONTAP.
 
 
-NOTE: Cette documentation remplace le rapport technique TR-4770 : base de données PostgreSQL sur les meilleures pratiques ONTAP.
+NOTE: Cette documentation remplace le rapport technique _TR-4770 : base de données PostgreSQL sur les meilleures pratiques ONTAP_.
 
 
 
 == SAP HANA
 
-Les bonnes pratiques de configuration, de gestion et d'automatisation des solutions SAP sont disponibles sur la page Solutions SAP de NetApp.
+link:https://docs.netapp.com/us-en/netapp-solutions-sap/["Solutions de base de données SAP HANA sur ONTAP"^] Les bonnes pratiques de configuration, de gestion et d'automatisation des solutions SAP sont disponibles sur la page Solutions SAP de NetApp.
 
-link:https://docs.netapp.com/us-en/netapp-solutions-sap/["Solutions de base de données SAP HANA sur ONTAP"]
+
+
+== Epic
+
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/epic/epic-overview.html["Meilleures pratiques Epic sur ONTAP"^] Guide pour comprendre les bonnes pratiques de déploiement d'Epic sur site et dans le cloud, tout en respectant les normes de configuration et en vue d'un déploiement correct sur ONTAP.
+
+
+NOTE: Cette documentation remplace le rapport technique _TR-3923 : meilleures pratiques NetApp pour Epic_.

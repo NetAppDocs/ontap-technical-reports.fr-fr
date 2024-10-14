@@ -6,7 +6,7 @@ indexpage:
     écosystèmes ou avec différents protocoles. Certains rapports techniques ONTAP
     présentent le contexte architectural et les pratiques recommandées pour les fonctionnalités
     et fonctionnalités de ONTAP.
-  keywords: ONTAP 9, ONTAP, Technical Reports, TR,
+  keywords: ONTAP 9, ONTAP, Technical Reports, TR
   lead: Les rapports techniques ONTAP fournissent des informations supplémentaires
     sur la planification et l'optimisation des déploiements ONTAP au sein de différents
     écosystèmes ou avec différents protocoles. Certains rapports techniques ONTAP
@@ -25,29 +25,21 @@ indexpage:
       url: apps-dbs.html#postgresql
     - title: SAP HANA sur ONTAP
       url: apps-dbs.html#sap-hana
-  - title: Continuité de l'activité
+    - title: Epic sur ONTAP
+      url: https://docs.netapp.com/us-en/ontap-apps-dbs/epic/epic-overview.html
+  - title: La protection des données, la reprise après incident et la continuité de
+      l'activité
     links:
-    - title: Synchronisation active SnapMirror
-      url: https://docs.netapp.com/us-en/ontap/snapmirror-active-sync/index.html
-    - title: Architecture et conception de la solution MetroCluster
-      url: business-continuity.html
-    - title: IP MetroCluster
-      url: business-continuity.html
-    - title: FC MetroCluster
-      url: business-continuity.html
-    - title: Autres rapports techniques sur la continuité de l'activité
-      url: business-continuity.html
-  - title: Protection des données et reprise d'activité
-    links:
-    - title: Configuration asynchrone de SnapMirror et bonnes pratiques
-      url: data-protection-disaster-recovery.html
-    - title: Configuration SnapMirror synchrone et bonnes pratiques
+    - title: Configuration et bonnes pratiques de SnapMirror
       url: data-protection-disaster-recovery.html
     - title: Stockage WORM conforme avec SnapLock
       url: data-protection-disaster-recovery.html
-    - title: Rapports techniques supplémentaires sur la protection des données et
-        la reprise après incident
-      url: data-protection-disaster-recovery.html
+    - title: Synchronisation active SnapMirror
+      url: https://docs.netapp.com/us-en/ontap/snapmirror-active-sync/index.html
+    - title: IP et FC MetroCluster
+      url: business-continuity.html
+    - title: Autres rapports techniques sur la continuité de l'activité
+      url: business-continuity.html
   - title: Volumes FlexCache et FlexGroup
     links:
     - title: Volumes FlexCache
@@ -75,10 +67,6 @@ indexpage:
       url: nas.html
     - title: Rapports techniques NAS supplémentaires
       url: nas.html
-  - title: Mise en réseau
-    links:
-    - title: BGP/VIP avec ONTAP
-      url: networking.html
   - title: SAN
     links:
     - title: Bonnes pratiques pour le SAN moderne dans ONTAP
@@ -98,11 +86,7 @@ indexpage:
       url: https://docs.netapp.com/us-en/ontap/ransomware-solutions/ransomware-overview.html
     - title: NetApp et le modèle « zéro confiance »
       url: https://docs.netapp.com/us-en/ontap/zero-trust/zero-trust-overview.html
-    - title: Stockage WORM conforme avec NetApp SnapLock
-      url: security.html
     - title: Authentification (SSH, MFA)
-      url: security.html
-    - title: La colocation sécurisée dans ONTAP
       url: security.html
     - title: Rapports techniques supplémentaires sur la sécurité
       url: security.html

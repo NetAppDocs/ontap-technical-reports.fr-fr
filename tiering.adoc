@@ -10,10 +10,11 @@ summary: Ces rapports techniques présentent la hiérarchisation dans NetApp ONT
 :nofooter: 
 :icons: font
 :linkattrs: 
+:imagesdir: ./media/
 
 
 [role="lead"]
-Grâce à la solution de Tiering des données FabricPool, l'expérience utilisateur globale des systèmes Flash est améliorée et l'architecture des applications à des fins d'efficacité du stockage n'est pas complexe. FabricPool réduit l'empreinte du stockage et les coûts associés de l'environnement d'un système. Les données actives restent sur les disques SSD haute performance. Les données inactives sont envoyées vers un stockage objet à faible coût tout en préservant les fonctionnalités d'efficacité du stockage.
+Grâce à la solution de Tiering des données FabricPool, l'expérience utilisateur globale des systèmes Flash est améliorée et l'architecture des applications n'est plus nécessaire pour optimiser l'efficacité du stockage. FabricPool réduit l'empreinte du stockage et les coûts associés à l'environnement d'un système. Les données actives restent sur les disques SSD haute performance. Les données inactives sont envoyées vers un stockage objet à faible coût tout en préservant les fonctionnalités d'efficacité du stockage.
 
 [NOTE]
 ====
