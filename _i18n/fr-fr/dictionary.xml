@@ -456,4 +456,6 @@ Microsoft Windows Server est un système d'exploitation professionnel qui couvre
   <block id="6393d669ce30abc667ac49b55f562310" category="sidebar">La protection des données, la reprise après incident et la continuité de l'activité</block>
   <block id="64af762eb6280d5cce6eda4b03a6e65c" category="sidebar">Configuration et bonnes pratiques de SnapMirror</block>
   <block id="0d59051e1739c44ad573da05fecfe0e1" category="sidebar">IP et FC MetroCluster</block>
+  <block id="b845152aee89efdb663c0e7c1522d7bf" category="inline-link-macro">Guide de renforcement de la sécurité pour l'hôte et la base de données MetroCluster Tiebreaker</block>
+  <block id="ee1c2b388c2a8f940cf512d5f930d4f5" category="paragraph"><block ref="3ba6a3982660c818149aaeadc40d89b3" category="inline-link-macro-rx"></block> Découvrez comment configurer l'hôte et la base de données NetApp MetroCluster Tiebreaker pour aider les entreprises à atteindre les objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.</block>
 </blocks>
