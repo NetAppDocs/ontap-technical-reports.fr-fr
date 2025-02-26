@@ -49,8 +49,7 @@ Découvrez le fonctionnement de l'accès NAS multiprotocole dans ONTAP et les pr
 
 == ONTAP S3
 
-link:https://www.netapp.com/pdf.html?item=/media/17219-tr4814.pdf["Tr-4814 : S3 dans les bonnes pratiques ONTAP"^]
-Découvrez les pratiques recommandées pour l'utilisation d'Amazon simple Storage Service (S3) avec le logiciel ONTAP ainsi que les fonctionnalités et configurations pour l'utilisation d'ONTAP en tant que magasin d'objets avec les applications S3 natives ou en tant que destination de Tiering pour FabricPool.
+link:https://docs.netapp.com/us-en/ontap/s3-config/index.html["Tr-4814 : S3 dans les bonnes pratiques ONTAP"^] Découvrez les pratiques recommandées pour l'utilisation d'Amazon simple Storage Service (S3) avec le logiciel ONTAP ainsi que les fonctionnalités et configurations pour l'utilisation d'ONTAP en tant que magasin d'objets avec les applications S3 natives ou en tant que destination de Tiering pour FabricPool.
 
 
 
