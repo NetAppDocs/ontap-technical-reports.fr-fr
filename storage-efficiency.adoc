@@ -1,10 +1,10 @@
 ---
+permalink: storage-efficiency.html 
 sidebar: sidebar 
 keywords: Technical Reports, TR, NetApp TR, ONTAP TR, ONTAP, ONTAP 9, best practices, best-practices 
-permalink: storage-efficiency.html 
 summary: 'Ces rapports techniques présentent l"efficacité du stockage dans NetApp ONTAP, ainsi que les pratiques recommandées.' 
 ---
-= Rapports techniques sur l'efficacité du stockage
+= Rapports techniques sur l'efficacité du stockage ONTAP
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -18,9 +18,6 @@ ONTAP propose un portefeuille complet de fonctionnalités d'efficacité du stock
 
 [NOTE]
 ====
-La documentation relative aux procédures de déduplication est disponible à l'adresse link:https://docs.netapp.com/us-en/ontap/volumes/enable-deduplication-volume-task.html["documentation sur la déduplication"]
-La documentation de procédure relative à la compression est disponible à l'adresse link:https://docs.netapp.com/us-en/ontap/volumes/enable-data-compression-volume-task.html["documentation sur la compression"]
-La documentation sur les procédures relatives à l'efficacité du stockage sensible à la température est disponible à l'adresse link:https://docs.netapp.com/us-en/ontap/volumes/enable-temperature-sensitive-efficiency-concept.html["documentation relative à l'efficacité du stockage sensible à la température"]
-La documentation de procédure pour le compactage est disponible à l'adresse link:https://docs.netapp.com/us-en/ontap/volumes/enable-inline-data-compaction-fas-systems-task.html["documentation de compactage"]
+La documentation procédurale pour la déduplication est disponible à la link:https://docs.netapp.com/us-en/ontap/volumes/enable-deduplication-volume-task.html["documentation sur la déduplication"^]section Documentation procédurale pour la compression, à la section link:https://docs.netapp.com/us-en/ontap/volumes/enable-data-compression-volume-task.html["documentation sur la compression"^]Documentation procédurale pour l'efficacité de stockage sensible à la température, à la section link:https://docs.netapp.com/us-en/ontap/volumes/enable-temperature-sensitive-efficiency-concept.html["documentation relative à l'efficacité du stockage sensible à la température"^]Documentation procédurale pour la compaction, se trouve à l'adresse link:https://docs.netapp.com/us-en/ontap/volumes/enable-inline-data-compaction-fas-systems-task.html["documentation de compactage"^]
 
 ====

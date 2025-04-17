@@ -1,10 +1,10 @@
 ---
+permalink: security-hardening-guides.html 
 sidebar: sidebar 
 keywords: Technical Reports, TR, NetApp TR, ONTAP TR, ONTAP, ONTAP 9, MFA, best practices, best-practices, TR-4569 
-permalink: security-hardening-guides.html 
 summary: 'Ces rapports techniques fournissent des conseils sur la manière de renforcer NetApp ONTAP ainsi que d"autres produits associés à ONTAP.' 
 ---
-= Guides de renforcement de la sécurité
+= Guides ONTAP sur le renforcement de la sécurité
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -18,16 +18,16 @@ Ces rapports techniques vous indiquent comment renforcer NetApp ONTAP et les aut
 
 [NOTE]
 ====
-Ces rapports techniques se développent sur le link:https://docs.netapp.com/us-en/ontap/security-encryption/index.html["Sécurité et chiffrement des données ONTAP"] documentation produit.
+Ces rapports techniques sont détaillés dans link:https://docs.netapp.com/us-en/ontap/security-encryption/index.html["Sécurité et chiffrement des données ONTAP"^]la documentation produit.
 
 ====
 
 
 == Guides de durcissement
 
-link:https://docs.netapp.com/us-en/ontap/ontap-security-hardening/security-hardening-overview.html["Tr-4569 : guide sur le renforcement de la sécurité pour NetApp ONTAP"^] Découvrez comment configurer NetApp ONTAP pour aider les entreprises à atteindre les objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.
+link:./ontap-security-hardening/security-hardening-overview.html["Tr-4569 : guide sur le renforcement de la sécurité pour NetApp ONTAP"] Découvrez comment configurer NetApp ONTAP pour aider les entreprises à atteindre les objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.
 
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vmware-otv-hardening-overview.html["Guide de renforcement de la sécurité des outils ONTAP pour VMware vSphere"] Découvrez comment configurer les outils ONTAP pour VMware vSphere pour aider les entreprises à atteindre les objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.
+link:https://docs.netapp.com/us-en/ontap-apps-dbs/vmware/vmware-otv-hardening-overview.html["Guide de renforcement de la sécurité des outils ONTAP pour VMware vSphere"^] Découvrez comment configurer les outils ONTAP pour VMware vSphere pour aider les entreprises à atteindre les objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.
 
 link:https://www.netapp.com/pdf.html?item=/media/82393-tr-4957.pdf["Tr-4957 : guide sur le renforcement de la sécurité pour NetApp SnapCenter"^]
 Découvrez comment configurer le logiciel NetApp SnapCenter pour aider les entreprises à atteindre les objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.

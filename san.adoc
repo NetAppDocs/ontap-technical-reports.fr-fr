@@ -1,10 +1,10 @@
 ---
+permalink: san.html 
 sidebar: sidebar 
 keywords: Technical Reports, TR, NetApp TR, ONTAP TR, ONTAP, ONTAP 9, SAN, NVMe, NVMeoF, NVMeoTCP, NVMeoFC, iSCSI, fibre channel, fiber channel, igroups, namespaces, namespace, LUN, subsystem, best practices, best-practices 
-permalink: san.html 
 summary: Ces rapports techniques présentent les protocoles de niveau bloc dans ONTAP, ainsi que les pratiques recommandées. 
 ---
-= Rapports techniques SUR LES SAN
+= Rapports techniques sur les SAN ONTAP
 :hardbreaks:
 :allow-uri-read: 
 :nofooter: 
@@ -14,11 +14,11 @@ summary: Ces rapports techniques présentent les protocoles de niveau bloc dans 
 
 
 [role="lead"]
-Le stockage SAN de ONTAP offre une expérience SAN simplifiée qui assure la haute disponibilité pour les bases de données stratégiques de votre entreprise et autres workloads SAN. Grâce à l'intégration de services de données exceptionnels avec les bases de données Oracle, SAP et Microsoft SQL Server, ainsi que l'utilisation de VMware et d'autres hyperviseurs de premier plan, les systèmes SAN ONTAP accélèrent le retour sur investissement des applications de bases de données d'entreprise.
+Le stockage SAN de ONTAP offre une expérience SAN simplifiée qui assure la haute disponibilité des bases de données stratégiques de votre entreprise et d'autres workloads SAN. Grâce à l'intégration de services de données exceptionnels avec les bases de données Oracle, SAP et Microsoft SQL Server, ainsi que l'utilisation de VMware et d'autres hyperviseurs de premier plan, les systèmes SAN ONTAP accélèrent le retour sur investissement des applications de bases de données d'entreprise.
 
 [NOTE]
 ====
-Ces rapports techniques se développent sur le link:https://docs.netapp.com/us-en/ontap/san-management/index.html["Gestion du stockage SAN ONTAP"] documentation produit.
+Ces rapports techniques sont détaillés dans link:https://docs.netapp.com/us-en/ontap/san-management/index.html["Gestion du stockage SAN ONTAP"^]la documentation produit.
 
 ====
 link:https://www.netapp.com/pdf.html?item=/media/10680-tr4080.pdf["Tr-4080 : bonnes pratiques pour le SAN moderne dans ONTAP"^]
