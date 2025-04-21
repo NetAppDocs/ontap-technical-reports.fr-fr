@@ -1794,7 +1794,6 @@ ONTAP est une puissante plateforme de gestion des données dont les fonctionnali
   <block id="50f0055dd25143ce1041a1e865a7cff2" category="paragraph">Pour plus d'informations sur le signalement de vulnérabilités et d'incidents, les réponses de sécurité NetApp et la confidentialité des clients, consultez le<block ref="85e584d5dd95cb24acf0575604062318" category="inline-link-rx"></block>.</block>
   <block id="3b878279a04dc47d60932cb294d96259" category="sidebar">Présentation</block>
   <block id="addb25ae677e0b8a55734ab57c09d585" category="sidebar">Renforcement de la sécurité</block>
-  <block id="1aa0723459b84338c8aad8382638c878" category="sidebar">Instructions de renforcement de la sécurité ONTAP</block>
   <block id="ca8c02fc98ee18dce1a2f0c4acf7cd56" category="sidebar">Comptes d'administrateur du stockage local</block>
   <block id="d3d5dd45b51e06a8bf7d70c42f06240c" category="sidebar">Vérification multiadministrateur</block>
   <block id="4cd4399cfc2bfd6d194da77235de119a" category="sidebar">Verrouillage des copies Snapshot</block>
@@ -1803,15 +1802,15 @@ ONTAP est une puissante plateforme de gestion des données dont les fonctionnali
   <block id="b835d7094831b4ed2a38af1dbd1fe404" category="sidebar">Mode FIPS et gestion TLS et SSL</block>
   <block id="8e48f26dee6c1917b45f1d05c19074d7" category="sidebar">Configurer le chiffrement et la signature SMB CIFS</block>
   <block id="94e6cee7fe1a1375bf9dc65d4f0dd995" category="sidebar">Sécurité LIF</block>
-  <block id="4b3b5551c4f327daecfcde4636aca278" category="sidebar">À propos de la protection contre les ransomware de NetApp</block>
   <block id="dcd771e3d20c3c7415e08f5bf28a6e38" category="sidebar">Ransomware et le portefeuille de solutions de protection de NetApp</block>
   <block id="06205ba9447bbde00fbe939539a25870" category="sidebar">SnapLock et copies Snapshot inviolables</block>
   <block id="e6a3ee6f35767ceec82038d17d54fb88" category="sidebar">Sécurité des workloads de stockage ci (CISWS)</block>
   <block id="e59f82f50a98ebe0abf3807c82f2a63b" category="sidebar">Cyber-archivage</block>
   <block id="9c93de8987f6abeac5c25e0855470103" category="sidebar">La protection contre les ransomware de Active IQ</block>
-  <block id="3cecaa4840f4146d89b6a6560054fc43" category="sidebar">Activez le modèle « zéro confiance »</block>
   <block id="c8b78402f94fce212009aa61ceb6fa0d" category="sidebar">Présentation de zéro confiance</block>
   <block id="ebf6adb994a800f01712f5271da576c8" category="sidebar">Approche « zéro confiance » basée sur l'architecture</block>
   <block id="30b66b872763a94b8ae22c6953d55a41" category="sidebar">Automatisation pour un modèle « zéro confiance » à grande échelle</block>
   <block id="a919cbb519743fc10912cc33b7fce224" category="sidebar">Déploiements de cloud hybride « zéro confiance »</block>
+  <block id="31f4bfc29163ac1c62592e45806e4c89" category="sidebar">Instructions de renforcement de la sécurité ONTAP</block>
+  <block id="998827b90d84e6f2876b33dda3bee943" category="sidebar">Solution NetApp pour ransomware</block>
 </blocks>
