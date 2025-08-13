@@ -8,8 +8,8 @@ entries:
   url: "/ransomware-solutions/ransomware-snaplock-tamperproof-snapshots.html"
 - title: Blocage des fichiers FPolicy
   url: "/ransomware-solutions/ransomware-fpolicy.html"
-- title: Sécurité des workloads de stockage ci (CISWS)
-  url: "/ransomware-solutions/ransomware-CI-workload-security.html"
+- title: Data Infrastructure Insights Stockage Charge de travail Sécurité
+  url: "/ransomware-solutions/ransomware-DII-workload-security.html"
 - title: Protection autonome contre les ransomwares (ARP)
   url: "/ransomware-solutions/ransomware-protection.html"
 - title: Cyber-archivage
