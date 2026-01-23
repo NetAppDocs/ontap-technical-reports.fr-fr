@@ -18,9 +18,9 @@ Il existe deux comptes d'administration par défaut : `admin` et `diag`.
 Les comptes orphelins sont un vecteur de sécurité majeur qui entraîne souvent des vulnérabilités, y compris l'escalade des privilèges. Il s'agit de comptes inutiles et inutilisés qui restent dans le référentiel de comptes d'utilisateurs. Il s'agit principalement de comptes par défaut qui n'ont jamais été utilisés ou pour lesquels les mots de passe n'ont jamais été mis à jour ou modifiés. Pour résoudre ce problème, ONTAP prend en charge la suppression et le changement de nom des comptes.
 
 
-NOTE: ONTAP ne peut ni supprimer ni renommer les comptes intégrés. Cependant, NetApp recommande de verrouiller tous les comptes intégrés inutiles à l'aide de la commande lock.
+NOTE: Vous ne pouvez pas supprimer ni renommer les comptes intégrés. Si un administrateur supprime le compte, au redémarrage, le compte intégré sera recréé. *NetApp recommande* de verrouiller tout compte intégré inutile avec la commande lock.
 
-Bien que les comptes orphelins constituent un problème de sécurité important, NetApp recommande fortement de tester l'effet de la suppression des comptes du référentiel de comptes local.
+Bien que les comptes orphelins constituent un problème de sécurité important, *NetApp recommande fortement* de tester l'effet de la suppression des comptes du référentiel de comptes local.
 
 
 
@@ -32,7 +32,7 @@ Pour lister les comptes locaux, exécutez la `security login show` commande.
 ----
 cluster1::*> security login show -vserver cluster1
 
-Vserver: cluster1
+vserver: cluster1
                              Authentication             Acct   Is-Nsswitch
 User/Group Name  Application Method    Role Name        Locked Group
 ---------------- ----------- --------- ---------------- ------ -----------

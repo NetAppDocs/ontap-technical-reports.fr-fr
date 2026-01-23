@@ -9,7 +9,7 @@ summary: 'La protection contre les ransomwares de NetApp inclut Digital Advisor,
 
 
 [role="lead"]
-Le conseiller digital Active IQ (également appelé conseiller digital) simplifie le support proactif et l'optimisation du stockage NetApp grâce à des informations exploitables pour une gestion des données optimale. Alimenté par les données de télémétrie de notre base installée diversifiée, il emploie des techniques avancées d'intelligence artificielle et de MACHINE LEARNING pour découvrir les opportunités de réduction des risques et d'amélioration des performances et de l'efficacité de votre environnement de stockage.
+Digital Advisor optimisé par Active IQ simplifie la maintenance proactive et l'optimisation du stockage NetApp avec des informations exploitables pour une gestion des données optimale. S'appuyant sur les données de télémétrie de notre base installée très diversifiée, il utilise des techniques avancées d'IA et de ML pour identifier les opportunités de réduction des risques et d'amélioration des performances et de l'efficacité de votre environnement de stockage.
 
 Non seulement peut https://www.netapp.com/services/support/active-iq/["Conseiller digital NetApp"^] vous y aider https://www.netapp.com/blog/fix-security-vulnerabilities-with-active-iq/["éliminez les failles de sécurité"^], mais il fournit également des informations et des recommandations spécifiques pour vous protéger contre les ransomwares. Une carte d'intégrité dédiée présente les actions nécessaires et les risques résolus. Vous êtes ainsi sûr que vos systèmes respectent ces recommandations en matière de bonnes pratiques.
 

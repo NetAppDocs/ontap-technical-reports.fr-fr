@@ -13,7 +13,7 @@ summary: 'Vous devez activer l"audit CIFS pour générer des événements d"audi
 [role="lead"]
 Les systèmes de fichiers NAS occupent une place de plus en plus importante dans le paysage actuel des menaces. Les fonctions d'audit sont essentielles pour assurer la visibilité des menaces.
 
-La sécurité nécessite une validation. ONTAP 9 propose davantage d'événements d'audit et de détails dans l'ensemble de la solution. Dans la mesure où les menaces pèsent aujourd'hui sur les systèmes de fichiers NAS, les fonctions d'audit jouent un rôle essentiel pour assurer la visibilité. Grâce aux fonctionnalités d'audit améliorées de ONTAP 9, les informations d'audit CIFS sont plus que jamais abondantes. Les détails clés, y compris les suivants, sont consignés avec les événements créés :
+La sécurité exige une validation. ONTAP fournit des événements d'audit plus nombreux et plus détaillés pour l'ensemble de la solution. Étant donné que les systèmes de fichiers NAS occupent une encombrement accru dans le paysage des menaces actuel, les fonctions d'audit sont essentielles pour garantir la visibilité. Grâce à la capacité d'audit améliorée dans ONTAP, les détails d'audit CIFS sont plus nombreux que jamais. Les informations clés, notamment les suivantes, sont consignées avec les événements créés :
 
 * Accès aux fichiers, aux dossiers et au partage
 * Fichiers créés, modifiés ou supprimés
@@ -59,6 +59,9 @@ ONTAP permet aux comptes d'administrateur d'accéder aux fichiers SMB/CIFS ou NF
 === Créez un rôle d'API REST sans accès
 
 Vous pouvez empêcher les administrateurs ONTAP d'utiliser des API REST pour l'accès aux fichiers en créant un rôle d'API REST qui n'a pas accès aux volumes ONTAP via REST. Pour configurer ce rôle, procédez comme suit.
+
+
+NOTE: L'API REST /api/storage/volumes est utilisée pour plus que l'accès aux fichiers. Elle est utilisée par System Manager et d'autres interfaces graphiques pour créer, visualiser et modifier des volumes.
 
 .Étapes
 . Créez un nouveau rôle REST qui n'a pas accès aux volumes de stockage mais qui dispose de tout autre accès API REST.
