@@ -1,8 +1,8 @@
 ---
 sidebar: sidebar 
 permalink: ontap-security-hardening/data-replication-encryption.html 
-keywords: tr-4569, ontap hardening guide, encrypted SnapMirror, SnapVault, FlexCache, pre-shared key, TLS 1.2 
-summary: Utilisez le chiffrement de réplication des données pour TLS 1.2 afin de chiffrer le trafic de réplication pour SnapMirror, SnapVault et FlexCache avec une clé prépartagée entre les clusters ONTAP. 
+keywords: tr-4569, ontap hardening guide, encrypted SnapMirror, SnapVault, FlexCache, pre-shared key, TLS 1.2, TLS 1.3, TLS 
+summary: Utilisez le chiffrement de la réplication des données pour chiffrer le trafic de réplication TLS pour SnapMirror, SnapVault, FlexCache avec une clé pré-partagée entre les clusters ONTAP. 
 ---
 = Chiffrement de réplication des données
 :allow-uri-read: 
@@ -11,29 +11,31 @@ summary: Utilisez le chiffrement de réplication des données pour TLS 1.2 afin 
 
 
 [role="lead"]
-Pour compléter le chiffrement des données au repos, vous pouvez chiffrer le trafic de réplication des données ONTAP entre les clusters à l'aide de TLS 1.2 avec une clé prépartagée pour SnapMirror, SnapVault ou FlexCache.
+Pour compléter le chiffrement des données au repos, vous pouvez chiffrer le trafic de réplication des données ONTAP entre les clusters en utilisant TLS avec une clé pré-partagée pour SnapMirror, SnapVault ou FlexCache®.
 
 Lors de la réplication de données pour la reprise sur incident, la mise en cache ou la sauvegarde, vous devez protéger ces données lors du transport sur le réseau entre un cluster ONTAP et un autre. Cela permet d'éviter les attaques de l'homme du milieu malveillantes contre les données sensibles lorsqu'elles sont en transit.
 
-À partir de ONTAP 9.6, le chiffrement de peering de cluster prend en charge le chiffrement TLS 1.2 AES-256 GCM pour les fonctionnalités de réplication des données ONTAP telles que SnapMirror, SnapVault et FlexCache. Le chiffrement est configuré au moyen d'une clé pré-partagée (PSK) entre deux pairs de cluster.
+À partir d'ONTAP 9.6, le chiffrement entre cluster fournit la prise en charge du chiffrement TLS 1.2 AES-256 GCM pour les fonctionnalités de réplication des données ONTAP telles que SnapMirror, SnapVault et FlexCache®. Le chiffrement est configuré au moyen d'une clé pré-partagée (PSK) entre deux clusters homologues.
 
-Les clients qui utilisent des technologies comme NSE, NVE et NAE pour protéger les données au repos peuvent également utiliser le chiffrement des données de bout en bout en passant à ONTAP 9.6 ou version ultérieure pour utiliser le chiffrement de cluster.
+À partir d'ONTAP 9.15.1, le chiffrement entre cluster fournit la prise en charge du chiffrement TLS 1.3 AES-256 GCM pour les fonctionnalités de réplication des données ONTAP telles que SnapMirror, SnapVault et FlexCache®. Le chiffrement est configuré au moyen d'une clé pré-partagée (PSK) entre deux clusters homologues.
 
-Le cluster peering chiffre toutes les données entre les pairs de cluster. Par exemple, lorsque vous utilisez SnapMirror, toutes les informations de peering ainsi que toutes les relations SnapMirror entre l'homologue du cluster source et l'homologue du cluster destination sont chiffrées. Vous ne pouvez pas envoyer de données en texte clair entre les pairs de cluster lorsque le chiffrement de peering de cluster est activé.
+Les clients qui utilisent des technologies comme NSE, NVE et NAE pour protéger les données au repos peuvent également utiliser le chiffrement de bout en bout en passant à ONTAP 9.6 ou une version ultérieure pour utiliser le chiffrement entre cluster.
 
-Depuis ONTAP 9.6, le chiffrement est activé par défaut pour les nouvelles relations entre clusters. Pour activer le chiffrement sur les relations entre clusters créées avant ONTAP 9.6, vous devez mettre à niveau le cluster source et le cluster de destination vers la version 9.6. En outre, vous devez utiliser `cluster peer modify` la commande pour modifier les pairs de cluster source et cible afin d'utiliser le chiffrement de peering de cluster.
+Le peering de cluster chiffre toutes les données entre les pairs du cluster. Par exemple, lors de l'utilisation de SnapMirror, toutes les informations de peering ainsi que toutes les relations SnapMirror entre le cluster source et le cluster de destination sont chiffrées. Vous ne pouvez pas envoyer de données en clair entre les pairs du cluster lorsque le chiffrement du peering de cluster est activé.
 
-Vous pouvez convertir une relation de pairs existante pour utiliser le chiffrement de peering de clusters dans ONTAP 9.6, comme illustré dans l'exemple suivant :
+À partir d'ONTAP 9.6, les nouvelles relations entre cluster homologues ont le chiffrement activé par défaut. Pour activer le chiffrement sur les relations entre cluster homologues créées avant ONTAP 9.6, vous devez mettre à niveau le cluster source et le cluster de destination vers la version 9.6. De plus, vous devez utiliser la  `cluster peer modify` commande pour modifier à la fois les homologues de cluster source et de destination afin qu'ils utilisent le chiffrement de l'appariement de cluster.
+
+Vous pouvez convertir une relation entre cluster existante pour utiliser le chiffrement de l'entre cluster dans ONTAP 9.6, comme illustré dans l'exemple suivant :
 
 [listing]
 ----
-On the Destination Cluster Peer
+On the destination cluster peer:
 
 cluster2::> cluster peer modify cluster1 -auth-status-admin use-authentication -encryption-protocol-proposed tls-psk
 
 When prompted enter a passphrase.
 
-On the Source Cluster Peer
+On the source cluster peer:
 
 cluster1::> cluster peer modify cluster2 -auth-status-admin use-authentication -encryption-protocol-proposed tls-psk
 
