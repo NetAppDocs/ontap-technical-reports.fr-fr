@@ -1,0 +1,449 @@
+---
+sidebar: sidebar 
+permalink: afx-overview/afx-overview-architecture.html 
+keywords: netapp afx, architecture, storage availability zone, nvram, raid, disaggregated 
+summary: NetApp AFX introduit des différences architecturales importantes par rapport à unified ONTAP dans la manière dont le stockage est présenté, dont les nœuds interagissent avec les disques et dont la capacité est gérée. 
+---
+= En quoi l’architecture NetApp AFX diffère-t-elle de ONTAP unifié
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx-overview/
+
+
+[role="lead"]
+NetApp AFX introduit des différences architecturales importantes par rapport à unified ONTAP dans la manière dont le stockage est présenté, dont les nœuds interagissent avec les disques et dont la capacité est gérée.
+
+Nous avons précédemment présenté un aperçu général de la façon dont l'architecture Unified ONTAP fournit le stockage de fichiers, d’objets et de blocs via des paires HA directement connectées, chacune possédant son propre ensemble de disques et présentant une capacité physique via des agrégats de disques. Dans cette section, nous examinerons plus en détail certaines des principales différences entre les architectures Unified ONTAP et NetApp AFX.
+
+
+
+== Comment savoir si un système exécute NetApp AFX
+
+La principale façon de vérifier si votre système exécute NetApp AFX est d'exécuter la commande suivante :
+
+[listing]
+----
+AFX::> node show -fields personality
+node             personality
+---------------- -----------
+afx-01           AFX
+afx-02           AFX
+----
+Un autre indice est la nouvelle zone de disponibilité du stockage, mais ce concept est également disponible pour les NetApp All-SAN Arrays (ASA). Vous pouvez consulter votre capacité via cette commande.
+
+[listing]
+----
+AFX::> storage availability-zone show
+                     Availability Zone Name: storage_availability_zone_0
+                     Availability Zone UUID: 545cb59f-32e9-11f1-a2f5-d039eabdd925
+                                 Total Size: 69.59TB
+                              Physical Used: 837.1GB
+                      Physical Used Percent: 1%
+                                  Available: 68.77TB
+                              Metadata Used: 837.1GB
+                  Log and Recovery Metadata: 834.6GB
+                              Delayed Frees: 2.50GB
+ Physical User Data Without Snapshot Copies: 17.24MB
+  Logical User Data Without Snapshot Copies: 17.24MB
+   Efficiency Ratio Without Snapshot Copies: 1.00:1
+               Space Full Threshold Percent: 98%
+        Space Nearly Full Threshold Percent: 95%
+----
+
+
+== Relations nœud-disque
+
+Dans l'architecture ONTAP unifiée, les opérations de lecture et d'écriture sont dirigées vers un sous-ensemble spécifique de disques. Ainsi, même si vous disposez de 24 baies de disques dans un cluster de 24 nœuds (une baie par nœud), à tout moment, chaque nœud ne peut accéder directement qu'à une seule baie de disques, ce qui limite la capacité et les performances disponibles dans le cluster.
+
+image:image5.png["Image"]
+
+De plus, comme NVRAM est directement connectée entre les paires haute disponibilité, les nœuds doivent être physiquement adjacents et sont plus étroitement couplés en tant que cibles de basculement. Par exemple, lorsqu'un nœud bascule vers son nœud partenaire, les seuls disques auxquels il a physiquement accès sont ceux du domaine de la paire haute disponibilité.
+
+*Cluster ONTAP unifié lors d'un basculement HA*
+
+image:image6.png["Image"]
+
+Dans NetApp AFX, il y a eu des changements majeurs dans la façon dont les disques sont présentés aux nœuds de calcul.
+
+
+
+=== Tous les disques sont visibles par tous les nœuds de stockage--pas de propriété de disque
+
+Dans NetApp AFX, les nœuds et les baies sont tous connectés au même commutateur dorsal, ce qui permet à ONTAP d’étendre le domaine de visibilité global des disques à l’ensemble de la pile. Par conséquent, aucun nœud ne possède de disques spécifiques. Tous les disques participent plutôt à un pool de capacité unique appelé Storage Availability Zone, ce qui simplifie la gestion de la capacité et augmente le potentiel de performance (plus de disques disponibles signifie plus de performance disponible).
+
+*Zone de disponibilité de stockage NetApp AFX*
+
+image:image7.png["Image"]
+
+
+
+=== Plus de groupes disques physiques
+
+Unified ONTAP regroupe les disques en groupes RAID, puis les combine en une structure de capacité appelée agrégat. Cet agrégat est la façon dont la capacité physique est présentée au stockage et constitue la limite de l'espace disponible pour la création de volumes afin de fournir des données aux utilisateurs finaux. Chaque nœud doit avoir au moins un agrégat qui lui est attribué et ces agrégats ont actuellement une limite de 800 To. Une fois cette limite atteinte, il n'y a plus d'espace disponible pour des écritures supplémentaires.
+
+Les agrégats physiques peuvent également présenter des défis de gestion de la capacité, car les administrateurs de stockage doivent parfois réorganiser manuellement les volumes pour maintenir un équilibre de capacité entre les nœuds du cluster. Ces défis peuvent également être amplifiés lors de l'utilisation d'une architecture de volumes à extension horizontale (comme un volume FlexGroup). Les agrégats peuvent également varier en taille, en nombre de disques, en types de disques, etc., ce qui peut aussi créer des différences de performances lors de la traversée des nœuds.
+
+*Agrégats dans ONTAP unifié*
+
+image:image8.png["Image"]
+
+NetApp AFX reprend le concept d’agrégat physique, le virtualise, le rend géré par ONTAP, puis déplace la gestion de la capacité physique d’une méthodologie par nœud à une gestion par cluster via la nouvelle Storage Availability Zone. Ce pool unique de capacité offre une approche « ce que vous voyez est ce que vous obtenez » pour la gestion de l’espace.
+
+*Zone de disponibilité de stockage NetApp AFX*
+
+image:image9.png["Image"]
+
+
+
+=== NVRAM est passée d'une connexion directe à une réplication commutée
+
+ONTAP utilise NVRAM comme zone de transit pour protéger les écritures entrantes sur un cluster. Chaque nœud dans un cluster ONTAP possède une carte NVRAM avec batterie de secours. Lorsqu'une écriture est envoyée à un volume depuis un client, elle est d'abord stockée dans la NVRAM. Le contenu de la NVRAM est ensuite transféré sur le disque lorsque la NVRAM est pleine ou lorsqu'un délai de 10 secondes expire (selon la première éventualité). Ce processus est appelé point de cohérence.
+
+Le contenu de la NVRAM est également répliqué en permanence entre les paires haute disponibilité, ce qui contribue à protéger la cohérence des données, car en cas de défaillance d'un nœud, le contenu de la NVRAM sera préservé sur le nœud survivant et enregistré sur le disque.
+
+Dans les clusters ONTAP unifiés, les cartes NVRAM des paires haute disponibilité sont directement connectées entre elles. NetApp AFX déplace la réplication NVRAM vers le réseau du cluster dorsal. Par conséquent, les nœuds partenaires de la paire haute disponibilité ne sont plus soumis à une contrainte de distance aussi stricte pour les nœuds. À la place, les paires haute disponibilité peuvent être séparées jusqu'à la distance maximale autorisée par Ethernet.
+
+*NetApp Réplication NVRAM AFX*
+
+image:image10.png["Image"]
+
+
+
+=== Données écrites sur n'importe quel (ou tous) disque(s) de la zone de disponibilité
+
+NetApp AFX supprime la notion de propriété des disques et transpose l'agrégat physique vers une approche virtualisée gérée par ONTAP, où la capacité achetée pour le cluster est entièrement disponible pour les nœuds rattachés au cluster. Avec AFX, tous les nœuds ont la capacité d'écrire sur n'importe quel disque de la Storage Availability Zone, indépendamment de la propriété nœud:volume. Les nœuds conservent la notion de propriété des volumes puisque les écritures passent toujours par la NVRAM, mais ces données peuvent être stockées n'importe où dans la capacité disponible. Cela signifie qu'un plus grand nombre de disques peuvent participer à une même charge de travail, ce qui offre des avantages en termes de performances.
+
+*Comment les données sont acheminées vers une Storage Availability Zone*
+
+image:image11.png["Image"]
+
+
+
+=== Échelle indépendante de capacité et de nœuds de calcul
+
+Grâce au découplage des ressources matérielles dans l’architecture NetApp AFX, les nœuds n’ont plus besoin d’être associés à des disques ajoutés ensemble. Lorsqu’un cluster manque de ressources liées aux performances telles que la RAM, le processeur ou le débit réseau, seuls des nœuds de stockage doivent être ajoutés au cluster et peuvent exploiter la zone de disponibilité de stockage existante. Inversement, si le besoin concerne la capacité, seuls des châssis doivent être ajoutés au groupe. Cette flexibilité garantit que vous n’achetez que les ressources dont vous aurez besoin, évitant ainsi le surprovisionnement.
+
+*NetApp AFX – Échelle indépendante*
+
+image:image12.png["Image"]
+
+
+
+=== Évolution linéaire des performances des nœuds
+
+L'ajout de nœuds à un cluster AFX augmente les ressources CPU, RAM et réseau allouées à la charge de travail. À mesure que ces ressources sont intégrées à l'environnement, l'augmentation des performances est de nature linéaire. Le graphique ci-dessous montre comment ces performances augmenteraient à mesure que des nœuds sont ajoutés.
+
+*Les performances augmentent linéairement avec l’ajout de nœuds NetApp AFX*
+
+image:image13.png["Image"]
+
+
+
+=== Groupes RAID plus importants, moins de disques de parité
+
+ONTAP offre un équilibre optimal entre protection des données et performances des disques grâce aux groupes RAID, et plus particulièrement RAID-TEC qui assure une triple protection par parité en cas de panne de disque. RAID-TEC peut supporter jusqu'à trois pannes simultanées de disques au sein d'un même groupe RAID. Dans ONTAP unifié, les groupes RAID sont limités à 28 disques, dont 3 disques sont dédiés à la parité et 1 disque est réservé comme disque de secours. Ainsi, 24 des 28 disques sont utilisés pour les opérations de données/stripes RAID.
+
+*Groupes RAID unifiés ONTAP*
+
+image:image14.png["Image"]
+
+NetApp AFX exploite toujours RAID-TEC, mais augmente la taille des groupes RAID à 96 disques tout en ne nécessitant que 3 disques de parité et 1 disque de secours. Les groupes RAID plus importants offrent de meilleures performances globales, tandis que l'exposition à la panne disque est minimisée grâce à une combinaison de faibles taux de défaillance des SSD, d'opérations mieux réparties sur un plus grand nombre de disques, ainsi que d'améliorations apportées à la reconstruction des disques de données à partir de la parité dans NetApp AFX.
+
+*NetApp Groupe RAID de zone de disponibilité de stockage AFX*
+
+image:image15.png["Image"]
+
+Le tableau suivant donne une estimation de la capacité brute utilisable pour 84 disques dans Unified ONTAP et NetApp AFX avec des tailles de disque variables.
+
+*Comparaison approximative de la capacité brute, 84 disques – Unified ONTAP et NetApp AFX*
+
+|===
+| Taille du disque | Capacité brute approximative (unifiée) | Capacité brute approximative (AFX) 
+
+
+| 7,6 To | ~547,2 To | ~608 To (+60,8 To) 
+
+
+| 15,3 To | ~1101,6 To | ~1224 To (+122,4 To) 
+
+
+| 30,6 To | ~2203,2 To | ~2448 To (+244,7 To) 
+
+
+| 60,1 To | ~4327,2 To | ~4808 To (+480,8 To) 
+|===
+
+
+=== Temps de reconstruction plus rapides en cas de défaillance de disques
+
+Dans Unified ONTAP, chaque nœud gère un sous-ensemble de disques dans la pile de stockage. Cela signifie que ce nœud n'écrit que sur ces disques, mais aussi que la reconstruction des disques est gérée par un seul nœud en cas de défaillance de disques.
+
+NetApp AFX s'affranchit de la notion de propriété des disques. Par conséquent, tous les disques peuvent être écrits depuis un seul nœud si nécessaire. Cela signifie également que lorsqu'un disque doit être reconstruit à partir de la parité, tous les nœuds du cluster participent, ce qui permet des reconstructions plus rapides que si un seul nœud devait effectuer l'opération.
+
+*Reconstruction du disque dans NetApp AFX*
+
+image:image16.png["Image"]
+
+
+
+=== domaines de déduplication
+
+La déduplication permet à un système de stockage de détecter les blocs dupliqués dans son système de fichiers puis de créer des pointeurs vers un seul bloc afin de réduire la capacité totale utilisée. Dans unified ONTAP, la déduplication respecte des limites spécifiques quant aux blocs pouvant être réduits. Ces limites dépendent du type de déduplication utilisé. En général :
+
+* Déduplication basée sur le volume -> Limite de volume
+* Déduplication inter-volumes -> Limite d'agrégat
+
+
+*Domaines de déduplication ONTAP unifiés*
+
+image:image17.png["Image"]
+
+Le tableau ci-dessous présente l'évolution de la capacité des données dupliquées dans différents scénarios au sein d'unified ONTAP. À mesure que les copies de fichiers s'étendent sur plusieurs nœuds et agrégats (et donc sur plusieurs domaines de déduplication), les gains d'espace diminuent.
+
+*Comportements de déduplication dans différents scénarios pour des fichiers identiques de 10 Go – ONTAP unifié*
+
+|===
+| Scénario | Espace utilisé 
+
+
+| Quatre copies du même fichier de 10 Go, sur le même volume (déduplication de volume) | 10 Go 
+
+
+| Quatre copies du même fichier de 10 Go, sur des volumes différents, avec le même agrégat (déduplication inter-volumes activée) | 10 Go 
+
+
+| Quatre copies du même fichier de 10 Go, 4 volumes différents, 4 agrégats différents (déduplication inter-volumes activée) | 40 Go 
+|===
+Comme NetApp AFX supprime les agrégats physiques et déplace la gestion de la capacité vers la nouvelle Storage Availability Zone, les limites du domaine de déduplication changent également. Dans AFX, le domaine de déduplication se situe au niveau du volume (comme dans unified ONTAP) et du nœud (plutôt que de l’agrégat) avant la version 9.19.1.
+
+À partir d'ONTAP 9.19.1, AFX prend en charge un domaine de déduplication global au niveau de la Storage Availability Zone, de sorte que tous les blocs dupliqués dans le pool de stockage du cluster sont traités de la même manière.
+
+*NetApp AFX – Domaine de déduplication global (ONTAP 9.19.1)*
+
+image:image18.png["Image"]
+
+Le tableau ci-dessous présente les comportements de capacité pour les données dupliquées dans différents scénarios dans NetApp AFX.
+
+*Comportements de déduplication dans différents scénarios pour des fichiers identiques de 10 Go – NetApp AFX*
+
+|===
+| Scénario | Espace utilisé 
+
+
+| Quatre copies du même fichier de 10 Go, sur le même volume (déduplication de volume) | 10 Go (9.18.1) 10 Go (9.19.1) 
+
+
+| Quatre copies du même fichier de 10 Go, volumes différents, même nœud (déduplication inter-volumes activée) | 10 Go (9.18.1) 10 Go (9.19.1) 
+
+
+| Quatre copies du même fichier de 10 Go, 4 volumes différents, 4 nœuds différents (déduplication inter-volumes activée) | 40 Go (9.18.1) 10 Go (9.19.1) 
+|===
+
+
+== Fonctionnalités supprimées/non prises en charge
+
+NetApp AFX est conçu pour les charges de travail NAS et objets hautes performances, notamment (mais pas exclusivement) celles liées à l'entraînement et à l'inférence en IA. Avec la conception de NetApp AFX, certaines décisions ont été prises pour désactiver certaines des fonctionnalités dans ONTAP.
+
+* Du fait de son orientation vers les NAS hautes performances et le stockage objet, la gestion des blocs a été supprimée de la solution NetApp AFX. Les protocoles de données FCP, iSCSI et NVMe ne sont pas pris en charge et il n'est pas prévu d'en ajouter.
+* « Désagrégé » est synonyme de « désagrégé », ce qui signifie que les agrégats (du moins en tant que concept d'administration du stockage physique) ont été supprimés. La suppression de l'agrégat physique simplifie non seulement la gestion de la capacité dans ONTAP, mais elle permet également de disposer d'un pool de capacité unique.
+* La suppression des agrégats entraîne également la suppression des fonctionnalités spécifiques à l’agrégat. Metrocluster, par exemple, utilise la mise en miroir au niveau de l’agrégat pour ses capacités de basculement de site. Par conséquent, Metrocluster est également supprimé de NetApp AFX. La fonctionnalité de basculement de site sera désormais assurée par la nouvelle fonctionnalité SnapMirror Active-Sync pour NAS proposée dans ONTAP 9.19.1GA.
+* La fonctionnalité de hiérarchisation des données froides appelée FabricPool est également actuellement indisponible pour NetApp AFX, car elle est aussi spécifique à l’agrégat.
+* Les déplacements de volumes basés sur la copie ne sont plus nécessaires dans NetApp AFX grâce à la nouvelle architecture de capacité. Pour plus d'informations, voir <<Déplacements de volume sans copie>>.
+* La suppression de fonctionnalités implique également des modifications de l'API CLI/GUI/REST, donc toutes les commandes ou appels d'API pour les fonctionnalités qui ne sont plus prises en charge seront également supprimés.
+* ZAPI n'est actuellement pas disponible pour NetApp AFX.
+* Déchargement de copie NFS pour la virtualisation (FlexGroup volumes avec distribution de données granulaire uniquement)
+
+
+
+
+== Modifications de la gestion ONTAP
+
+De manière générale, la gestion NetApp AFX ne modifie pas les mécanismes utilisés pour gérer un cluster. Les administrateurs peuvent toujours utiliser l'interface de ligne de commande (CLI), l'interface graphique (GUI) et les API REST pour se connecter et configurer un cluster. Mais NetApp AFX a offert l'opportunité d'améliorer certains aspects de la façon dont les opérations de gestion du stockage sont réalisées.
+
+
+
+=== gestion de la capacité
+
+La NetApp AFX Storage Availability Zone réduit les points de gestion d'une approche basée sur les nœuds et les agrégats à un pool unique de capacité disponible pour l'ensemble du cluster. À mesure que les volumes augmentent ou diminuent, ONTAP emprunte et restitue automatiquement de la capacité à la Storage Availability Zone.
+
+Grâce à cela, les administrateurs de stockage n'ont plus à se soucier de la localisation et de la gestion de l'espace libre disponible sur jusqu'à 24 nœuds et potentiellement des centaines d'agrégats. Désormais, la capacité est gérée et visualisée depuis un seul et même endroit.
+
+Par exemple, dans l'interface de ligne de commande de unified ONTAP, si vous souhaitez afficher les informations de capacité physique totale d'un cluster, vous devez utiliser « aggregate show-space », ce qui affichera alors chaque entrée d'agrégat. Dans NetApp AFX, vous avez « cluster space show », qui n'affichera que la seule Storage Availability Zone.
+
+*Comparaison côte à côte des commandes CLI de capacité dans ONTAP unifié et NetApp AFX*
+
+image:image19.png["Image"]
+
+Dans l'interface graphique Unified ONTAP System Manager, les niveaux servent à afficher la capacité. En fait, l'interface tente d'afficher la capacité globale du cluster en additionnant les totaux, mais elle présente néanmoins l'utilisation globale par agrégat.
+
+*Vues de capacité de System Manager – Unified ONTAP*
+
+image:image20.png["Image"]
+
+Dans NetApp AFX System Manager, l'affichage est quasiment identique pour l'espace du cluster, mais comme il n'y a pas d'agrégats, aucun calcul supplémentaire n'est nécessaire. La capacité affichée est la capacité réelle.
+
+*Vues de capacité du gestionnaire système – NetApp AFX*
+
+image:image21.png["Image"]
+
+
+
+=== Améliorations de la gestion des volumes FlexGroup
+
+Un volume FlexGroup est composé de plusieurs volumes FlexVol sous-jacents créés sur plusieurs nœuds et agrégats du cluster et présentés comme un espace de noms unique et étendu aux clients NAS. Les volumes FlexGroup offrent des avantages en termes de performances, d’évolutivité, d’équilibrage de charge et de capacité de fichiers pour les charges de travail à haute performance. Cependant, comme ils se coordonnent entre les nœuds et les agrégats, ils rencontrent parfois certaines limitations physiques lorsque la capacité commence à se remplir, car les systèmes de fichiers indépendants fournis par les agrégats ont également une utilisation et des limites de capacité indépendantes. Par exemple, si un agrégat avec des volumes constituants FlexGroup commence à se remplir avant les autres agrégats du cluster, alors l’ensemble du FlexGroup lui-même pourrait être sujet à des problèmes de capacité ou de performances.
+
+De ce fait, les administrateurs de stockage peuvent se préoccuper excessivement de l'infrastructure FlexGroup sous-jacente et se concentrer moins sur la maintenance d'autres aspects de l'environnement.
+
+*Disposition du volume FlexGroup - Agrégats ONTAP unifiés*
+
+image:image22.png["Image"]
+
+NetApp AFX présente la capacité dans une seule zone de disponibilité de stockage, ce qui correspond davantage à la façon dont les volumes FlexGroup sont conçus pour fonctionner. Au lieu de plusieurs volumes constitutifs répartis dans différents agrégats de tailles potentiellement variables, tous les volumes résident dans le même pool de capacité, ce qui simplifie considérablement la gestion globale de l'utilisation d'un volume FlexGroup.
+
+De plus, AFX active par défaut l'équilibrage de capacité avancé pour les volumes FlexGroup, ce qui permet une meilleure répartition des fichiers volumineux au sein du volume. Désormais, les constituants du volume FlexGroup deviennent moins un concept de gestion et effectuent plutôt leur travail discrètement en arrière-plan.
+
+*Disposition du volume FlexGroup - NetApp AFX*
+
+image:image23.png["Image"]
+
+
+
+=== Tâches automatisées d'administration du stockage
+
+Avec la zone de disponibilité de stockage dans NetApp AFX, toute la capacité est partagée entre tous les nœuds. Bien que les nœuds possèdent encore des volumes, ONTAP gère automatiquement l'utilisation de la capacité de chaque nœud en empruntant et en libérant de la capacité selon les besoins de chaque nœud à tout moment. Cela signifie que les administrateurs de stockage n'ont plus à se préoccuper de la meilleure façon d'équilibrer l'espace utilisable.
+
+De plus, la gestion des groupes RAID est automatisée par ONTAP, où les disques nouvellement ajoutés sont intégrés aux groupes RAID existants ou nouveaux sans intervention de l’administrateur. ONTAP gère également les déplacements de volumes entre les nœuds sans nécessiter de copie de données.
+
+
+
+=== Déplacements de volume sans copie
+
+Unified ONTAP offre la possibilité de déplacer des volumes entre les nœuds ou les agrégats sans interruption de service, afin de gérer les performances et l'utilisation de la capacité au sein du cluster.
+
+Lorsqu'un déplacement de volume est lancé, voici ce qui se produit :
+
+* Un nouveau volume vide est créé sur l’agrégat de destination
+* Les métadonnées du volume (telles que les informations sur l'efficacité du stockage, les descripteurs de fichiers, etc.) sont répliquées sur le nouveau volume de destination
+* Les données du volume sont répliquées vers le volume de destination via le réseau du cluster backend grâce à la technologie SnapMirror : l’agrégat de destination doit disposer d’espace libre pour le déplacement, sinon la tâche échouera.
+* La réplication des volumes est à nouveau effectuée afin de garantir que les deux volumes sont cohérents avec toute modification de données
+* Un processus de basculement est lancé pour mettre hors service le volume d'origine et promouvoir le volume de destination comme nouveau volume d'origine pour les clients
+* L’interface d’E/S du client subit une brève interruption lors de la bascule, mais aucun remontage n’est nécessaire
+
+
+Dans NetApp AFX, la zone de disponibilité de stockage met à disposition toute la capacité pour tous les nœuds, et chaque nœud peut écrire sur n'importe quel disque de ce pool. Une fois les données placées, elles restent à leur emplacement d'origine, même si le volume est déplacé. Cela signifie qu'aucune copie de données n'est requise. Le processus de déplacement de volume est identique à celui d'ONTAP unifié, à l'exception de la nécessité de répliquer les données via SnapMirror. Aucune capacité supplémentaire n'est requise.
+
+*Déplacements de volumes sans copie dans NetApp AFX*
+
+image:image24.png["Image"]
+
+La mobilité des volumes légers permet à AFX d'automatiser de nombreuses tâches d'administration sans contraintes de performance ou de capacité, et ces déplacements de volumes sont utilisés dans quelques nouvelles fonctionnalités fournies par NetApp AFX, comme décrit dans les sujets ci-dessous.
+
+
+
+==== Comportement de basculement HA
+
+Dans unified ONTAP, les nœuds possèdent des disques et des agrégats, où les données sont servies via des volumes. Les écritures sont effectuées à l'aide de la NVRAM locale d'un nœud pour vider sur les disques dont le nœud est propriétaire. Lorsqu'un nœud est redémarré ou tombe en panne, ONTAP déclenche une prise en charge des ressources du nœud défaillant, où la propriété des disques et des agrégats est transférée au nœud partenaire. Les interfaces réseau sont également basculées vers des ports dans l'espace IP, et comme le contenu de la NVRAM est constamment répliqué entre la paire haute disponibilité, le nœud vide le contenu de la NVRAM pour valider les écritures du nœud défaillant sur les disques. Après cela, le nœud survivant possédera les agrégats et les volumes du nœud défaillant jusqu'à la restitution du nœud. Cela signifie que tout le trafic vers ces volumes – ainsi que vers les volumes déjà détenus par le nœud survivant – sera traité sur un seul nœud jusqu'à ce que le problème de basculement soit résolu.
+
+Dans le cadre du déploiement initial d'un cluster ONTAP unifié, il est recommandé d'anticiper les basculements afin d'éviter la surcharge d'un nœud par son partenaire. Cela représente un défi en soi, car il est difficile de prévoir quels volumes pourraient être des sources de surcharge de performance, mais des fonctionnalités telles que le déplacement non disruptif de volumes et les politiques de qualité de service des volumes peuvent aider à atténuer ce risque.
+
+Les images ci-dessous montrent comment les clusters ONTAP unifiés peuvent présenter un équilibre de performances inégal entre les nœuds, ainsi que comment un basculement peut entraîner une dégradation des performances dans certains cas.
+
+*Unified ONTAP – déséquilibres potentiels dans l’utilisation des nœuds*
+
+image:image25.png["Image"]
+
+Lorsqu'un déséquilibre apparaît entre les nœuds d'une paire haute disponibilité en termes de nombre de volumes et d'utilisation des performances, les basculements de nœuds impactent les performances globales, car le nœud survivant prend alors en charge tous les volumes du nœud défaillant. Parallèlement, d'autres nœuds du cluster peuvent avoir la capacité de prendre en charge du travail supplémentaire.
+
+*Unified ONTAP – Impact du basculement sur l'utilisation des nœuds*
+
+image:image26.png["Image"]
+
+Dans le cas décrit ci-dessus, lorsqu'un partenaire paire haute disponibilité doit prendre en charge une charge supplémentaire, il peut être surchargé et impacter les performances de tous les volumes sur ce nœud. Le déplacement de volumes peut atténuer ce problème, mais il nécessite des copies entre les nœuds (ce qui requiert de l'espace libre disponible), et le temps nécessaire peut dépasser le temps de restauration des nœuds en cas de retour arrière. De plus, si vous déplacez un volume, celui-ci ne sera pas restauré sur le nœud d'origine. Il restera sur le nœud sur lequel vous l'avez déplacé.
+
+Avec NetApp AFX, les basculements de nœuds adoptent des comportements différents.
+
+* Comme les nœuds ne possèdent pas de disques et qu'il n'existe pas d'agrégats physiques, un basculement de nœud ne nécessite pas le transfert de ces ressources. Seules les interfaces réseau et la propriété des volumes sont transférées aux autres nœuds.
+* Les opérations d'écriture dans la NVRAM ont toujours lieu, mais via le réseau HA au lieu d'une connexion directe.
+* Une fois le basculement initial des volumes vers le nœud partenaire effectué, AFX redistribuera les volumes sur les autres nœuds restants du cluster. Ceci est rendu possible grâce aux déplacements de volumes sans copie.
+* Une fois le nœud récupéré, les volumes seront replacés sur le nœud d'origine.
+
+
+NetApp AFX maintient déjà un équilibre des performances entre les nœuds du cluster afin de garantir une utilisation relativement uniforme, donc lorsqu'un basculement se produit et que les volumes sont rééquilibrés, l'utilisation des nœuds devrait être sensiblement la même dans l'ensemble du cluster.
+
+*NetApp AFX - Rééquilibrage des volumes après basculement*
+
+image:image27.png["Image"]
+
+
+
+==== Ajouts et suppressions de nœuds
+
+Les solutions unified ONTAP et NetApp AFX permettent toutes deux d’ajouter et de supprimer des nœuds du cluster. Cependant, en raison de certaines différences architecturales, le processus d’ajout et de suppression de nœuds diffère légèrement.
+
+
+
+==== Ajout/suppression de nœuds dans unified ONTAP
+
+Nous avons déjà vu que ONTAP unifié établit une relation directe entre les nœuds et les disques, et que chaque nœud doit posséder des disques et au moins un agrégat. Par conséquent, les règles suivantes s'appliquent aux ajouts et aux suppressions.
+
+* L'ajout de nœuds dans unified ONTAP ne nécessite aucune étape supplémentaire, mais pour garantir des performances équilibrées sur l'ensemble des nœuds (y compris les nouveaux), il est nécessaire de déplacer les volumes vers les nouveaux nœuds. Cela nécessite une analyse préalable des volumes existants et de leurs charges de travail, des décisions sur les volumes à déplacer, puis le déplacement effectif des volumes, ce qui, là encore, requiert une copie de ces données sur le réseau principal du cluster.
+* La suppression de nœuds dans unified ONTAP nécessite une évacuation manuelle des volumes existants sur le nœud, ce qui signifie que vous devez identifier quels nœuds peuvent héberger quels volumes pour maintenir des performances homogènes, et vous devez disposer d'une capacité libre suffisante pour permettre le déplacement de ces volumes. Si la capacité libre pose problème, des déplacements de volumes supplémentaires peuvent être nécessaires pour redistribuer les charges de travail dans le cluster. La suppression de nœuds implique également la suppression de la paire haute disponibilité, ce qui double la charge de travail. Comme les nœuds possèdent les disques, une réinitialisation complète des disques serait également requise pour ces nœuds. Chacune de ces étapes ajoute du temps et des efforts à ce qui devrait être une tâche relativement simple.
+
+
+
+
+==== Ajout/suppression de nœuds dans NetApp AFX
+
+Nous avons également constaté que NetApp AFX n'utilise pas le modèle standard d'association nœud-disque et n'a pas recours aux agrégats physiques pour présenter la capacité au cluster. De ce fait, l'ajout et la suppression de nœuds se comportent un peu différemment.
+
+* L'ajout de nœuds dans NetApp AFX ne nécessite pas d'analyse préalable des volumes ni d'intervention administrative pour garantir une répartition équilibrée des volumes entre les nœuds. À la place, ONTAP répartit automatiquement le nombre de volumes entre les nouveaux nœuds afin de maintenir des profils de performance relativement homogènes. ONTAP déplacera automatiquement les volumes entre les nœuds sans rien copier, réduisant ainsi le temps, la capacité et les efforts nécessaires à l'ajout de nœuds à un cluster.
+* La suppression de nœuds dans NetApp AFX ne nécessite également que très peu, voire aucune, intervention manuelle. Lorsqu’un nœud est marqué pour suppression, ONTAP déplace automatiquement les volumes entre les nœuds (là encore, sans copie) afin d’évacuer les nœuds supprimés. Et comme aucun disque n’est détenu par les nœuds, il n’est pas nécessaire de réinitialiser les disques après la suppression des nœuds. Cela rend les nœuds dans AFX modulaires par nature et faciles à faire évoluer à la hausse ou à la baisse.
+
+
+
+
+==== Mouvements de volume axés sur la performance
+
+La fonctionnalité de déplacement de volume sans copie de NetApp AFX signifie qu'il peut rééquilibrer les volumes selon les besoins sans copier de données, ce qui lui permet de fonctionner rapidement et sans nécessiter de capacité supplémentaire. Cela signifie que les déplacements de volumes peuvent devenir une partie plus importante de l'équilibrage de charge automatisé disponible pour les clusters ONTAP. Maintenant qu'il ne coûte relativement rien de déplacer un volume, ONTAP peut exploiter cet outil précieux pour incorporer des fonctionnalités comme l'équilibrage de charge des volumes basé sur les performances.
+
+Dans NetApp AFX exécutant ONTAP 9.18.1 et versions ultérieures, l'utilisation des nœuds, des paires haute disponibilité et des volumes est surveillée en permanence, tandis que les données de performance sont collectées et analysées. Si l'utilisation d'un nœud sort des seuils définis, alors ONTAP sélectionnera automatiquement un volume à déplacer vers un nœud moins sollicité afin de maintenir des performances équilibrées au sein du cluster.
+
+*Mouvements de volume liés aux performances dans NetApp AFX – une utilisation élevée déclenche un déplacement de volume*
+
+image:image28.png["Image"]
+
+*Déplacements de volumes optimisés pour les performances dans NetApp AFX – Utilisation équilibrée des nœuds après le déplacement de volume*
+
+image:image29.png["Image"]
+
+
+
+=== Échelle et expansion du cluster
+
+Les clusters ONTAP unifiés prennent en charge jusqu'à 24 nœuds et chaque nœud ajouté doit également être ajouté avec des disques (à la fois pour la fonctionnalité du système et les services de données). Des baies de disques peuvent être ajoutées au cluster, mais elles sont toujours connectées à une seule paire haute disponibilité et appartiennent uniquement à un seul nœud, même si le cluster compte 24 nœuds. Cela signifie que de la capacité est ajoutée à un cluster même lorsque seules les performances sont requises, et que cette augmentation de performance est principalement limitée à un ensemble spécifique de disques appartenant aux nouveaux nœuds. Par conséquent, vous risquez de vous retrouver avec une capacité supplémentaire dont vous n'avez pas nécessairement besoin.
+
+*Unified ONTAP – prise en compte de l'échelle ajoutée*
+
+image:image30.png["Image"]
+
+NetApp AFX prend en charge une plus grande échelle pour les clusters. À partir de la version 9.19.1, les clusters AFX peuvent atteindre 32 nœuds dans un seul cluster. Et parce que tous les nœuds peuvent voir et accéder à tous les disques, ils peuvent tous partager les performances et la capacité (jusqu'à 32 Po avec ONTAP 9.19.1) de ces disques, de sorte qu'il n'y ait jamais de ressource inutilisée. Les déplacements de volumes ne nécessitent pas de copies, donc ONTAP peut déplacer automatiquement les volumes vers les nouveaux nœuds afin d'assurer une utilisation homogène des nœuds, tandis que la capacité est répartie uniformément via la Storage Availability Zone.
+
+*NetApp AFX – prise en compte de l'échelle*
+
+image:image31.png["Image"]
+
+
+
+=== modifications du volume racine
+
+Dans NetApp ONTAP, chaque nœud se voit attribuer un volume racine, utilisé pour les fichiers et fonctions spécifiques au système, tels que les fichiers journaux, les images de démarrage, les fichiers core, les bases de données du cluster, et plus encore.
+
+Dans Unified ONTAP, ces volumes racine résidaient sur des agrégats racine physiques. Pour réduire la capacité utilisée par les agrégats racine, ils ont été créés sur des partitions de disques de données via Advanced Disk Partitioning (ADP).
+
+NetApp AFX élimine les agrégats physiques de l'équation, supprimant ainsi le besoin d'agrégats racine et d'ADP. Les volumes racine restent un concept, mais ils résident désormais dans des zones virtualisées du pool de capacité et ne nécessitent aucune configuration supplémentaire. De plus, la fonctionnalité du volume racine change. Les images de démarrage et les bases de données de cluster répliquées sont déplacées de la pile de stockage vers un support de démarrage intégré à chaque nœud AFX. Désormais, si l'accès à la pile de stockage est perdu, les nœuds peuvent toujours démarrer et conserver leur éligibilité au cluster, ce qui simplifie la complexité du dépannage.
+
+
+
+=== Support de démarrage embarqué
+
+NetApp Les nœuds AFX utilisent un support de démarrage intégré, qui est un périphérique M.2 NVMe d'environ 3,8 To. Ces supports de démarrage contiennent des fichiers image de démarrage et des bases de données répliquées, distincts des baies de stockage, ce qui offre une redondance supplémentaire en cas de problème d'accès disque. Si le support de démarrage tombe en panne, le nœud sera pris en charge par son partenaire de paire haute disponibilité et le support de démarrage pourra être remplacé. Une fois remplacé, une nouvelle image ONTAP sera chargée sur le périphérique par un administrateur de stockage et ONTAP reconstruira automatiquement la base de données du cluster pour rétablir la pleine fonctionnalité.

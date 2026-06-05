@@ -1,0 +1,137 @@
+---
+sidebar: sidebar 
+permalink: afx-overview/afx-overview-learn-about.html 
+keywords: netapp afx, ontap, disaggregated architecture, overview, key terms 
+summary: NetApp AFX propose une architecture désagrégée pour les charges de travail NAS et objets, tout en conservant le logiciel ONTAP riche en fonctionnalités que vous connaissez et appréciez. 
+---
+= NetApp AFX : présentation : Découvrez NetApp AFX
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx-overview/
+
+
+[role="lead"]
+NetApp AFX reste ONTAP ; il s’agit simplement d’une autre façon d’exploiter les avantages d’ONTAP. NetApp AFX propose une architecture désagrégée pour les charges de travail NAS et objets, tout en conservant la richesse fonctionnelle du logiciel ONTAP que vous connaissez et appréciez.
+
+
+
+== Une évolution de l'innovation : NetApp ONTAP
+
+NetApp ONTAP a été créé en 1992 comme une nouvelle façon de servir les charges de travail NFS à de multiples clients, tout en révolutionnant les performances, la résilience des données, les copies à un instant donné, et plus encore. À l'origine, il ne prenait en charge que NFSv2, mais à mesure que la demande pour des versions NFS plus récentes, d'autres protocoles de données et davantage de fonctionnalités de protection des données augmentait, NetApp ONTAP a dû évoluer.
+
+Vous trouverez ci-dessous une chronologie abrégée de certaines des principales évolutions d'ONTAP survenues au cours des 30 dernières années.
+
+*L'évolution de NetApp ONTAP*
+
+|===
+| Décennie | Caractéristiques 
+
+
+| 1990s | NFSv2, NFSv3, CIFS, instantanés, système de fichiers WAFL, AutoSupport, SnapMirror 
+
+
+| 2000s | SnapVault, SnapLock, NFSv4, Protocoles de blocs, FlexVols, FlexClone, GX/Extensibilité, Déduplication, clonage de fichiers 
+
+
+| 2010s | Clustered ONTAP, efficacités de stockage en ligne, NFSv4.1/pNFS, NVMe, RAID-TEC, FlexGroup volumes, chiffrement de volume, AFF, Cloud Volumes ONTAP, QoS, FabricPool, Azure NetApp Files (ANF), Google Cloud NetApp Volumes (GCNV), All SAN Array (ASA) 
+
+
+| 2020s | SnapMirror Business Continuity, FlexCache, ONTAP S3, IPsec, protection autonome contre les ransomwares, SnapMirror dans et hors de ANF et GCNV, Amazon FSxN, ASAr2, NetApp AFX vous êtes ici 
+|===
+
+
+=== NetApp ONTAP personnalités
+
+Pendant des années, ONTAP a fonctionné comme une plateforme unique et unifiée, combinant fichiers, blocs et objets au sein d'un seul système. Cela a positionné ONTAP comme le couteau suisse du centre de données – une plateforme capable de tout faire.
+
+Cependant, avec l'évolution des applications et les changements des exigences des centres de données liés aux transformations du secteur informatique, la demande de plateformes aux fonctionnalités spécifiques s'est accrue. De ce fait, il existe aujourd'hui plusieurs façons d'utiliser ONTAP.
+
+*NetApp ONTAP personnalités*
+
+|===
+| Personnalité ONTAP | Description 
+
+
+| ONTAP unifié | Le même ONTAP que vous avez toujours connu, toujours activement développé et amélioré. 
+
+
+| Toutes les baies SAN | ONTAP qui prend uniquement en charge iSCSI, FCP et NVMe sur FC/TCP et fournit une fonctionnalité de contrôleur actif/actif, ainsi que des concepts désagrégés dans ASAr2. 
+
+
+| ONTAP résident dans le cloud | ONTAP fonctionnant dans le cloud ; soit sur des systèmes physiques hébergés dans un centre de données cloud, soit sur des instances ONTAP virtualisées. 
+
+
+| ONTAP/AFX désagrégé | ONTAP utilise une architecture désagrégée pour les charges de travail NAS et objets hautes performances. 
+|===
+
+
+== Aperçu de l'architecture Unified ONTAP
+
+Le diagramme suivant illustre l'architecture générale d'ONTAP unifié, avec une description de la manière dont tous les éléments s'articulent en dessous.
+
+*Architecture générale ONTAP*
+
+image:image3.png["Image"]
+
+Quelques aspects clés de l’architecture ONTAP :
+
+* Prise en charge des fichiers, des objets et des blocs
+* Les protocoles sont servis via un réseau de données client frontal
+* Plusieurs nœuds indépendants peuvent être regroupés en cluster
+* Chaque nœud peut fournir des adresses IP flottantes indépendantes pour les cas d'utilisation liés aux données et à la gestion
+* Les nœuds du cluster se connectent à un commutateur dorsal fourni par NetApp via un VLAN de cluster
+* Les nœuds sont présentés sous forme de paires haute disponibilité afin d'assurer la résilience en cas de panne matérielle ou de coupure de courant
+* Les paires HA possèdent des cartes NVRAM directement connectées qui se répliquent pour protéger les écritures
+* Chaque nœud se voit attribuer au moins un agrégat et possède un sous-ensemble du nombre total de disques
+* En cas de basculement, les disques d'un nœud sont réattribués à la paire haute disponibilité (et uniquement à la paire haute disponibilité)
+* Les baies de disques sont généralement connectées directement aux nœuds via un câblage multipath, mais les systèmes haut de gamme introduisent le concept de réseaux de stockage sur le même commutateur de cluster dorsal
+* Les volumes (FlexVols et FlexGroup volumes) constituent les points d'entrée du stockage pour l'accès aux données
+
+
+
+
+== Qu'est-ce que NetApp AFX ?
+
+Il faut garder à l'esprit que NetApp AFX est toujours ONTAP.
+
+Il s'agit simplement d'une autre façon de tirer parti des avantages d'ONTAP. La même image que vous installeriez pour vos systèmes Unified ONTAP ou All SAN Array est la même image utilisée avec NetApp AFX. La base de code est identique, mais la façon dont les systèmes démarrent détermine le chemin d'exécution du code, la manière dont le stockage backend est présenté, ainsi que les fonctionnalités et protocoles pris en charge.
+
+NetApp AFX propose une architecture désagrégée pour les charges de travail NAS et objet, tout en conservant la richesse fonctionnelle du logiciel ONTAP que vous connaissez et appréciez. L’ONTAP désagrégé désigne une architecture de stockage où chaque nœud de contrôleur NetApp bénéficie de la même capacité grâce à des commutateurs réseau redondants et un réseau haut débit à faible latence. Cette approche permet aux nœuds de contrôleur et à la capacité de stockage d’évoluer indépendamment les uns des autres afin de répondre au mieux aux besoins des différentes charges de travail hautes performances. En d’autres termes, lorsque vous avez besoin de performances supplémentaires, il suffit d’ajouter des nœuds de contrôleur. Si vous avez besoin de capacité supplémentaire, ajoutez des boîtiers d’extension. Les administrateurs de stockage disposent ainsi de la flexibilité nécessaire pour proposer une solution de stockage plus économique à leurs utilisateurs finaux.
+
+Comme aucun nœud de contrôleur ne possède de disques de manière indépendante, il n'existe pas non plus d'agrégats physiques avec leurs propres contraintes de capacité et de performance. À la place, la capacité est présentée comme un modèle partagé avec lequel tous les nœuds peuvent interagir, et ONTAP peut gérer automatiquement.
+
+*ONTAP désagrégé*
+
+image:image4.png["Image"]
+
+
+
+== Termes et concepts clés
+
+Vous trouverez ci-dessous les termes directement liés à AFX. Pour la terminologie spécifique à ONTAP, consultez la documentation du produit.
+
+link:https://docs.netapp.com/us-en/ontap-family/index.html["Documentation produit ONTAP"^].
+
+
+
+=== ONTAP désagrégé
+
+Il s'agit de la nouvelle architecture basée sur ONTAP qui permet de faire évoluer la puissance de calcul et la capacité indépendamment l'une de l'autre. Le terme « Disaggregated ONTAP » n'est pas un nom de produit, mais un moyen de différencier ONTAP unifiée et les architectures NetApp AFX.
+
+
+
+=== NetApp AFX
+
+NetApp AFX est le nom de produit officiel de l'architecture ONTAP désagrégée et a été annoncé lors de NetApp Insight 2025.
+
+
+
+=== Nœuds de calcul
+
+Dans NetApp AFX, un nœud de calcul désigne un nœud de contrôleur de stockage (et les termes sont souvent utilisés indifféremment dans la documentation). Ces nœuds ne possèdent pas de disque intégré et sont conçus pour être entièrement modulaires afin de permettre l'évolutivité indépendante qu'offre l'architecture ONTAP désagrégée.
+
+
+
+=== Zone de disponibilité de stockage
+
+Une zone de disponibilité de stockage (SAZ) est un pool unique de capacité au sein d'un cluster NetApp AFX, où tous les disques sont partagés entre tous les nœuds. La SAZ permet des fonctionnalités telles que le partage de capacité, des performances améliorées, la déduplication globale, et plus encore.

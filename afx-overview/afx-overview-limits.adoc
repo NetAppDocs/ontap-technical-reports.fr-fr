@@ -1,0 +1,211 @@
+---
+sidebar: sidebar 
+permalink: afx-overview/afx-overview-limits.html 
+keywords: netapp afx, maximums, minimums, limits, capacity, nodes, volumes 
+summary: 'Cette page décrit les valeurs maximales et minimales d"un cluster NetApp AFX par rapport à unified ONTAP.' 
+---
+= Maximums et limites
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx-overview/
+
+
+[role="lead"]
+La section suivante traite des valeurs maximales et minimales d'un cluster AFX NetApp par rapport à unified ONTAP.
+
+Pour connaître les limites les plus récentes, voir link:http://hwu.netapp.com/["Hardware Universe"^].
+
+*NetApp Valeurs maximales et minimales AFX*
+
+|===
+| Limite | ONTAP unifié | NetApp AFX 
+
+
+| Nombre de volumes (cluster)  a| 
+* 30 000 (selon la plateforme)
+
+ a| 
+* 30 000
+
+
+
+
+| Taille agrégée  a| 
+* 800 To
+
+ a| 
+* S/O
+
+
+
+
+| Nombre de nœuds  a| 
+* 24
+
+ a| 
+* 8 (9.17.1)
+* 32 (9.19.1RC1)
+
+
+
+
+| Capacité totale  a| 
+* Dépend du nœud et du lecteur. Voir link:http://hwu.netapp.com["hwu.netapp.com"^] pour plus de détails.
+
+ a| 
+* 2 Po (9.17.1)
+* 3PB (9.18.1RC1)
+* 16PB (version 9.18.1GA)
+* 20PB (9.19.1RC0)
+* 32PB (9.19.1RC1)
+
+
+
+
+| Nombre d'étagères prises en charge  a| 
+* 8 par paire haute disponibilité
+* 192 par cluster
+
+ a| 
+* 12 par cluster (9.18.1GA)
+* 17 par cluster (9.19.1RC0)
+* 25 par cluster (9.19.1RC1) (aucune limitation de paire haute disponibilité)
+
+
+
+
+| Nombre total de disques pris en charge  a| 
+* 240 par paire haute disponibilité
+* 2880 (24 nœuds)
+
+ a| 
+* 288 par cluster (en fonction des limites de nombre d'étagères ; aucune limitation de paire haute disponibilité)
+* 408 par cluster (9.19.1RC0)
+* 600 par cluster (9.19.1RC1)
+
+
+
+
+| Taille du volume  a| 
+* 300 To (FlexVol)
+* 60 Po (FlexGroup)
+
+ a| 
+* 300 To (FlexVol)
+* 60 Po (FlexGroup)*
+
+
+
+
+| Nombre maximal de fichiers par volume  a| 
+* 2 milliards (FlexVol)
+* 400 milliards (FlexGroup)
+
+ a| 
+* 2 milliards (FlexVol)
+* 400 milliards (FlexGroup)
+
+
+
+
+| Nombre maximal de fichiers par répertoire (valeur maxdirsize par défaut 320 Mo)  a| 
+* ~4 millions (FlexVol)
+* ~2 millions (FlexGroup)
+
+ a| 
+* ~4 millions (FlexVol)
+* ~2 millions (FlexGroup)
+
+
+
+
+| Transferts simultanés SnapMirror  a| 
+* 250
+
+ a| 
+* 250
+
+
+
+
+| Nombre de qtrees  a| 
+* 4096
+
+ a| 
+* 4096
+
+
+
+
+| Nombre maximal de connexions TCP par nœud  a| 
+* 100 000
+
+ a| 
+* 100 000
+
+
+
+
+| Nombre maximal de verrous par nœud  a| 
+* 3 millions
+
+ a| 
+* 3 millions
+
+
+
+
+| Nombre maximal d'interfaces de données (cluster)  a| 
+* 4096
+
+ a| 
+* 4096
+
+
+
+
+| Nombre maximal de constituants – FlexGroup  a| 
+* 200
+
+ a| 
+* 200
+* 512 dans 9.19.1 RC1
+
+
+
+
+| Nombre maximal de LIF inter-clusters  a| 
+* 8
+
+ a| 
+* 8
+
+
+
+
+| Nombre maximal d'espaces IP  a| 
+* 512
+
+ a| 
+* 512
+
+
+
+
+| Nombre maximal de FlexCache par origine  a| 
+* 100
+
+ a| 
+* 100
+
+
+
+
+| Nombre maximal de FlexCache (nœud)  a| 
+* 400
+
+ a| 
+* 400
+
+
+|===

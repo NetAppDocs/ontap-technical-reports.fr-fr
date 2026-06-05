@@ -1,0 +1,105 @@
+---
+sidebar: sidebar 
+permalink: afx-overview/afx-overview-hardware.html 
+keywords: netapp afx, hardware, nodes, shelves, switches, disks, nvme 
+summary: Cette page présente des informations détaillées sur le matériel du cluster NetApp AFX, notamment les nœuds, les baies, les commutateurs et les types de disques pris en charge. 
+---
+= Détails matériels
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx-overview/
+
+
+[role="lead"]
+La section suivante couvre des détails sur le matériel du cluster NetApp AFX. Pour les informations les plus récentes sur le matériel NetApp AFX, consultez link:https://hwu.netapp.com["https://hwu.netapp.com"^].
+
+
+
+== Matériel pris en charge
+
+Pour obtenir les informations les plus récentes sur le matériel pris en charge pour NetApp AFX, consultez link:https://hwu.netapp.com["https://hwu.netapp.com"^].
+
+
+
+== Nœuds
+
+NetApp Les nœuds AFX sont basés sur le modèle AFF A1K de nœuds fourni pour les clusters ONTAP unifiés. Ces nœuds n'ont pas de disque interne pour le stockage et sont conçus pour être modulaires afin d'ajouter ou de retirer facilement des nœuds en fonction des exigences de performance. Chaque nœud utilise 2U d'espace rack et les performances augmentent de façon linéaire à mesure qu'ils sont ajoutés à un cluster AFX.
+
+*NetApp Détails du nœud AFX 1K*
+
+image:image42.png["Image"]
+
+
+
+=== emplacements pour matériel
+
+NetApp AFX 1K utilise les affectations d'emplacements suivantes.
+
+* L'emplacement 1 est dédié à la réplication HA
+* L'emplacement 7 est dédié à la réplication du cluster
+* Les emplacements 10 et 11 sont dédiés à la communication avec les étagères de stockage
+
+
+
+
+== Tiroirs
+
+NetApp AFX utilise les mêmes châssis que les systèmes AFF. La principale différence entre les baies AFX réside dans le module utilisé. Les modules NSM140 offrent des capacités de performance améliorées et contribuent à rendre possible la désagrégation ONTAP. Quelques points clés à considérer :
+
+* Seules les étagères entièrement remplies sont prises en charge.
+* Les étagères sont automatiquement détectées par NetApp AFX lorsqu'elles sont branchées.
+* Aucune prise en charge du retrait des étagères pour le moment.
+
+
+*NetApp Détails du boîtier d'étagère AFX*
+
+image:image43.png["Image"]
+
+
+
+== Commutateurs
+
+NetApp AFX utilise toujours des commutateurs de cluster backend pour la communication intracluster, tels que la réplication de base de données de cluster, les opérations sur les données distantes, les opérations de stockage et la mise en miroir de la NVRAM. Sur le plan fonctionnel, les seules différences entre les commutateurs de cluster unifiés ONTAP et NetApp AFX sont les suivantes :
+
+* Prise en charge 400GbE
+* Nouveau VLAN HA
+* Pour plus d'informations, consultez le link:https://www.cisco.com/site/us/en/products/collateral/networking/switches/nexus-9000-series-switches/nexus-9300-gx2-series-fixed-switches-data-sheet.html["Fiche technique des commutateurs Cisco"^].
+
+
+*NetApp AFX commutateurs de cluster*
+
+image:image44.png["Image"]
+
+
+
+=== connectivité du commutateur de cluster
+
+NetApp AFX s'appuie fortement sur les commutateurs de cluster backend pour nombre de ses concepts architecturaux majeurs. Par exemple, les interfaces de cluster, les adaptateurs de stockage, les baies de stockage et les cartes NVRAM se connectent tous aux commutateurs de cluster. Actuellement, toutes ces interfaces ne prennent en charge que les communications à 100GB, tandis que les commutateurs supportent le 400GB. Par conséquent, les interfaces 100GB sont connectées aux interfaces 400GB du commutateur via 4 câbles de dérivation 100GB. Cette approche réduit le nombre de ports utilisés sur les commutateurs. Par exemple, 16 ports de module de baie de stockage 100GB n'utiliseront que 4 ports sur les commutateurs, tandis que les 8 ports au total sur les nœuds utiliseront 2 ports de commutateur.
+
+*NetApp Câblage du commutateur AFX*
+
+image:image45.png["Image"]
+
+
+
+== Types et tailles de disques
+
+NetApp AFX ne prend actuellement en charge que les SSD NVMe connectés dans les tailles suivantes :
+
+* 7,6 To
+* 15,3 To
+* 30,1 To
+* 60,6 To
+
+
+
+
+=== TLC vs QLC
+
+NetApp AFX peut exploiter à la fois les types de mémoire flash TLC et QLC. Les disques de 7,6 et 15,3 To sont des modèles TLC, tandis que les disques de plus de 30,1 To seront des modèles QLC. Quel que soit le type de support, les normes de performance de certification NVIDIA SuperPod peuvent être respectées.
+
+Tous les disques utilisés avec NetApp AFX sont des disques hautes performances, et les technologies QLC et TLC offrent des performances quasi identiques en lecture. Les performances en écriture des disques QLC sont légèrement inférieures à celles des disques TLC, et l’usure peut être légèrement plus importante lors de charges de travail intensives en écriture.
+
+Pour les chiffres de performance, voir link:afx-overview-performance.html#per-shelf-performance["Performance par étagère"].
+
+Lors du choix du type de disque utilisé, tenez compte des charges de travail que le stockage hébergera et des compromis entre performances et densité de capacité.

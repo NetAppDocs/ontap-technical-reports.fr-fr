@@ -1,0 +1,22 @@
+---
+section: afx-overview
+title: AFX
+entries:
+- title: Présentation
+  url: "/afx-overview/afx-overview-learn-about.html"
+- title: Quoi de neuf
+  url: "/afx-overview/afx-overview-whats-new.html"
+- title: Architecture
+  url: "/afx-overview/afx-overview-architecture.html"
+- title: Performances
+  url: "/afx-overview/afx-overview-performance.html"
+- title: Gestion
+  url: "/afx-overview/afx-overview-management.html"
+- title: Capacités
+  url: "/afx-overview/afx-overview-capabilities.html"
+- title: Matériel
+  url: "/afx-overview/afx-overview-hardware.html"
+- title: Maximums et limites
+  url: "/afx-overview/afx-overview-limits.html"
+- title: Informations associées
+  url: "/afx-overview/afx-overview-related-info.html"
