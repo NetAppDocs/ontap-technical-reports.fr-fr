@@ -1,13 +1,13 @@
 ---
 sidebar: sidebar 
-permalink: afx-overview/afx-overview-hardware.html 
+permalink: afx/afx-hardware.html 
 keywords: netapp afx, hardware, nodes, shelves, switches, disks, nvme 
 summary: Cette page présente des informations détaillées sur le matériel du cluster NetApp AFX, notamment les nœuds, les baies, les commutateurs et les types de disques pris en charge. 
 ---
 = Détails matériels
 :allow-uri-read: 
 :icons: font
-:imagesdir: ../media/afx-overview/
+:imagesdir: ../media/afx/
 
 
 [role="lead"]
@@ -100,6 +100,6 @@ NetApp AFX peut exploiter à la fois les types de mémoire flash TLC et QLC. Les
 
 Tous les disques utilisés avec NetApp AFX sont des disques hautes performances, et les technologies QLC et TLC offrent des performances quasi identiques en lecture. Les performances en écriture des disques QLC sont légèrement inférieures à celles des disques TLC, et l’usure peut être légèrement plus importante lors de charges de travail intensives en écriture.
 
-Pour les chiffres de performance, voir link:afx-overview-performance.html#per-shelf-performance["Performance par étagère"].
+Pour les chiffres de performance, voir link:afx-performance.html#per-shelf-performance["Performance par étagère"].
 
 Lors du choix du type de disque utilisé, tenez compte des charges de travail que le stockage hébergera et des compromis entre performances et densité de capacité.

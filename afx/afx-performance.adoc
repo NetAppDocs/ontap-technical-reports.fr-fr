@@ -1,13 +1,13 @@
 ---
 sidebar: sidebar 
-permalink: afx-overview/afx-overview-performance.html 
+permalink: afx/afx-performance.html 
 keywords: netapp afx, performance, nfsv4, benchmarks, read-ahead, throughput 
 summary: 'NetApp AFX a été conçu dans un souci de performance et d"évolutivité, spécifiquement adapté aux charges de travail nécessitant un débit de lecture et d"écriture élevé.' 
 ---
 = Performances
 :allow-uri-read: 
 :icons: font
-:imagesdir: ../media/afx-overview/
+:imagesdir: ../media/afx/
 
 
 [role="lead"]
@@ -36,7 +36,7 @@ NOTE: Pour obtenir les estimations de performance les plus récentes, veuillez c
 
 == Performance par étagère
 
-Chaque baie contient des modules hautes performances dotés de 16 ports Ethernet 100 Gb qui utilisent la communication RoCEv2 pour une interaction de stockage à large bande passante avec les nœuds de calcul du cluster. Comme toute ressource physique, ces baies ont des maximums qui peuvent être atteints – en particulier puisque NetApp AFX peut présenter plusieurs nœuds pointant vers le même ensemble de disques. Le tableau suivant présente les performances maximales estimées en lecture et en écriture pour une seule baie, pour les disques TLC et QLC. Pour plus d'informations sur les différences entre TLC et QLC, voir link:afx-overview-hardware.html#tlc-vs-qlc["TLC vs QLC"].
+Chaque baie contient des modules hautes performances dotés de 16 ports Ethernet 100 Gb qui utilisent la communication RoCEv2 pour une interaction de stockage à large bande passante avec les nœuds de calcul du cluster. Comme toute ressource physique, ces baies ont des maximums qui peuvent être atteints – en particulier puisque NetApp AFX peut présenter plusieurs nœuds pointant vers le même ensemble de disques. Le tableau suivant présente les performances maximales estimées en lecture et en écriture pour une seule baie, pour les disques TLC et QLC. Pour plus d'informations sur les différences entre TLC et QLC, voir link:afx-hardware.html#tlc-vs-qlc["TLC vs QLC"].
 
 *Estimations de performance par étagère*
 
