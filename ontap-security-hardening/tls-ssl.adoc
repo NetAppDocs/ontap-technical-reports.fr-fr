@@ -22,6 +22,7 @@ NOTE: La configuration FIPS s'applique à ONTAP et au contrôleur BMC de la plat
 
 
 
+[[netapp-ontaps-fips-mode-configuration]]
 == La configuration NetApp ONTAP FIPS-mode
 
 NetApp ONTAP dispose d'une configuration FIPS-mode qui instancie un niveau de sécurité supplémentaire dans le plan de contrôle :
@@ -36,6 +37,7 @@ NOTE: Le NIST a soumis une norme FIPS-140-3 et NCSM sera conforme aux normes FIP
 
 
 
+[[enable-fips-140-2-and-fips-140-3-compliance-mode]]
 == Activez le mode de conformité FIPS-140-2 et FIPS-140-3
 
 À partir de ONTAP 9, vous pouvez activer le mode de conformité FIPS-140-2 et FIPS-140-3 pour les interfaces du plan de contrôle au niveau du cluster.
@@ -46,6 +48,7 @@ NOTE: Le NIST a soumis une norme FIPS-140-3 et NCSM sera conforme aux normes FIP
 
 
 
+[[fips-enablement-and-protocols]]
 == Protocoles et activation FIPS
 
 La `security config modify` commande permet de modifier la configuration de sécurité existante au niveau du cluster. Si vous activez le mode conforme FIPS, le cluster ne sélectionne automatiquement que les protocoles TLS.
@@ -62,6 +65,7 @@ La `security config modify` commande permet de modifier la configuration de séc
 
 
 
+[[fips-enablement-and-ciphers]]
 == Activation et chiffrement FIPS
 
 * Utilisez le `-supported-cipher-suites` paramètre pour configurer uniquement AES (Advanced Encryption Standard) ou AES et 3DES.
@@ -72,6 +76,7 @@ La `security config modify` commande permet de modifier la configuration de séc
 
 
 
+[[ssh-and-tls-security-hardening]]
 == Renforcement de la sécurité SSH et TLS
 
 L'administration SSH de ONTAP 9 nécessite un client OpenSSH 5.7 ou une version ultérieure. Les clients SSH doivent négocier avec l'algorithme de clé publique ECDSA (Elliptic Curve Digital Signature Algorithm) pour que la connexion réussisse.
@@ -80,6 +85,7 @@ Pour renforcer la sécurité TLS, activez uniquement TLS 1.2 et utilisez des sui
 
 
 
+[[enable-tlsv1-2-and-pfs-capable-cipher-suites]]
 == Activez les suites de chiffrement compatibles TLSv1.2 et PFS
 
 Pour activer uniquement les suites de chiffrement compatibles TLS 1.2 et PFS, utilisez la `security config modify` commande du niveau de privilège avancé.

@@ -13,6 +13,7 @@ Il est important que la détection des ransomwares ait lieu le plus tôt possibl
 
 
 
+[[netapp-ransomware-protection]]
 == Protection contre les ransomwares NetApp
 
 La NetApp Console est un plan de contrôle unique permettant d'orchestrer intelligemment une défense complète contre les ransomwares centrée sur la charge de travail.  La protection contre les ransomwares NetApp rassemble les puissantes fonctionnalités de cyber-résilience d' ONTAP, telles que ARP, FPolicy et les snapshots inviolables, et les services de données NetApp , tels que NetApp Backup and Recovery.  Il ajoute également des recommandations et des conseils avec des flux de travail automatisés pour fournir une défense de bout en bout via une interface utilisateur unique.  Il fonctionne au niveau de la charge de travail pour garantir que les applications qui font fonctionner votre entreprise sont protégées et peuvent être récupérées le plus rapidement possible en cas d'attaque.

@@ -18,6 +18,7 @@ Nous proposons des solutions de stockage de données spécifiques à chaque sect
 
 
 
+[[eda]]
 == L'EDA
 
 link:https://www.netapp.com/pdf.html?item=/media/19368-tr-4617.pdf["Meilleures pratiques d'automatisation de la conception électronique en ONTAP"^]
@@ -25,6 +26,7 @@ Découvrez les pratiques recommandées et les conseils d'implémentation fournis
 
 
 
+[[healthcare]]
 == Santé
 
 link:https://www.netapp.com/pdf.html?item=/media/17137-tr3928pdf.pdf["Meilleures pratiques NetApp pour Epic"^]

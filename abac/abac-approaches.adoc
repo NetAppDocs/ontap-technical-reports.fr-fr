@@ -15,6 +15,7 @@ ONTAP propose plusieurs approches pour assurer le contrôle d'accès basé sur d
 
 
 
+[[nfs-v4-2-security-labels]]
 == Étiquettes de sécurité NFS v4.2
 
 À partir de ONTAP 9.9.1, la fonctionnalité NFS v4.2 appelée NFS est prise en charge.
@@ -33,6 +34,7 @@ Voici quelques cas d'utilisation des étiquettes de sécurité NFS v4.2 :
 
 
 
+[[enable-nfs-v4-2-security-labels]]
 === Activez les étiquettes de sécurité NFS v4.2
 
 Vous pouvez activer ou désactiver les étiquettes de sécurité NFS v4.2 à l'aide de la commande suivante (privilège avancé requis) :
@@ -45,6 +47,7 @@ Pour en savoir plus, `vserver nfs modify` consultez le link:https://docs.netapp.
 
 
 
+[[enforcement-modes-for-nfs-v4-2-security-labels]]
 === Modes d'application pour les étiquettes de sécurité NFS v4.2
 
 À partir de ONTAP 9.9.1, ONTAP prend en charge les modes d'application suivants :
@@ -63,6 +66,7 @@ NOTE: ONTAP ne prend actuellement pas en charge le mode complet (stockage et app
 
 
 
+[[nfs-v4-2-security-labels-examples]]
 === Exemples d'étiquettes de sécurité NFS v4.2
 
 L'exemple de configuration suivant illustre les concepts d'utilisation de Red Hat Enterprise Linux version 9.3 (Plough).
@@ -126,6 +130,7 @@ Outre la sécurité multi-niveaux (MLS), une autre fonctionnalité appelée séc
 |===
 
 
+[[extended-attributes-xattrs]]
 == Attributs étendus (xattrs)
 
 À partir de ONTAP 9.12.1, ONTAP prend en charge xattrs. Xattrs permet d'associer des métadonnées à des fichiers et des répertoires au-delà de ce qui est fourni par le système, tels que les listes de contrôle d'accès (ACL) ou les attributs définis par l'utilisateur.
@@ -157,6 +162,7 @@ Exemples de cas d'utilisation de xattr :
 
 
 
+[[commands-for-managing-xattrs]]
 === Commandes de gestion des xattrs
 
 * `setfattr` définit un attribut étendu d'un fichier ou d'un répertoire :
@@ -192,6 +198,7 @@ getfattr -n user.comment example.txt
 
 
 
+[[xattr-key-value-pair-examples]]
 === Exemples de paires de valeurs de clé xattr
 
 Le tableau suivant présente deux exemples de paire de valeurs de clé xattr :
@@ -216,6 +223,7 @@ Le tableau suivant présente deux exemples de paire de valeurs de clé xattr :
 |===
 
 
+[[user-permissions-with-ace-for-xattrs]]
 === Autorisations utilisateur avec ACE pour xattrs
 
 Une entrée de contrôle d'accès (ACE) est un composant d'une liste de contrôle d'accès qui définit les droits ou autorisations d'accès accordés à un utilisateur individuel ou à un groupe d'utilisateurs pour une ressource spécifique, comme un fichier ou un répertoire. Chaque ACE spécifie le type d'accès autorisé ou refusé et est associé à une entité de sécurité particulière (identité d'utilisateur ou de groupe).
@@ -238,6 +246,7 @@ Une entrée de contrôle d'accès (ACE) est un composant d'une liste de contrôl
 |===
 
 
+[[integration-with-abac-identity-and-access-control-software]]
 == Intégration au logiciel ABAC Identity and Access Control
 
 Pour exploiter pleinement les capacités d'ABAC, ONTAP peut s'intégrer à un logiciel de gestion des identités et des accès orienté ABAC.
@@ -274,6 +283,7 @@ image:abac-access-architecture.png["Architecture d'accès ABAC"]
 
 
 
+[[ontap-cloning-and-snapmirror]]
 == Clonage ONTAP et SnapMirror
 
 Les technologies de clonage et de SnapMirror de ONTAP sont conçues pour offrir des fonctionnalités de réplication et de clonage des données efficaces et fiables, garantissant que tous les aspects des données de fichiers, y compris les xattrs, sont conservés et transférés avec le fichier. Les xattrs sont essentiels car ils stockent des métadonnées supplémentaires associées à un fichier, telles que des étiquettes de sécurité, des informations de contrôle d'accès et des données définies par l'utilisateur, qui sont essentielles pour maintenir le contexte et l'intégrité du fichier.
@@ -287,6 +297,7 @@ NOTE: Les étiquettes de sécurité NFS v4.2 présentent les restrictions défin
 
 
 
+[[auditing-changes-to-labels]]
 == Audit des modifications apportées aux étiquettes
 
 L'audit des modifications apportées aux étiquettes de sécurité xattrs ou NFS constitue un aspect essentiel de la gestion et de la sécurité du système de fichiers. Les outils d'audit standard du système de fichiers permettent de surveiller et de consigner toutes les modifications apportées à un système de fichiers, y compris les modifications apportées aux xattrs et aux étiquettes de sécurité.
@@ -325,6 +336,7 @@ L'activation link:https://docs.netapp.com/us-en/ontap/nas-audit/two-parts-fpolic
 
 
 
+[[examples-of-controlling-access-to-data]]
 == Exemples de contrôle de l'accès aux données
 
 L'exemple d'entrée ci-dessous pour les données stockées dans le certificat PKI de John R. Smith montre comment l'approche de NetApp peut être appliquée à un fichier et fournit un contrôle d'accès précis.

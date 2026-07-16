@@ -15,6 +15,7 @@ NetApp AFX prend en charge la même pile réseau, les mêmes fonctionnalités de
 
 
 
+[[networking]]
 == Mise en réseau
 
 La pile réseau dans NetApp AFX est identique à celle de unified ONTAP.
@@ -40,6 +41,7 @@ Voici quelques différences réseau clés :
 
 
 
+[[security]]
 == Sécurité
 
 NetApp AFX utilise ONTAP, ce qui signifie qu'il bénéficie du même niveau de sécurité qu'ONTAP. Tous les modules de chiffrement sont identiques, ce qui signifie que les certifications de sécurité seront également identiques une fois les processus de certification terminés. NetApp AFX prend également en charge les mêmes algorithmes de chiffrement de sécurité qu'ONTAP unifié.
@@ -63,6 +65,7 @@ Pour plus d'informations sur les certifications obtenues par unified ONTAP (ains
 
 
 
+[[snapshots-and-data-protection]]
 == Instantanés et protection des données
 
 NetApp AFX exploite les mêmes technologies de snapshot et de réplication que unified ONTAP, sans modification majeure de la façon dont ces fonctionnalités fonctionnent. En effet, AFX peut répliquer vers et depuis les systèmes unified ONTAP de la même link:https://docs.netapp.com/us-en/ontap/data-protection/compatible-ontap-versions-snapmirror-concept.html["règles et configurations"^] manière que celle que vous connaissez.
@@ -71,6 +74,7 @@ La seule exception dans AFX pour la réplication concerne les volumes FlexGroup 
 
 
 
+[[nondisruptive-operations]]
 == opérations non perturbatrices
 
 ONTAP assure des opérations sans interruption de service, telles que les déplacements de volumes, les mises à niveau, la maintenance des clusters, les basculements de stockage, etc. NetApp AFX propose les mêmes opérations sans interruption de service, avec quelques adaptations.
@@ -83,6 +87,7 @@ ONTAP assure des opérations sans interruption de service, telles que les dépla
 
 
 
+[[volume-types]]
 == Types de volume
 
 Unified ONTAP prend en charge plusieurs types de volumes différents, tels que :

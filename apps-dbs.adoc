@@ -18,6 +18,7 @@ ONTAP constitue le socle de la gestion et de la protection des données pour de 
 
 
 
+[[microsoft-sql-server]]
 == Microsoft SQL Server
 
 SQL Server constitue le socle de la plateforme de données Microsoft. Il apporte les performances stratégiques grâce aux technologies in-memory et permet d'obtenir plus rapidement des informations sur toutes les données, qu'elles soient sur site ou dans le cloud.
@@ -35,6 +36,7 @@ Apprenez à déployer Microsoft SQL Server sur un système de stockage ONTAP à 
 
 
 
+[[mysql]]
 == MySQL
 
 Ce document décrit la configuration requise et fournit des conseils sur le réglage et la configuration du stockage pour le déploiement de MySQL sur ONTAP.
@@ -46,6 +48,7 @@ NOTE: Cette documentation remplace le rapport technique _TR-4722 : base de donn�
 
 
 
+[[oracle]]
 == Oracle
 
 ONTAP est conçu pour les bases de données Oracle. Pendant des décennies, ONTAP a été optimisé pour les demandes uniques d'E/S de bases de données relationnelles. Plusieurs fonctionnalités ONTAP ont été créées spécifiquement pour répondre aux besoins des bases de données Oracle, et même à la demande d'Oracle Inc. Elle-même.
@@ -77,6 +80,7 @@ Découvrez les pratiques recommandées par la solution pour provisionner, gérer
 
 
 
+[[postgresql]]
 == PostgreSQL
 
 PostgreSQL est fourni avec des variantes incluant PostgreSQL, PostgreSQL plus et EDB Postgres Advanced Server (EPAS). PostgreSQL est généralement déployé en tant que base de données interne pour les applications multiniveaux. NetApp ONTAP constitue un excellent choix pour l'exécution des bases de données PostgreSQL et ses fonctionnalités de gestion des données fiables, performantes et efficaces.
@@ -88,12 +92,14 @@ NOTE: Cette documentation remplace le rapport technique _TR-4770 : base de donn�
 
 
 
+[[sap-hana]]
 == SAP HANA
 
 link:https://docs.netapp.com/us-en/netapp-solutions-sap/["Solutions de base de données SAP HANA sur ONTAP"^] Les bonnes pratiques de configuration, de gestion et d'automatisation des solutions SAP sont disponibles sur la page Solutions SAP de NetApp.
 
 
 
+[[epic]]
 == Epic
 
 link:https://docs.netapp.com/us-en/ontap-apps-dbs/epic/epic-overview.html["Meilleures pratiques Epic sur ONTAP"^] Guide pour comprendre les bonnes pratiques de déploiement d'Epic sur site et dans le cloud, tout en respectant les normes de configuration et en vue d'un déploiement correct sur ONTAP.

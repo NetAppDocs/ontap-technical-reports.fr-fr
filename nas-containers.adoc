@@ -23,6 +23,7 @@ Ces rapports techniques étendent la documentation sur link:https://docs.netapp.
 ====
 
 
+[[flexcache]]
 == FlexCache
 
 link:https://www.netapp.com/pdf.html?item=/media/7336-tr4743.pdf["Tr-4743 : FlexCache dans ONTAP"^]
@@ -30,12 +31,14 @@ FlexCache est une technologie de mise en cache qui crée des répliques inscript
 
 
 
+[[flexcache-write-back]]
 == Réécriture de code FlexCache
 
 link:https://docs.netapp.com/us-en/ontap/flexcache-writeback/flexcache-write-back-overview.html["Réécriture de code FlexCache"^] Introduit dans ONTAP 9.15.1, l'écriture différée FlexCache est un autre mode de fonctionnement pour l'écriture au niveau du cache. L'écriture différée permet d'engager l'écriture sur un stockage stable au niveau du cache et d'en accuser réception au client sans attendre que les données soient à l'origine. Les données sont transférées de manière asynchrone vers l'origine. Le résultat est un système de fichiers distribué à l'échelle mondiale qui permet aux écritures d'effectuer des opérations à des vitesses proches de celles locales pour des charges de travail et des environnements spécifiques, et qui offre des avantages considérables en termes de performances.
 
 
 
+[[flexgroup-volumes]]
 == Volumes FlexGroup
 
 link:https://www.netapp.com/pdf.html?item=/media/12385-tr4571.pdf["Tr-4571 : guide des meilleures pratiques et d'implémentation des volumes NetApp ONTAP FlexGroup"^]

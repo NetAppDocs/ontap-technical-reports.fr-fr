@@ -13,6 +13,7 @@ L'approche de NetApp en matière de cyber-coffre est une architecture de référ
 
 
 
+[[cyber-vaulting-with-snaplock-compliance-and-a-logical-air-gap]]
 == Cyber-archivage avec SnapLock Compliance et un air Gap logique
 
 La tendance est de plus en plus marquée aux pirates informatiques qui détruisent les copies de sauvegarde et, dans certains cas, même les chiffrent. C'est pourquoi beaucoup dans le secteur de la cybersécurité recommandent d'utiliser des sauvegardes « air Gap » dans le cadre d'une stratégie globale de cyberrésilience.
@@ -29,6 +30,7 @@ NetApp a publié la fonctionnalité SnapLock il y a plus de 10 ans pour répondr
 
 
 
+[[tamperproof-snapshots]]
 == Des snapshots inviolables
 
 Si l'utilisation de SnapLock Compliance comme air Gap logique offre une protection ultime pour empêcher les pirates de supprimer vos copies de sauvegarde, il est nécessaire de déplacer les snapshots à l'aide de SnapVault vers un volume secondaire compatible SnapLock. Par conséquent, de nombreux clients déploient cette configuration sur un système de stockage secondaire sur le réseau. Cela peut entraîner des temps de restauration plus longs qu'avec la restauration d'un Snapshot de volume primaire sur le système de stockage primaire.

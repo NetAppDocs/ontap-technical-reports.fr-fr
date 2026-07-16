@@ -24,6 +24,7 @@ Recommandation NetApp :
 ====
 
 
+[[supported-ciphers-and-key-exchanges]]
 == Chiffrements et échanges de clés pris en charge
 
 [cols="42%,58%"]
@@ -59,6 +60,7 @@ Recommandation NetApp :
 |===
 
 
+[[supported-aes-and-3des-symmetric-encryptions]]
 == Cryptage symétrique AES et 3DES pris en charge
 
 ONTAP prend également en charge les types de chiffrement symétrique AES et 3DES suivants (également appelés chiffrement) :

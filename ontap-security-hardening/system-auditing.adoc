@@ -15,6 +15,7 @@ Assurez l'intégrité de l'audit des événements en transférant les événemen
 
 
 
+[[send-out-syslog]]
 == Envoyer syslog
 
 Les informations d'audit et de journalisation sont extrêmement précieuses pour le support et la disponibilité. En outre, les informations figurant dans les journaux (syslog) ainsi que dans les rapports et résultats d'audit sont généralement sensibles. Pour préserver les contrôles et le niveau de sécurité, les entreprises doivent impérativement gérer les données de journalisation et d'audit de manière sécurisée.
@@ -23,6 +24,7 @@ Le délestage des données des syslog est nécessaire pour limiter l'impact d'un
 
 
 
+[[create-a-log-forwarding-destination]]
 === Créez une destination de transfert de journaux
 
 Utilisez `cluster log-forwarding create` la commande pour créer des destinations de transfert de journaux pour la journalisation à distance.
@@ -82,6 +84,7 @@ NOTE: NetApp recommande d'utiliser la `cluster log-forwarding` commande pour for
 
 
 
+[[event-notification]]
 == Notification d'événement
 
 La sécurisation des informations et des données quittant un système est essentielle au maintien et à la gestion du niveau de sécurité du système. Les événements générés par la solution ONTAP sont une mine d'informations sur le problème rencontré par la solution, les informations traitées, etc. La vitalité de ces données souligne la nécessité de les gérer et de les migrer de manière sécurisée.

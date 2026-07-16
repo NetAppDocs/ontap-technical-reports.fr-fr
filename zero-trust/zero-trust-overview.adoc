@@ -16,10 +16,11 @@ La solution « zéro confiance » s'est traditionnellement orientée réseau pou
 
 NOTE: À partir de juillet 2024, le contenu du rapport technique _TR-4829: NetApp and Zero Trust: Enabling a data-Centric Zero Model_, qui a été publié au format PDF, est disponible sur docs.netapp.com.
 
-Les données constituent les ressources les plus importantes de votre entreprise. Selon le 2022 , les menaces internes sont la cause de 18 % des violations de données https://enterprise.verizon.com/resources/reports/dbir/["Rapport d'enquête sur les violations de données Verizon"^]. Les entreprises peuvent améliorer leur vigilance en déployant des contrôles « zéro confiance » de pointe sur les données à l'aide du logiciel de gestion des données NetApp ONTAP.
+Les données constituent l'atout le plus précieux de votre organisation. Les menaces internes sont à l'origine de 18 % des violations de données, selon le rapport 2022 https://www.verizon.com/business/resources/["Rapport d'enquête sur les violations de données Verizon"^]. Les organisations peuvent renforcer leur vigilance en déployant des contrôles Zero Trust de pointe autour des données avec le logiciel de gestion des données NetApp ONTAP.
 
 
 
+[[what-is-zero-trust]]
 == Qu'est-ce que le principe zéro confiance ?
 
 Le modèle Zero Trust a été développé pour la première fois par John Kindervag, de Forrester Research. Le service informatique envisage la sécurité du réseau de l'intérieur vers l'extérieur plutôt que de l'extérieur vers l'intérieur. L'approche « zéro confiance » de l'intérieur identifie un micronoyau et un périmètre (MCAP). Le MCAP est une définition intérieure des données, des services, des applications et des ressources à protéger avec un ensemble complet de contrôles. Le concept de périmètre extérieur sécurisé est obsolète. Les entités fiables et autorisées à s'authentifier avec succès via le périmètre peuvent alors rendre l'organisation vulnérable aux attaques. Les initiés, par définition, sont déjà à l'intérieur du périmètre sécurisé. Les employés, prestataires et partenaires sont des initiés, et ils doivent être autorisés à opérer avec des contrôles appropriés pour remplir leurs rôles au sein de l'infrastructure de votre entreprise.
@@ -38,6 +39,7 @@ Pour les besoins de cette documentation, nous utilisons les concepts et la termi
 
 
 
+[[security-resources]]
 == Ressources de sécurité
 
 Pour plus d'informations sur le signalement de vulnérabilités et d'incidents, les réponses de sécurité NetApp et la confidentialité des clients, consultez le https://www.netapp.com/company/trust-center/security/["Portail de sécurité NetApp"^].

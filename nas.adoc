@@ -23,6 +23,7 @@ Ces rapports techniques étendent la documentation sur link:https://docs.netapp.
 ====
 
 
+[[nfs]]
 == NFS
 
 link:https://www.netapp.com/pdf.html?item=/media/10720-tr-4067.pdf["Tr-4067 : guide des bonnes pratiques et d'implémentation NFS dans ONTAP"^]
@@ -33,6 +34,7 @@ Découvrez comment activer et utiliser les attributs étendus NFSv4.2 dans ONTAP
 
 
 
+[[smb]]
 == PME
 
 link:https://www.netapp.com/pdf.html?item=/media/17136-tr4740.pdf["Tr-4740 : multicanal SMB 3.0"^]
@@ -40,6 +42,7 @@ Microsoft a introduit Multicanal dans le protocole SMB 3.0 dans le but d'amélio
 
 
 
+[[multiprotocol]]
 == Multiprotocole
 
 link:https://www.netapp.com/pdf.html?item=/media/27436-tr-4887.pdf["Tr-4887 : présentation et bonnes pratiques du stockage NAS multiprotocole dans ONTAP"^]
@@ -47,12 +50,14 @@ Découvrez le fonctionnement de l'accès NAS multiprotocole dans ONTAP et les pr
 
 
 
+[[ontap-s3]]
 == ONTAP S3
 
 link:https://docs.netapp.com/us-en/ontap/s3-config/index.html["Tr-4814 : S3 dans les bonnes pratiques ONTAP"^] Découvrez les pratiques recommandées pour l'utilisation d'Amazon simple Storage Service (S3) avec le logiciel ONTAP ainsi que les fonctionnalités et configurations pour l'utilisation d'ONTAP en tant que magasin d'objets avec les applications S3 natives ou en tant que destination de Tiering pour FabricPool.
 
 
 
+[[name-services]]
 == Nommer les services
 
 link:https://www.netapp.com/pdf.html?item=/media/19370-tr-4523.pdf["Tr-4523 : équilibrage de la charge DNS dans ONTAP"^]
@@ -66,6 +71,7 @@ Découvrez comment configurer la gestion des identités LDAP (Lightweight Direct
 
 
 
+[[nas-security]]
 == Sécurité NAS
 
 link:https://www.netapp.com/pdf.html?item=/media/19384-tr-4616.pdf["Tr-4616 : NFS Kerberos dans ONTAP"^]

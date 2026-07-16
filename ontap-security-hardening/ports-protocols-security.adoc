@@ -15,6 +15,7 @@ Outre les opérations et fonctions de sécurité intégrées, le renforcement d'
 
 
 
+[[commonly-used-protocols-and-ports]]
 == Protocoles et ports couramment utilisés
 
 [cols="27%,26%,47%"]
@@ -148,6 +149,7 @@ Outre les opérations et fonctions de sécurité intégrées, le renforcement d'
 |===
 
 
+[[netapp-internal-ports]]
 == Ports internes NetApp
 
 [cols="47%,53%"]

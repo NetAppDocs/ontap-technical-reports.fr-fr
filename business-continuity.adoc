@@ -23,19 +23,21 @@ Ces rapports techniques étendent la documentation sur link:https://docs.netapp.
 ====
 
 
+[[snapmirror-active-sync-formerly-sm-bc]]
 == SnapMirror actif sync (anciennement SM-BC)
 
 link:https://docs.netapp.com/us-en/ontap/snapmirror-active-sync/index.html["Tr-4878 : synchronisation active SnapMirror"^] SnapMirror Active Sync est une solution de stockage disponible en continu avec une granularité au niveau des applications. Elle est disponible pour ONTAP sur les systèmes de stockage AFF ou ASA, afin de répondre aux besoins RPO 0 et RTO 0 des applications d'entreprise les plus stratégiques.
 
 
 
+[[metrocluster]]
 == MetroCluster
 
 link:https://www.netapp.com/pdf.html?item=/media/13480-tr4705.pdf["Tr-4705 : architecture et conception de la solution NetApp MetroCluster"^]
 Ce document présente l'architecture générale et les concepts de conception des fonctionnalités MetroCluster dans ONTAP.
 
 .Les IP dans MetroCluster
-link:https://www.netapp.com/pdf.html?item=/media/13481-tr4689pdf.pdf["Tr-4689 : IP NetApp MetroCluster"^] MetroCluster est une solution de stockage disponible en continu pour ONTAP sur les systèmes FAS et AFF. MetroCluster IP est la dernière évolution qui utilise un fabric de stockage back-end basé sur Ethernet. MetroCluster IP fournit une configuration hautement redondante afin de répondre aux besoins des applications d'entreprise les plus stratégiques. MetroCluster IP est inclus dans ONTAP et fournit une connectivité NAS et SAN pour les clients et les serveurs qui utilisent le stockage ONTAP.
+link:https://www.netapp.com/pdf.html?item=/media/13481-tr4689.pdf["Tr-4689 : IP NetApp MetroCluster"^] MetroCluster est une solution de stockage à disponibilité continue pour ONTAP fonctionnant sur les systèmes FAS et AFF. MetroCluster IP représente la dernière évolution et utilise une infrastructure de stockage dorsale basée sur Ethernet. MetroCluster IP offre une configuration hautement redondante pour répondre aux besoins des applications métier les plus critiques. MetroCluster IP est inclus dans ONTAP et assure la connectivité NAS et SAN pour les clients et serveurs utilisant le stockage ONTAP.
 
 .Les FC dans MetroCluster
 link:https://www.netapp.com/pdf.html?item=/media/13482-tr4375.pdf["Tr-4375 : FC NetApp MetroCluster"^] MetroCluster assure une disponibilité continue des données dans les data centers répartis géographiquement pour les applications stratégiques. Découvrez les pratiques recommandées, les décisions de conception et les configurations prises en charge par MetroCluster FC.

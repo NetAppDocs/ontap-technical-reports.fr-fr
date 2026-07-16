@@ -24,6 +24,7 @@ Bien que les comptes orphelins constituent un problème de sécurité important,
 
 
 
+[[list-local-accounts]]
 == Répertorie les comptes locaux
 
 Pour lister les comptes locaux, exécutez la `security login show` commande.
@@ -47,6 +48,7 @@ autosupport      console     password  autosupport      no     no
 ----
 
 
+[[set-the-diagnostic-diag-account-password]]
 == Définissez le mot de passe du compte de diagnostic (diag)
 
 Un compte de diagnostic nommé `diag` est fourni avec votre système de stockage. Vous pouvez utiliser le `diag` compte pour effectuer des tâches de dépannage dans `systemshell`. Le `diag` compte est le seul compte qui peut être utilisé pour accéder au systemshell via la `diag` commande Privileged `systemshell`.

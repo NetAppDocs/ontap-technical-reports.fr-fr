@@ -15,6 +15,7 @@ ONTAP fournit des mécanismes permettant de s'assurer que l'image ONTAP est vali
 
 
 
+[[upgrade-image-validation]]
 == Validation des images de mise à niveau
 
 La signature de code permet de vérifier que les images ONTAP installées via des mises à jour d'images sans interruption ou des mises à jour d'images automatisées sans interruption, des interfaces de ligne de commande ou des API ONTAP sont produites de manière authentique par NetApp et n'ont pas été falsifiées. La validation des images de mise à niveau a été introduite dans ONTAP 9.3.
@@ -23,6 +24,7 @@ Cette fonction est une amélioration de la sécurité sans intervention de la mi
 
 
 
+[[boot-time-image-validation]]
 == Validation de l'image de démarrage
 
 À partir de ONTAP 9.4, le démarrage sécurisé UEFI (Unified extensible Firmware interface) est activé pour les systèmes NetApp AFF A800, AFF A220, FAS2750 et FAS2720, ainsi que pour les systèmes nouvelle génération qui utilisent le BIOS UEFI.

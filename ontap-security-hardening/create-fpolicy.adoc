@@ -56,18 +56,21 @@ vs2.example.com         vs2_pol
 
 
 
+[[fpolicy-enhancements]]
 == Améliorations de FPolicy
 
 ONTAP 9 inclut les améliorations de FPolicy décrites dans les sections suivantes.
 
 
 
+[[filtering-controls]]
 === Filtrage des contrôles
 
 De nouveaux filtres sont disponibles pour `SetAttr` et pour la suppression de notifications sur les activités d'annuaire.
 
 
 
+[[async-resiliency]]
 === Résilience asynchrone
 
 Lorsqu'un serveur FPolicy fonctionnant en mode asynchrone est en panne du réseau, les notifications FPolicy générées lors de la panne sont stockées sur le nœud de stockage. Lorsque le serveur FPolicy est de nouveau en ligne, il est averti des notifications stockées et peut les récupérer du nœud de stockage. La durée pendant laquelle les notifications peuvent être stockées en cas de panne peut être configurée pendant 10 minutes.

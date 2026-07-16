@@ -23,6 +23,7 @@ Ces rapports techniques sont détaillés dans link:https://docs.netapp.com/us-en
 ====
 
 
+[[hardening-guides]]
 == Guides de durcissement
 
 link:./ontap-security-hardening/security-hardening-overview.html["Tr-4569 : guide sur le renforcement de la sécurité pour NetApp ONTAP"] Découvrez comment configurer NetApp ONTAP pour aider les entreprises à atteindre les objectifs de sécurité prescrits en matière de confidentialité, d'intégrité et de disponibilité des systèmes d'information.

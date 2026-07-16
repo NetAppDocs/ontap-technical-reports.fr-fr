@@ -17,12 +17,14 @@ Il s'agit des rôles disponibles pour les administrateurs admin et Storage Virtu
 
 
 
+[[roles]]
 == Rôles
 
 Grâce au contrôle d'accès basé sur des rôles (RBAC), les utilisateurs n'ont accès qu'aux systèmes et aux options requis pour leurs rôles et fonctions. La solution RBAC d'ONTAP limite l'accès administratif des utilisateurs au niveau correspondant à leur rôle, ce qui permet aux administrateurs de gérer les utilisateurs par rôle attribué. ONTAP fournit plusieurs rôles prédéfinis. Les opérateurs et les administrateurs peuvent créer, modifier ou supprimer des rôles de contrôle d'accès personnalisés et peuvent spécifier des restrictions de compte pour des rôles spécifiques.
 
 
 
+[[predefined-roles-for-cluster-administrators]]
 === Rôles prédéfinis pour les administrateurs du cluster
 
 |===
@@ -159,6 +161,7 @@ NOTE: Le `autosupport` rôle est attribué au compte prédéfini `autosupport`, 
 
 
 
+[[predefined-roles-for-storage-virtual-machine-svm-administrators]]
 === Rôles prédéfinis pour les administrateurs des machines virtuelles de stockage (SVM)
 
 |===
@@ -252,6 +255,7 @@ NOTE: Le `autosupport` rôle est attribué au compte prédéfini `autosupport`, 
 |===
 
 
+[[application-methods]]
 == Méthodes d'application
 
 La méthode d'application spécifie le type d'accès de la méthode de connexion. Les valeurs possibles incluent `console, http, ontapi, rsh, snmp, service-processor, ssh,` et `telnet`.
@@ -266,6 +270,7 @@ La `security protocol modify` commande modifie la configuration existante de RSH
 
 
 
+[[authentication-methods]]
 == Méthodes d'authentification
 
 Le paramètre de méthode d'authentification spécifie la méthode d'authentification utilisée pour les connexions.
@@ -318,4 +323,4 @@ A partir de ONTAP 9.12.1, FIDO2 peut également être utilisé pour l'authentifi
 * La révocation des clés publiques est prise en charge avec les clés publiques SSH ainsi que les certificats qui seront vérifiés pour leur expiration/révocation au cours de SSH.
 
 
-Pour plus d'informations sur l'authentification multifacteur (MFA) pour ONTAP System Manager, Active IQ Unified Manager et SSH, consultez la section link:http://www.netapp.com/us/media/tr-4647.pdf["Tr-4647 : authentification multifacteur dans ONTAP 9"^].
+Pour plus d'informations sur l'authentification multifactorielle (MFA) pour ONTAP System Manager, Active IQ Unified Manager et SSH, consultez link:https://www.netapp.com/pdf.html?item=/media/17055-tr4647.pdf["Tr-4647 : authentification multifacteur dans ONTAP 9"^].
