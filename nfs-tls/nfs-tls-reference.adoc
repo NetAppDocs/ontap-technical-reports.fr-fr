@@ -1,0 +1,118 @@
+---
+sidebar: sidebar 
+permalink: nfs-tls/nfs-tls-reference.html 
+keywords: nfs, tls, interoperability, svm-dr, metrocluster, snapmirror, limits, connection limit, enforcement, recommendations 
+summary: 'NFS sur TLS fonctionne avec les contrôles de règles d"export ONTAP standard et se réplique via SVM-DR et MetroCluster. Cette page aborde également les limites de connexion, le comportement d"application et les recommandations opérationnelles.' 
+---
+= Interopérabilité et limites
+:toc: macro
+:hardbreaks:
+:toclevels: 1
+:allow-uri-read: 
+:toc: 
+:toclevels: 1
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+:toc-position: content
+
+
+[role="lead"]
+NFS sur TLS s’intègre aux contrôles standard des règles d’export ONTAP, se réplique via SVM-DR et MetroCluster, et comporte un petit ensemble de limitations strictes de plateforme ainsi que des recommandations opérationnelles que vous devez connaître avant le déploiement.
+
+
+
+[[interoperability]]
+== Interopérabilité
+
+
+
+[[supported-co-existing-features]]
+=== Fonctionnalités de coexistence prises en charge
+
+*Stratégies d'export, exportations qtree et chemins de jonction.* La règle de règles d'export intègre le champ  `-allow-nfs-tls-only`, qui peut exiger TLS pour chaque règle. Elle se combine avec les contrôles de sécurité existants client-match, protocol, read-only/read-write, superuser, anonymous, chown-mode, allow-suid et NTFS-UNIX. Les exportations qtree et les montages par chemin de jonction héritent de l'exigence TLS via ce même mécanisme de règles d'export. System Manager affiche le paramètre  `-allow-nfs-tls-only` dans le sélecteur d'accès NFS.
+
+La réplication NFS sur TLS et la prise en charge de la reprise après sinistre sont résumées dans le tableau ci-dessous. Pour plus d'informations sur le mécanisme de réplication, consultez link:nfs-tls-architecture.html["Architecture"].
+
+[cols="2,3"]
+|===
+| Réplication / DR | NFS sur TLS en 9.19.1 
+
+
+| SVM-DR | *Prise en charge.* La ligne d’interface TLS est répliquée au niveau SVM (statut, nom et UUID du certificat, authentification hôte obligatoire). Le  `-allow-nfs-tls-only`champ export-rule est répliqué avec la règles d'export. 
+
+
+| MetroCluster (Réplication au niveau SVM) | *Prise en charge.* Même chemin de réplication que SVM-DR. Le cycle de vie du matériel de certificat sur la SVM de destination est géré par le gestionnaire de certificats. 
+
+
+| SnapMirror (réplication de volume) | *Prise en charge.* Orthogonale au transport TLS côté client. 
+
+
+| Variantes ONTAP hébergées dans le cloud | *Non pris en charge* à la version 9.19.1. 
+|===
+
+
+[[features-with-constraints]]
+=== Fonctionnalités avec contraintes
+
+*Exigences du client.* Le client NFS doit implémenter TLS pour ONC RPC conformément à link:https://www.rfc-editor.org/rfc/rfc9289.html["RFC 9289"]. Sous Linux, cela est assuré par un client NFS intégré au noyau qui prend en charge l’option de montage  `xprtsec=tls` (ou  `xprtsec=mtls`), utilisée en combinaison avec l’assistant de négociation TLS en espace utilisateur  `tlshd` du paquet  `ktls-utils`. Pour la matrice client définitive — incluant les versions minimales du noyau, les versions des paquets en espace utilisateur et les distributions Linux prises en charge — consultez l’Interoperability Matrix Tool (IMT).
+
+
+
+[[limitations-and-caveats]]
+== Limitations et mises en garde
+
+* *Variantes ONTAP hébergées dans le cloud.* Cloud Volumes ONTAP et les autres variantes ONTAP hébergées dans le cloud ne sont pas prises en charge par ONTAP 9.19.1.
+* *NFS sur accès direct à la mémoire à distance (RDMA).* NFS sur RDMA et NFS sur TLS sont mutuellement exclusifs sur la même LIF.
+
+
+
+
+[[per-node-limits]]
+=== Limites par nœud
+
+
+IMPORTANT: Il n'existe actuellement aucune limite de connexion prédéfinie pour NFS sur TLS dans ONTAP. Pour obtenir les informations les plus récentes sur les limites prises en charge, veuillez consulter link:https://hwu.netapp.com["Hardware Universe"].
+
+*MEILLEURE PRATIQUE :* Maintenez le nombre de connexions NFS-over-TLS par nœud en dessous de 10 000 afin de conserver une marge de manœuvre pour les tempêtes de montage et les prises de contrôle HA.
+
+
+
+[[per-cluster-limits]]
+=== Limites par cluster
+
+Aucun plafond agrégé distinct à l'échelle du cluster n'est imposé dans le code.
+
+
+
+[[per-lif-and-per-object-limits]]
+=== Limites par LIF et par objet
+
+* La table de configuration est indexée sur le tuple  `(SVM, LIF)`. Chaque LIF contient soit zéro, soit une ligne de configuration NFS sur TLS.
+* Un seul certificat serveur est associé à chaque LIF compatible NFS sur TLS. Le certificat est spécifié au moment de  `vserver nfs tls interface enable` et peut être modifié avec  `... modify -certificate-name`.
+* `-allow-nfs-tls-only` est une seule valeur booléenne par règle de stratégie d'exportation. Cette fonctionnalité n'impose aucune limite supplémentaire au nombre de règles ; les limites maximales standard par stratégie et par SVM s'appliquent.
+
+
+
+
+[[enforcement-behavior]]
+=== Comportement de mise en application
+
+**`-allow-nfs-tls-only true` Application.** Lorsque ce champ est `true` présent dans une règle de stratégie d'exportation correspondante, les tentatives de connexion NFS provenant de clients correspondants qui n'utilisent pas TLS pour ONC RPC conformément à la RFC 9289 sont rejetées lors de l'évaluation de la règle d'exportation. Les connexions TLS existantes de ces clients ne sont pas affectées.
+
+**`-enforce-host-auth true` Application.** Lorsque `true` sur un `(SVM, LIF)`, les échanges TLS dont l'identité du certificat client ne correspond pas à l'identité d'hôte configurée pour la LIF sont rejetés lors de la poignée de main TLS. L'événement EMS `Nblade.TLSHandshakeFailed` (gravité `ERR`, limité à une fois toutes les 10 minutes par source d'événement) est émis pour chaque échec de poignée de main.
+
+**Limites de débit EMS.** 
+`Nblade.TLSConfigError` et  `Nblade.TLSHandshakeFailed` sont limités à un événement toutes les 10 minutes par source d'événement.  `Nblade.NfsTlsDisabled` est limité à un événement toutes les 24 heures par source d'événement. Ces plafonds intentionnels limitent le volume des journaux d'événements lors de conditions de défaillance prolongées. Lors d'une rafale, seule la première occurrence dans chaque fenêtre de limitation de débit est enregistrée.
+
+
+
+[[soft-limits-and-recommendations]]
+=== Limites souples et recommandations
+
+Ce qui suit sont des recommandations, pas des valeurs maximales strictes.
+
+* *Maintenez une marge de sécurité inférieure à 10 000 connexions NFS-over-TLS par nœud.* Il n'y a pas de limite fixe, mais maintenez le nombre de connexions NFS-over-TLS par nœud à 10 000 ou moins.
+* *Prévoyez une nouvelle négociation TLS complète après une prise de contrôle HA.* Les sessions TLS sont limitées au protocole TCP et ne survivent pas à une prise de contrôle. Chaque client se reconnectera avec une nouvelle négociation TLS 1.3 sur le nœud survivant ou de destination, alors prévoyez une tempête de montages. Maintenir le nombre de connexions bien en dessous de 10 000 vous donne une marge pour absorber ce pic.
+

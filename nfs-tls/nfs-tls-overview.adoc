@@ -1,0 +1,49 @@
+---
+sidebar: sidebar 
+permalink: nfs-tls/nfs-tls-overview.html 
+keywords: nfs, tls, encryption, ontap, rfc9289, in-transit, prerequisites, requirements 
+summary: ONTAP 9.19.1 introduit la prise en charge native de NFS sur TLS, permettant le chiffrement en transit du trafic NFS RPC conformément à la RFC 9289, sans Kerberos ni IPsec. 
+---
+= Aperçu de NFS sur TLS
+:toc: macro
+:hardbreaks:
+:toclevels: 1
+:allow-uri-read: 
+:toc: 
+:toclevels: 1
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+:toc-position: content
+
+
+[role="lead"]
+ONTAP 9.19.1 introduit NFS sur TLS, le « bouton facile » tant attendu pour chiffrer votre trafic NFS.
+
+Avant cette fonctionnalité, le chiffrement de votre charge utile NFS en transit était limité à IPsec ou Kerberos. Bien que les deux soient efficaces, la configuration était fastidieuse et les pénalités de performance pouvaient être élevées. Les deux méthodes étaient des solutions « ajoutées » — des solutions non définies dans une RFC spécifiquement pour NFS. link:https://www.rfc-editor.org/rfc/rfc9289.html["RFC 9289"], intitulée « Toward Remote Procedure Call Encryption by Default », a changé cela. Désormais, NFSv3 et NFSv4.x peuvent chiffrer le trafic RPC NFS en transit à l'aide de TLS 1.3. Aucun besoin de Kerberos. Aucun besoin d'IPsec.
+
+
+
+[[prerequisites]]
+== Prérequis
+
+Pour utiliser ONTAP NFS sur TLS, vous devez respecter les exigences suivantes.
+
+* ...exécuter ONTAP 9.19.1
++
+** Les personnalités cloud ONTAP ne sont pas prises en charge pour le moment
+
+
+* ...dispose d'une licence NFS
+* ...ont un client NFS trouvé dans le link:https://imt.netapp.com["NetApp Matrice d'interopérabilité"]
+
+
+
+
+[[what-it-doesnt-do]]
+== Ce qu'il ne fait pas
+
+NFS sur TLS sécurise la couche de transport – il ne modifie pas la façon dont NFS authentifie les utilisateurs.
+
+*Authentification utilisateur par certificat.* NFS sur TLS *ne fournit pas de nouveau mécanisme d'authentification utilisateur*. Vous avez toujours besoin soit de  `auth_sys` soit de  `krb5` pour l'authentification utilisateur. Vous pouvez toujours utiliser  `krb5i` et  `krb5p`, mais TLS rend leurs protections d'intégrité et de confidentialité redondantes, et vous subirez toujours une perte de performance.

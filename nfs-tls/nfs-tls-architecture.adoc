@@ -1,0 +1,68 @@
+---
+sidebar: sidebar 
+permalink: nfs-tls/nfs-tls-architecture.html 
+keywords: nfs, tls, architecture, data flow, ha takeover, svm-dr, metrocluster 
+summary: 'NFS sur TLS est une fonctionnalité de sécurité de transport par LIF du serveur NFS ONTAP, configurée par SVM et répliquée à l"échelle du cluster.' 
+---
+= Architecture
+:toc: macro
+:hardbreaks:
+:toclevels: 1
+:allow-uri-read: 
+:toc: 
+:toclevels: 1
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+:toc-position: content
+
+
+[role="lead"]
+NFS sur TLS est une fonctionnalité de sécurité de transport par LIF du serveur NFS ONTAP. Elle applique une protection TLS au trafic NFS entre le client et le serveur NFS ONTAP. La configuration est gérée via la famille de commandes  `vserver nfs tls interface` et la ressource REST correspondante  `/api/protocols/nfs/tls/interfaces`.
+
+La configuration est limitée à la SVM, appliquée à chaque LIF et répliquée à l'échelle du cluster. Tout nœud hébergeant actuellement la LIF applique les mêmes paramètres TLS. Il n'existe pas d'option d'activation/désactivation globale. L'activation et la désactivation sont des opérations spécifiques à chaque LIF.
+
+
+
+[[external-dependencies]]
+== Dépendances externes
+
+Aucun appel sortant vers une autorité de certification externe (CA) ou un répondeur OCSP n'est effectué à partir du chemin de négociation TLS NFS dans la version 9.19.1. La validation de la chaîne et du Subject Alternative Name (SAN) est effectuée localement par rapport au certificat installé sur le SVM.
+
+
+
+[[data-flow]]
+== Flux de données
+
+NFSv3 et NFSv4 chiffrent l'intégralité de la charge utile NFS après la première paire appel/réponse NULL vers le port TCP 2049. L'appel NULL utilise le nouveau  `AUTH_TLS` identifiant d'authentification défini dans la RFC 9289, signalant l'intention du client d'utiliser TLS. Le serveur répond par une réponse NULL qui accepte ou rejette la mise à niveau TLS. Si le client reçoit une acceptation, il poursuit avec l'établissement de la liaison TLS 1.3 sur la même connexion TCP. Si l'établissement de la liaison réussit, tous les appels RPC NFS suivants sont encapsulés dans des enregistrements TLS et chiffrés en transit.
+
+Il existe une différence entre NFSv3 et NFSv4.x : NFSv3 repose sur des protocoles auxiliaires -`rpcbind` (portmapper), `mountd`, NLM (Network Lock Manager) et NSM (Network Status Monitor), qui ne sont pas transmis via la connexion protégée par TLS et sont transmis en clair. Les organisations ayant des exigences de conformité imposant le chiffrement complet du trafic de stockage doivent en tenir compte lors du choix entre NFSv3 et NFSv4.x. NFSv4.x élimine ces protocoles de canal secondaire ; tout le trafic NFSv4.x est consolidé sur le port 2049 et chiffré après la poignée de main TLS.
+
+image:nfs-tls-v3-handshake.png["légende=\"Diagramme de séquence de négociation NFS sur TLS\", alt=\"Diagramme de séquence illustrant le flux de négociation NFS sur TLS entre un client et le serveur NFS ONTAP.\""]
+
+NFSv4.x n'utilise pas de protocoles auxiliaires, donc tous les RPC NFSv4.x sont chiffrés après la négociation TLS.
+
+image:nfs-tls-v4-handshake.png["caption=\"Diagramme de séquence d'établissement de liaison NFSv4.1 sur TLS\", alt=\"Diagramme de séquence illustrant le flux d'établissement de liaison NFSv4.1 sur TLS entre un client et le serveur NFS ONTAP.\""]
+
+ONTAP termine le protocole TLS au niveau du serveur NFS sur le nœud hébergeant actuellement la LIF. Au-dessus du transport, le serveur NFS traite les RPC de la même manière qu'une connexion NFS non TLS.
+
+
+
+[[ha-takeover-behavior]]
+== Comportement de prise de contrôle HA
+
+Les sessions NFS sur TLS existantes ne survivent pas à une prise de contrôle HA ni à une panne imprévue d'un nœud. TLS est un protocole de transport de session basé sur TCP. Lorsque les connexions TCP sont interrompues avec le nœud, les sessions TLS le sont également.
+
+Après la prise de contrôle, les clients se reconnectent et effectuent une nouvelle négociation TLS 1.3. Le nœud partenaire utilise la même configuration TLS répliquée (liaison du certificat, paramètre d'authentification de l'hôte et paramètre de validation SAN), car l'enregistrement de configuration est répliqué à l'échelle du cluster.
+
+Les tickets de session TLS et les clés pré-partagées (PSK) sont locaux au nœud et ne sont pas transférés au partenaire. Attendez-vous à une recrudescence des reconnexions avec des négociations TLS complètes lors de la prise de contrôle.
+
+
+
+[[metrocluster-and-svm-dr-behavior]]
+== MetroCluster et le comportement SVM-DR
+
+Le certificat et la configuration de l'interface TLS sont répliqués avec la SVM via le chemin de réplication standard SVM-DR et MetroCluster au niveau SVM. Après un basculement avec préservation de l'identité, la SVM de destination conserve la même configuration TLS par LIF.
+
+Le champ  `-allow-nfs-tls-only` de la règle d'export-policy est répliqué avec le reste de la règle d'export-policy via le chemin de réplication standard des règles d'export-policy. Dans SVM-DR, la règle accompagne la stratégie lorsque celle-ci est répliquée avec la SVM.

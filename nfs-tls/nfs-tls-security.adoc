@@ -1,0 +1,116 @@
+---
+sidebar: sidebar 
+permalink: nfs-tls/nfs-tls-security.html 
+keywords: nfs, tls, security, rbac, encryption, auditing, certificates, mtls 
+summary: NFS sur TLS utilise le RBAC ONTAP standard, nécessite un certificat serveur X.509 par LIF et ne prend en charge que TLS 1.3. 
+---
+= Sécurité
+:toc: macro
+:hardbreaks:
+:toclevels: 1
+:allow-uri-read: 
+:toc: 
+:toclevels: 1
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+:toc-position: content
+
+
+[role="lead"]
+Cette page traite des exigences RBAC, de la validation des certificats, des paramètres de chiffrement, de l'audit et des limitations de sécurité connues pour NFS sur TLS dans ONTAP 9.19.1.
+
+
+
+[[role-and-rbac-requirements]]
+== Exigences relatives aux rôles et au contrôle d'accès basé sur les rôles (RBAC)
+
+La `vserver nfs tls interface` famille de commandes-`enable`, `disable`, `modify` et `show`-- est limitée à la portée de la SVM. Elle peut être exécutée par le rôle du cluster `admin` ou par le `vsadmin` de la SVM propriétaire.
+
+Le champ  `-allow-nfs-tls-only` sur  `vserver export-policy rule` est un champ d'écriture sur l'objet de règle d'exportation existant. Il utilise le RBAC standard des règles de stratégie d'exportation.
+
+Les points de terminaison REST sous  `/api/protocols/nfs/tls/interfaces` correspondent directement aux commandes CLI ci-dessus. Ils utilisent le RBAC standard pour l'administration NAS. Aucun rôle REST distinct n'est défini.
+
+
+
+[[authentication-and-authorization]]
+== Authentification et autorisation
+
+L'activation de NFS sur TLS sur une LIF nécessite un certificat X.509 serveur installé sur la SVM via  `security certificate install`. Le certificat est lié à chaque LIF lors de l'activation à l'aide de  `-certificate-name`.
+
+ONTAP effectue deux vérifications sur le certificat serveur fourni :
+
+. Le nom commun (CN) du certificat doit correspondre au nom de domaine pleinement qualifié (FQDN) de la LIF.
+. L'adresse IP du LIF doit figurer dans la liste des noms alternatifs du sujet (SAN) du certificat.
+
+
+Un  `-skip-san-validation` booléen optionnel (par défaut  `false`) supprime la vérification SAN lors de l’activation ou de la modification.
+
+Chaque échec de vérification renvoie une erreur distincte.
+
+L'authentification de l'hôte par TLS mutuel (mTLS) est facultative. Définissez  `-enforce-host-auth true` sur  `vserver nfs tls interface enable` ou  `modify` pour l'activer. La valeur par défaut est  `false`, ce qui signifie une authentification du serveur uniquement. Les certificats clients sont validés par rapport à la chaîne de confiance de l'autorité de certification (CA) installée sur la SVM, dont vous êtes responsable de l'approvisionnement.
+
+
+
+[[user-authentication]]
+=== Authentification de l'utilisateur
+
+L'authentification utilisateur reste inchangée par TLS. TLS ajoute la confidentialité des données transmises et l'authentification de l'hôte. `AUTH_SYS` L'UID/GID UNIX ou `RPCSEC_GSS`Kerberos doivent toujours être utilisés pour l'authentification des utilisateurs RPC. La RFC 9289 est explicite à ce sujet : TLS protège le transport, tandis que les mécanismes d'authentification NFS existants gèrent l'authentification utilisateur comme auparavant.
+
+
+
+[[encryption]]
+== Chiffrement
+
+
+
+[[in-transit]]
+=== En transit
+
+Lorsque NFS sur TLS est activé sur une LIF, seule la version TLS 1.3 est utilisée. Les suites de chiffrement suivantes sont prises en charge :
+
+* `TLS_AES_128_GCM_SHA256`
+* `TLS_AES_256_GCM_SHA384`
+* `TLS_CHACHA20_POLY1305_SHA256`
+
+
+L'échange de clés utilise ECDHE sur la  `secp384r1` courbe. Le chiffrement s'applique au trafic NFSv3 et NFSv4.x transitant par l'interface logique LIF compatible TLS.
+
+
+
+[[auditing]]
+== Audit
+
+Toutes les modifications de configuration NFS sur TLS sont enregistrées dans le journal des audits ONTAP (`security audit log show`. Les opérations suivantes sont consignées :
+
+* `vserver nfs tls interface enable`
+* `vserver nfs tls interface modify`
+* `vserver nfs tls interface disable`
+* `vserver export-policy rule create -allow-nfs-tls-only`
+* `vserver export-policy rule modify -allow-nfs-tls-only`
+
+
+Les opérations en lecture seule `show` et `GET` suivent la politique d'audit standard d'ONTAP et ne sont généralement pas enregistrées, sauf si l'audit est configuré pour les consigner.
+
+Trois événements EMS visibles par le client sont émis sur le chemin d'accès aux données NFS-over-TLS. Pour plus de détails sur les événements, les conditions de déclenchement et les limites de débit, consultez link:nfs-tls-monitor.html["Messages EMS"].
+
+
+
+[[tenancy-boundary]]
+== Limite de location
+
+La configuration NFS-over-TLS est propre à chaque SVM. Un administrateur SVM peut uniquement consulter et gérer la configuration TLS sur les LIF appartenant à sa propre SVM. Les administrateurs de cluster voient toutes les SVM.
+
+Les références aux certificats serveur sont locales à la SVM. La configuration est répliquée à l'échelle du cluster afin que tout nœud desservant une LIF donnée applique la même configuration TLS.
+
+
+
+[[known-security-relevant-limitations]]
+== Limitations connues en matière de sécurité
+
+**Avertissement concernant les certificats auto-signés.** Les commandes CLI `enable` et `modify` avertissent que les certificats auto-signés vous exposent à une attaque de type man-in-the-middle. Utilisez un certificat signé par une autorité de certification installé via `security certificate install`.
+
+**L'authentification TLS mutuelle est optionnelle.** Par défaut,  `-enforce-host-auth false`NFS sur TLS protège la confidentialité et l'intégrité des données transmises et authentifie le serveur auprès du client, mais n'authentifie pas cryptographiquement l'hôte client. Si vous avez besoin de cela, activez explicitement mTLS.
+
+**L'application exclusive du protocole TLS se fait par règle de stratégie d'exportation, et non globalement.** Jusqu'à ce que vous définissiez  `-allow-nfs-tls-only true` sur la règle de stratégie d'exportation concernée, la même LIF peut toujours accepter des connexions NFS non TLS de la part de clients autrement autorisés par la règle.

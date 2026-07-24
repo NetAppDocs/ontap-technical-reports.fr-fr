@@ -1,0 +1,59 @@
+---
+sidebar: sidebar 
+permalink: nfs-tls/nfs-tls-performance.html 
+keywords: nfs, tls, performance, cpu, offload, ktls, connectx, handshake latency 
+summary: 'TLS engendre une surcharge au niveau du processeur, de la mémoire et du réseau. L"accélération matérielle sur les cartes réseau CX6-Dx et CX7 réduit considérablement la consommation du processeur en régime permanent.' 
+---
+= Performances
+:toc: macro
+:hardbreaks:
+:toclevels: 1
+:allow-uri-read: 
+:toc: 
+:toclevels: 1
+:nofooter: 
+:icons: font
+:linkattrs: 
+:imagesdir: ../media/
+:toc-position: content
+
+
+[role="lead"]
+TLS ajoute un coût dans trois dimensions de ressources : processeur, mémoire et réseau.
+
+
+
+[[resource-cost-overview]]
+== Aperçu des coûts des ressources
+
+*CPU* est le principal coût. La poignée de main TLS 1.3 est une dépense unique par connexion, couvrant la cryptographie asymétrique, l'analyse du certificat et l'échange de clés. Une fois la connexion établie, la surcharge en régime permanent correspond au chiffrement symétrique des enregistrements à l'aide d'AES-GCM ou de ChaCha20-Poly1305. Sur les plateformes équipées de cartes réseau Mellanox ConnectX-6 Dx (CX6-Dx) ou ConnectX-7 (CX7), la carte réseau effectue elle-même le chiffrement et le déchiffrement via le déchargement kernel TLS (KTLS), réduisant de manière significative le coût CPU en régime permanent.
+
+L'impact sur la *mémoire* est faible. TLS ajoute un état de session par connexion et un cache de configuration TLS par nœud. La taille du cache est limitée ; les entrées expirent selon une durée de vie (TTL) et sont actualisées en arrière-plan.
+
+La surcharge *réseau* est faible. Le tramage d'enregistrement TLS 1.3 ajoute une surcharge fixe par enregistrement et une balise d'authentification. Le handshake ajoute des allers-retours uniquement lors de l'établissement de la connexion, et non par RPC.
+
+
+
+[[tls-performance-penalty]]
+== Pénalité de performance TLS
+
+Il existe deux chemins distincts pour NFS sur TLS dans ONTAP : le chemin de déchargement matériel et le chemin TLS logiciel. Le chemin de déchargement matériel est disponible sur les plateformes avec des cartes réseau CX6-Dx ou CX7. Le chemin TLS logiciel est utilisé sur les plateformes sans cartes réseau compatibles avec le déchargement.
+
+Sur les plateformes équipées de cartes réseau compatibles avec le déchargement, les performances observées se situent à environ 10 % de celles du NFS en clair, pour diverses charges de travail. Sur les plateformes dépourvues de cartes réseau compatibles avec le déchargement, le chemin TLS logiciel est plus sensible à la charge de travail et peut présenter des réductions de débit d'environ 30 % par rapport au NFS en clair dans le pire des cas. Ces valeurs sont des chiffres de caractérisation, et non des spécifications garanties. Vos résultats varieront en fonction du type de charge de travail, de la taille des E/S et du nombre de connexions. Si vous mélangez du trafic TLS et non-TLS sur le même nœud, attendez-vous également à un impact sur le débit du trafic non-TLS.
+
+
+
+[[scaling-factors]]
+== Facteurs d'échelle
+
+Les facteurs suivants augmentent le coût CPU global du protocole TLS ou la latence de la négociation TLS :
+
+*Fréquence des connexions.* Chaque nouvelle connexion engendre des frais d'établissement de liaison. Les charges de travail qui ouvrent et ferment fréquemment des connexions TCP au serveur NFS présentent une utilisation agrégée du processeur TLS plus élevée que celles qui utilisent des connexions de longue durée.
+
+*Surcharges de montage après une reprise de contrôle ou un événement réseau.* Les charges de travail où de nombreux clients se reconnectent simultanément, comme après une reprise de contrôle HA, supportent l'intégralité du coût de la poignée de main TLS 1.3 par connexion. Surveillez `nfs_tls:tls_handshake_average_latency` et planifiez la capacité de connexion en conséquence.
+
+*Grand nombre d'identités client distinctes (mutual TLS).* Les déploiements mutual TLS (mTLS) adaptent la charge CPU de la négociation en fonction du nombre de certificats clients uniques validés.
+
+*mTLS vs. TLS côté serveur uniquement.* L’activation de l’authentification de l’hôte (mTLS) ajoute la validation du certificat client côté serveur, ce qui rend chaque négociation légèrement plus coûteuse qu’avec TLS côté serveur uniquement. Le coût par RPC en régime permanent reste inchangé.
+
+*Changements fréquents de configuration TLS.* Les modifications fréquentes de la configuration de l'interface TLS (rotation des certificats, cycles d'activation/désactivation) invalident le cache de configuration TLS par nœud et forcent les recherches vers l'hôte de gestion, augmentant brièvement la latence de la négociation.
