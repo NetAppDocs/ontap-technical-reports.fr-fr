@@ -2345,8 +2345,6 @@ ONTAP est une puissante plateforme de gestion des données dont les fonctionnali
   <block id="739f428040feee735e00029f2f74aaad" category="summary">Cette page présente les dernières mises à jour pour NetApp AFX et sera mise à jour à chaque nouvelle version.</block>
   <block id="89bef61b77bccd688eb4c742aab2b38b" category="doc">Quoi de neuf dans NetApp AFX</block>
   <block id="f5cb5bdaaa412361fa89cf3912168e46" category="summary">IPsec offre une alternative au chiffrement NFS ou SMB et constitue la seule option de chiffrement en transit pour le trafic iSCSI.</block>
-  <block id="0edc4f2a9dbc6aeccfda9e35d7fc1e2c" category="sidebar">NetApp technical reports fournissent un contexte supplémentaire pour la planification et l’optimisation des déploiements au sein de différents écosystèmes ou avec différents protocoles. Certains rapports techniques ONTAP fournissent un contexte architectural et des pratiques recommandées pour les fonctionnalités et capacités d’ONTAP.</block>
-  <block id="769f9a17e2917e1c464ebd1dfbcbc78f" category="sidebar">Rapports techniques NetApp</block>
   <block id="5c6ab1284b6b7a5a7102854a969c99be" category="sidebar">Systèmes de stockage</block>
   <block id="e9d7397e9772df2e11071d57657f4b22" category="sidebar">AFX</block>
   <block id="33871b6190a8d5adbe8b15282054766c" category="sidebar">Quoi de neuf</block>
@@ -2528,7 +2526,6 @@ ONTAP est une puissante plateforme de gestion des données dont les fonctionnali
   <block id="799311ec2a93db750cc80868f6de9f45" category="list-text">Gravité<block ref="320f86f60f25459ba5550e000b2c3929" prefix=" " category="inline-code"></block>, alerte limitée à 24 heures. Déclenchée lorsqu’un client tente NFS sur TLS sur une SVM où la fonctionnalité est désactivée. Champs enregistrés : nom de la SVM.</block>
   <block id="3073a9f5875a227e23219f0525b7efbd" category="list-text"><block ref="77e0cb8b7c203cd744328c65b0690682" prefix="" category="inline-code"></block></block>
   <block id="4dd7e90fe2de7e36ca6e0f6c4551de0c" category="list-text">Gravité<block ref="cd22bad976363fdd1bfbf6759fede482" prefix=" " category="inline-code"></block>. Déclenché lorsqu’un client correspondant à une règle de règles d'export<block ref="0db3324f6e6bdfb7434bca0fd896c8b2" prefix=" " category="inline-code"></block> tente de monter ou d’accéder au chemin NFS sans TLS. Utilisez cet événement pour confirmer que les clients non-TLS sont bien bloqués comme prévu.</block>
-  <block id="d4d963696760850746648f3a41f8ecd1" category="summary">ONTAP 9.19.1 introduit la prise en charge native de NFS sur TLS, permettant le chiffrement en transit du trafic NFS RPC conformément à la RFC 9289, sans Kerberos ni IPsec.</block>
   <block id="08ed4a47b941685c9edbc9dcd5d9ee57" category="doc">Aperçu de NFS sur TLS</block>
   <block id="2ae4132b55036d673c6efc936c13f75e" category="paragraph">ONTAP 9.19.1 introduit NFS sur TLS, le « bouton facile » tant attendu pour chiffrer votre trafic NFS.</block>
   <block id="ffea051388edee8ef372949be32bff50" category="inline-link-macro">RFC 9289</block>
@@ -2559,7 +2556,6 @@ ONTAP est une puissante plateforme de gestion des données dont les fonctionnali
   <block id="af308a9544f9cd6667d954e201388346" category="paragraph">*Grand nombre d'identités client distinctes (mutual TLS).* Les déploiements mutual TLS (mTLS) adaptent la charge CPU de la négociation en fonction du nombre de certificats clients uniques validés.</block>
   <block id="21864784471d974f421182a25769daa9" category="paragraph">*mTLS vs. TLS côté serveur uniquement.* L’activation de l’authentification de l’hôte (mTLS) ajoute la validation du certificat client côté serveur, ce qui rend chaque négociation légèrement plus coûteuse qu’avec TLS côté serveur uniquement. Le coût par RPC en régime permanent reste inchangé.</block>
   <block id="097bc9f656efd3efd7bb245df52f4e67" category="paragraph">*Changements fréquents de configuration TLS.* Les modifications fréquentes de la configuration de l'interface TLS (rotation des certificats, cycles d'activation/désactivation) invalident le cache de configuration TLS par nœud et forcent les recherches vers l'hôte de gestion, augmentant brièvement la latence de la négociation.</block>
-  <block id="60d3ef38aef28b0416bcd458ffc3d840" category="summary">NFS sur TLS fonctionne avec les contrôles de règles d'export ONTAP standard et se réplique via SVM-DR et MetroCluster. Cette page aborde également les limites de connexion, le comportement d'application et les recommandations opérationnelles.</block>
   <block id="8d217ebd6342c5cff32664c568fede0c" category="doc">Interopérabilité et limites</block>
   <block id="ff876c23f5a4e3c38b9a50b2f7b4a1fa" category="paragraph">NFS sur TLS s’intègre aux contrôles standard des règles d’export ONTAP, se réplique via SVM-DR et MetroCluster, et comporte un petit ensemble de limitations strictes de plateforme ainsi que des recommandations opérationnelles que vous devez connaître avant le déploiement.</block>
   <block id="67a915151759ecc737f698391f7cfd08" category="section-title">Interopérabilité</block>
@@ -2675,4 +2671,8 @@ ONTAP est une puissante plateforme de gestion des données dont les fonctionnali
   <block id="083f5724b7ba8a1aee93e65207c1ca46" category="list-text"><block ref="083f5724b7ba8a1aee93e65207c1ca46" category="inline-link-macro-rx"></block></block>
   <block id="0b177bc573a406d57588f5636aee8329" category="inline-link-macro">Fiche technique AFX</block>
   <block id="ccc213f9aa4c560ef128ce5b7fec0244" category="list-text"><block ref="ccc213f9aa4c560ef128ce5b7fec0244" category="inline-link-macro-rx"></block></block>
+  <block id="28c20cc636e9273bfdbbb9e04c22b3eb" category="summary">ONTAP 9.19.1 introduit le NFS natif sur TLS, permettant le chiffrement en transit du NFS conformément à la RFC 9289 sans Kerberos ni IPsec.</block>
+  <block id="49f0664f282179029e2131d30362f45d" category="summary">NFS sur TLS fonctionne avec les contrôles de stratégie d'exportation ONTAP standard et se réplique via SVM-DR et MetroCluster. Cette page aborde également les limites de connexion, le comportement d'application des règles et les recommandations opérationnelles.</block>
+  <block id="7ec1eb1e8c27af2d560415def72f2dcf" category="sidebar">Les rapports techniques ONTAP fournissent un contexte supplémentaire pour la planification et l’optimisation des déploiements au sein de différents écosystèmes ou avec différents protocoles. Certains rapports techniques ONTAP fournissent un contexte architectural et des pratiques recommandées pour les fonctionnalités et capacités ONTAP.</block>
+  <block id="9678a7dcb872318bf33163b8a1ba5331" category="sidebar">Rapports techniques ONTAP</block>
 </blocks>

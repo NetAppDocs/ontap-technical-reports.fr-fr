@@ -1,6 +1,6 @@
 ---
 settings:
-  name: NetApp Technical Reports
+  name: ONTAP Technical Reports
   search: ontap-technical-reports, ontap-apps-dbs, netapp-solutions-sap
   internal:
     pdf_enabled: false
@@ -10,7 +10,7 @@ settings:
   langs: fr-fr,us-en,de-de,es-es,it-it,pt-br,ja-jp,ko-kr,zh-cn,zh-tw
 sidebar:
   entries:
-  - title: Rapports techniques NetApp
+  - title: Rapports techniques ONTAP
     url: "/index.html"
   - title: Applications et bases de données
     url: "/apps-dbs.html"
