@@ -1,0 +1,361 @@
+---
+sidebar: sidebar 
+permalink: afx/afx-performance-benchmarks.html 
+keywords: netapp afx, performance, benchmarks, elbencho, nfs, mount options, best practices 
+summary: 'Instructions pour reproduire les résultats des tests de performance NetApp AFX, y compris les règles d"export, le volume, le montage, le client et les considérations réseau.' 
+---
+= Conseils pour l'évaluation des performances
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx/
+
+
+[role="lead"]
+Cette page fournit des conseils de configuration pour reproduire les résultats du test de performance NetApp AFX décrits dans link:afx-performance.html#benchmark-results["Résultats de référence"]. Il s'agit de considérations générales et de lignes directrices de configuration plutôt que d'une procédure de test complète.
+
+Pour des informations générales sur le protocole NFS et les pratiques recommandées, consultez link:https://www.netapp.com/pdf.html?item=/media/10720-tr-4067.pdf["Tr-4067 : guide des bonnes pratiques et d'implémentation NFS dans ONTAP"^] et link:afx-performance.html#nfsv4x-performance-enhancements["Améliorations des performances de NFSv4.x"].
+
+Des scripts d'analyse comparative NAS pour la création de volumes, la gestion des LIF et le réglage des clients sont disponibles dans le dépôt link:https://github.com/whyistheinternetbroken/Benchmarking/tree/main/ONTAP["Analyse comparative/ONTAP"^].
+
+
+
+[[performance-testing-considerations]]
+== Considérations relatives aux tests de performance
+
+Les tests de performance visent généralement à déterminer les limites de ce qu’un système peut accomplir dans des scénarios de charge de travail spécifiques. La plupart du temps, il n’est pas nécessaire de modifier les paramètres par défaut d’ONTAP pour obtenir de bonnes performances pour la majorité des charges de travail, mais dans certains cas, vous pouvez souhaiter ajuster certaines configurations afin d’optimiser le système.
+
+
+
+[[nfs-export-policy-configuration]]
+== Configuration des règles d'export NFS
+
+Les règles d'export dans ONTAP déterminent comment l'accès aux exports NFS est contrôlé. Chaque volume nécessite la définition d'une règle d'export, avec des règles configurées dans la politique. Si aucune règle n'est configurée dans une politique, cela sera considéré comme « aucun accès ». Pour plus d'informations, consultez link:https://docs.netapp.com/us-en/ontap-technical-reports/ontap-security-hardening/securing-nfs.html["Sécurisation NFS"^] et la link:https://docs.netapp.com/us-en/ontap/nfs-config/export-policies-concept.html["Documentation sur les règles d'export ONTAP"^].
+
+Pour l'évaluation des performances, nous sommes probablement moins préoccupés par les permissions accordées aux clients utilisés pour les tests et souhaitons plutôt éviter toute erreur liée aux permissions. Il est donc recommandé de s'assurer que toute règle d'export policy soit configurée en accès totalement ouvert pour le volume de données, mais uniquement pour les clients utilisés pour accéder aux jeux de données. De plus, la stratégie vsroot *doit* autoriser l'accès en lecture dans la règle pour la traversée de chemin.
+
+*Stratégie vsroot (utilise la stratégie "default")*
+
+[listing]
+----
+export-policy rule create -policyname default -clientmatch 0/0 -rorule any -rwrule never
+----
+*politique de volume de données*
+
+[listing]
+----
+export-policy create -policyname [name] -vserver [SVM]
+export-policy rule create -policyname [name] -clientmatch [client1],[client2],..[clientN] -rorule any -rwrule any -superuser any -anon 0 -chown-mode unrestricted -ntfs-unix-security-ops ignore
+----
+
+
+[[nfs-server-configuration]]
+== Configuration du serveur NFS
+
+Les options de serveur NFS suivantes ont été utilisées pour les tests de performance internes d'AFX. D'autres options de serveur NFS peuvent également être activées (par exemple, la prise en charge des ACL NFSv4), mais elles ne sont pas abordées dans ces conseils de test de performance. Pour le contexte des performances de NFSv4.1, pNFS et du trunking de session sur AFX, voir link:afx-performance.html#nfsv4x-performance-enhancements["Améliorations des performances de NFSv4.x"].
+
+|===
+| Option | Valeur 
+
+
+| v4.1 | Activé 
+
+
+| domaine ID v4 | [nom de domaine]* 
+
+
+| v4.1-pnfs | Activé 
+
+
+| v4.1-trunking | Activé 
+
+
+| taille maximale de transfert TCP | 262144 
+
+
+| identificateurs v3-64bit | Activé 
+
+
+| identificateurs v4-64bit | Activé 
+
+
+| v3 | Activé 
+
+
+| v4.1-read-delegation | Désactivé 
+
+
+| délégation d'écriture v4.1 | Désactivé 
+
+
+| rdma | Activé (facultatif) 
+
+
+| v4.0 | Désactivé 
+
+
+| v3-hide-snapshot | Activé 
+
+
+| montage-rootonly | Désactivé 
+
+
+| nfs-rootonly | Désactivé 
+|===
+*Le domaine d'identification NFSv4 peut prendre n'importe quelle valeur, à condition qu'elle corresponde à celle définie sur les clients NFS.
+
+Pour vérifier le domaine d'identification NFSv4 sur le client :
+
+[listing]
+----
+# nfsidmap -d
+user-domain.company.com
+# cat /etc/idmapd.conf | grep Domain
+Domain = user-domain.company.com
+----
+
+NOTE: Si ces commandes ne fonctionnent pas, il est probable que vous n'ayez pas installé les paquets NFS nécessaires pour utiliser NFSv4.x. Par exemple, nfs-common pour les systèmes basés sur Debian/Ubuntu.
+
+La commande CLI suivante applique la configuration du serveur NFS utilisée pour les tests de performance internes. Un script permettant de se connecter au cluster via SSH et d'appliquer cette configuration est disponible à link:https://github.com/whyistheinternetbroken/Benchmarking/blob/main/ONTAP/NAS/configure-nfs-server.sh["ONTAP/NAS/configure-nfs-server.sh"^].
+
+
+NOTE: RDMA réduit la latence et augmente le débit pour la plupart des charges de travail -- environ 10 à 30 %. Pour NFS sur RDMA, voir la link:https://docs.netapp.com/us-en/ontap/nfs-rdma/index.html["Documentation ONTAP NFS sur RDMA"^].
+
+[listing]
+----
+set advanced; nfs modify -vserver [SVM] -v3 enabled -v4.1 enabled -v4.0 disabled -v4-id-domain [yourdomain.com] -v4.1-pnfs enabled -v4.1-trunking enabled -v4-64bit-identifiers enabled -v3-64bit-identifiers enabled -chown-mode unrestricted -tcp-max-xfer-size 262144 -mount-rootonly disabled -nfs-rootonly disabled -v3-hide-snapshot enabled -rdma [enabled optional]
+----
+
+
+[[volume-configuration]]
+== Configuration du volume
+
+La section suivante aborde la création et la configuration des volumes et présente les options à utiliser lors de la création initiale. Pour savoir comment les volumes FlexGroup fonctionnent dans AFX, consultez link:afx-architecture-flexgroup.html#flexgroup-volume-management-improvements["Améliorations de la gestion des volumes FlexGroup"], link:afx-capabilities.html#volume-types["Types de volume"] et link:https://www.netapp.com/pdf.html?item=/media/12385-tr4571.pdf["Tr-4571 : guide des meilleures pratiques et d'implémentation des volumes NetApp ONTAP FlexGroup"^].
+
+|===
+| Paramètre | Valeur 
+
+
+| Type de volume | FlexGroup 
+
+
+| Méthode de création | CLI 
+|===
+[listing]
+----
+set diag; vol create -vserver [SVM] -volume [name] -size [size] -junction-path [/path] -unix-permissions 777 -files-set-maximum true -maxdir-size 4G -is-large-size-enabled true -snapshot-policy none -autosize-mode grow_shrink -policy [data policy] -snapdir-access false
+----
+Valeurs par défaut modifiées :
+
+* Stratégie de snapshot désactivée
+* Maxfiles augmenté
+* Taille maximale du répertoire augmentée
+* Grande taille activée
+* Dimensionnement automatique activé
+* Permissions UNIX 777
+* Analyse du système de fichiers désactivée
+* Accès Snapdir désactivé
+
+
+
+
+[[special-considerations-flexgroup-volumes]]
+=== Considérations particulières -- FlexGroup volumes
+
+Si la charge de travail crée de nombreux fichiers volumineux (>1GB) dans un seul dossier, modifiez le workflow du volume en data :
+
+[listing]
+----
+AFX::> set advanced; vol modify -vserver [SVM] -volume [FlexGroup name] -workflow data
+----
+Si la charge de travail concerne des datastores VMware hébergés sur un FlexGroup volume, désactivez l’option  `-gdd` (Distribution granulaire des données). La distribution granulaire des données n’est pas prise en charge avec le déchargement de copie NFS pour la virtualisation sur AFX ; voir link:afx-architecture-feature-support.html#ontap-features-that-have-been-removedare-unsupported-with-afx["Fonctionnalités ONTAP supprimées ou non prises en charge avec AFX"].
+
+[listing]
+----
+AFX::> set diag; vol modify -vserver [SVM] -volume [FlexGroup name] -granular-data disabled
+----
+
+
+[[why-snapshots-are-disabled]]
+=== Pourquoi les instantanés sont désactivés
+
+En général, les instantanés dans ONTAP n'ont pas d'impact négatif sur les performances globales du système. Pour savoir comment les instantanés et la réplication fonctionnent sur AFX, voir link:afx-capabilities.html#snapshots-and-data-protection["Instantanés et protection des données"]. Cependant, lors des tests de performance, nous désactivons les instantanés pour deux raisons :
+
+* Contrôle précis de l'environnement : nous pouvons créer des instantanés quand nous le souhaitons afin de mieux contrôler les scénarios de création et de faciliter la mesure de leur impact.
+* Flux important de données : de nombreux tests de performance génèrent une grande quantité de données, puis les suppriment, ce qui augmente rapidement la taille des instantanés existants sur le volume. Pour éviter les problèmes d’allocation d’espace, nous désactivons les instantanés.
+
+
+
+NOTE: L'accès à Snapdir est également désactivé afin d'éviter les analyses indésirables du système de fichiers à travers les instantanés.
+
+
+
+[[mount-options]]
+== Options de montage
+
+Les options de montage varient généralement selon les cas d'utilisation. Cette section tente de présenter une liste générale d'options de montage utilisée lors de nos tests de performance internes. Si le serveur NFS est correctement configuré comme indiqué dans <<Configuration du serveur NFS>>, il n'est pas nécessaire de spécifier les versions NFS ni les options wsize/rsize.
+
+Options de base (applicables à tous les clients/scénarios) :
+
+[listing]
+----
+-o tcp,hard,intr
+----
+*Agrégation de sessions (spécifique au système d'exploitation)*
+
+Le trunking de session est également répertorié dans la link:afx-performance.html#benchmark-results["Résultats de référence"] configuration (`trunkdiscovery`). Pour le contexte d'E/S multipath NFSv4.x, voir link:afx-performance.html#nfsv4x-performance-enhancements["Améliorations des performances de NFSv4.x"].
+
+[listing]
+----
+RHEL: trunkdiscovery
+Ubuntu (depends on version): trunkdiscovery (newer releases)
+                             max_connect=4 (older releases)
+----
+*Options spécifiques RDMA*
+
+Pour NFS sur RDMA, consultez le link:https://docs.netapp.com/us-en/ontap/nfs-rdma/index.html["Documentation ONTAP NFS sur RDMA"^].
+
+[listing]
+----
+rdma,write=eager
+----
+
+
+[[other-mount-options]]
+=== Autres options de montage
+
+Certaines charges de travail peuvent tirer parti d'options de montage spécifiques lors des tests de performance. Le tableau suivant présente certaines de ces options et les cas d'utilisation susceptibles d'améliorer les performances.
+
+*Options de montage NFS alternatives et leurs cas d'utilisation*
+
+|===
+| option de montage NFS | Description | Cas d'utilisation 
+
+
+| `nocto` | Désactive la cohérence du cache « close-to-open ». Le client ne revalidera pas les attributs de fichier mis en cache lors de l'ouverture d'un fichier, se basant plutôt sur les données mises en cache, même si celles-ci peuvent être obsolètes. | Charges de travail à forte intensité de lecture sur un seul client, où les fichiers changent rarement (par exemple, contenu web statique, bibliothèques logicielles, archives multimédias en lecture seule). Ne convient pas aux écritures multi-clients. 
+
+
+| `cto` | Active la cohérence du cache entre les versions fermées et ouvertes (par défaut). Lorsqu’un fichier est ouvert, le client vérifie auprès du serveur que sa copie en cache est toujours valide. Garantit qu’un fichier fermé sur un client est considéré comme à jour lorsqu’il est ouvert sur un autre. | Charges de travail à accès partagé multi-clients où la cohérence des données est importante (par exemple, répertoires personnels partagés, environnements de développement collaboratif). 
+
+
+| `actimeo` | Définit la durée d'expiration de tous les caches d'attributs (acregmin, acregmax, acdirmin, acdirmax) à une seule valeur en secondes. Contrôle la durée pendant laquelle le client fait confiance aux métadonnées de fichiers/répertoires mises en cache avant de les revalider auprès du serveur. | Simplification du réglage lorsque vous souhaitez une politique de mise en cache uniforme. Des valeurs élevées sont avantageuses pour les charges de travail à forte intensité de lecture ou statiques ; des valeurs faibles (par exemple, actimeo=0) conviennent aux données évoluant rapidement et nécessitant une cohérence des données quasi temps réel. 
+
+
+| `acregmin` | Définit la durée minimale (en secondes) pendant laquelle le client met en cache les attributs d'un fichier standard avant de les revalider. La valeur par défaut est généralement de 3s. | Charges de travail avec de petits fichiers fréquemment mis à jour où vous souhaitez optimiser le rapport entre fraîcheur et performance (par exemple, ingestion de journaux, interrogation de fichiers de configuration). 
+
+
+| `acregmax` | Définit la durée maximale (en secondes) pendant laquelle le client met en cache les attributs d'un fichier standard. La valeur par défaut est généralement de 60s. | Charges de travail de fichiers principalement statiques où l’extension de la taille maximale réduit le bavardage de métadonnées (par exemple, grands ensembles de données en lecture seule, référentiels de packages). 
+
+
+| `acdirmin` | Définit la durée minimale (en secondes) pendant laquelle le client met en cache les attributs d'un répertoire avant de les revalider. La valeur par défaut est généralement de 30s. | Charges de travail avec listage ou création fréquente de répertoires (par exemple, systèmes de build, spools de courrier au format Maildir) où la fraîcheur des répertoires est importante. 
+
+
+| `acdirmax` | Définit la durée maximale (en secondes) pendant laquelle le client met en cache les attributs d'un répertoire. La valeur par défaut est généralement de 60s. | Les structures de répertoires stables qui changent rarement — augmenter ce paramètre réduit les appels GETATTR (par exemple, les grandes arborescences de répertoires statiques, le stockage d'archives). 
+
+
+| `clientaddr` | Spécifie l'adresse IP du client à annoncer au serveur NFS pour la communication de rappel (NFSv4/v4.1+). Le serveur utilise cette adresse pour envoyer les rappels de délégation et autres rappels. | Clients multi-hébergés ou environnements avec une mise en réseau complexe (par exemple, clients avec plusieurs cartes réseau, réseaux VPN/superposition ou NAT) où l'adresse détectée automatiquement peut être incorrecte. 
+
+
+| `nconnect` | Crée plusieurs connexions TCP (jusqu'au nombre spécifié) au serveur NFS pour un seul montage, permettant des E/S parallèles sur des connexions séparées. | Charges de travail à haut débit et à forte intensité d'E/S, limitées par un seul flux TCP (par exemple, transferts de fichiers volumineux, calcul haute performance/scientifique, montage vidéo, sauvegardes de bases de données, analytique Big Data). Particulièrement avantageux sur les réseaux à large bande passante (10 GbE+). 
+
+
+| `krb5,krb5i,krb5p` | Spécifie le type de sécurité Kerberos à utiliser avec le montage. Nécessite une configuration Kerberos pour fonctionner correctement. Voir link:https://www.netapp.com/media/19384-tr-4616.pdf["TR-4616 : NFS Kerberos dans ONTAP avec Active Directory"^] pour plus de détails. | La sécurisation des montages NFS a un impact négatif sur les performances. 
+|===
+
+
+[[client-configuration]]
+== Configuration du client
+
+La configuration client utilisée pour les tests de performance internes, y compris les scripts d'optimisation de la carte réseau et du système d'exploitation, est décrite dans le dépôt link:https://github.com/whyistheinternetbroken/Benchmarking/tree/main/Clients["Analyse comparative/Clients"^]. Les points suivants présentent quelques considérations de configuration supplémentaires. Cette liste n'est pas considérée comme exhaustive et sera modifiée au fil du temps pour prendre en compte d'autres cas d'utilisation ou scénarios.
+
+
+
+[[nfs-readahead]]
+=== Anticipation de lecture NFS
+
+La lecture anticipée NFS côté client (ci-dessous) est un paramètre de point de montage Linux. Elle est distincte de la fonctionnalité link:afx-performance.html#aggressive-read-ahead["readahead agressif"] (Cross File Sequential Read) au niveau du volume ONTAP sur AFX.
+
+Depuis : link:https://learn.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-nfs-read-ahead["Meilleures pratiques de lecture anticipée NFS sous Linux pour Azure NetApp Files"^]
+
+La lecture anticipée NFS pré-récupère des blocs d'un fichier avant même que l'application n'effectue de requêtes d'E/S. Elle est conçue pour améliorer le débit de lecture séquentielle côté client. Jusqu'à récemment, toutes les distributions Linux modernes fixaient la valeur de lecture anticipée à l'équivalent de 15 fois la rsize du système de fichiers monté.
+
+RHEL 8.3 et Ubuntu 18.04 ont introduit des modifications susceptibles d'affecter négativement les performances de lecture séquentielle côté client. Contrairement aux versions précédentes, ces distributions fixent la valeur de lecture anticipée par défaut à 128 Kio, quelle que soit l'option de montage rsize utilisée. La mise à niveau depuis des versions avec une valeur de lecture anticipée plus élevée vers des versions avec la valeur par défaut de 128 Kio a entraîné une baisse des performances de lecture séquentielle. Cependant, les valeurs de lecture anticipée peuvent être augmentées de manière dynamique et permanente. Par exemple, des tests effectués avec SAS GRID ont montré que la valeur de lecture de 15 360 Kio était optimale par rapport à 3 840 Kio, 960 Kio et 128 Kio. Le nombre de tests réalisés au-delà de 15 360 Kio est insuffisant pour déterminer un impact positif ou négatif.
+
+La lecture anticipée NFS est définie au niveau du point de montage d'un système de fichiers NFS. Pour afficher la valeur actuelle, recherchez le chemin de montage dans `/proc/self/mountinfo` et utilisez le numéro de périphérique pour afficher `/sys/class/bdi/<device>/read_ahead_kb` :
+
+[listing]
+----
+# grep /mountpath/ /proc/self/mountinfo | awk '{ print $3 }'
+# cat /sys/class/bdi/<device>/read_ahead_kb
+----
+Un script pratique permettant de visualiser ou de définir dynamiquement la lecture anticipée est fourni dans link:https://learn.microsoft.com/en-us/azure/azure-netapp-files/performance-linux-nfs-read-ahead["Meilleures pratiques de lecture anticipée NFS sous Linux pour Azure NetApp Files"^].
+
+
+
+[[network-configuration]]
+== Configuration réseau
+
+La section suivante présente des recommandations générales concernant la mise en réseau des clients et du stockage. Ces recommandations sont basées sur les tests de performance internes que nous avons réalisés. Pour connaître les différences de mise en réseau AFX, consultez link:afx-capabilities.html#networking["Mise en réseau"] et link:afx-hardware.html#switches["Matériel : commutateurs"].
+
+
+
+[[storage-network-considerations]]
+=== Considérations relatives au réseau de stockage
+
+* Au moins une adresse IP de données par nœud, par SVM (plus il y en a par nœud, mieux c'est)
+* Maximum de 16 adresses IP par nœud, par SVM
+* Toutes les interfaces de données routables vers tous les clients
+* Ports agrégés/combinés par nœud utilisant LACP
+* Taille MTU de 9000 (de bout en bout)
+* Contrôle de flux prioritaire (PFC priorité 3) activé lors de l'utilisation de RDMA
+* Répartition de charge DNS configurée pour inclure toutes les adresses IP d’interface de données
+
+
+
+
+[[client-network-considerations]]
+=== Considérations relatives au réseau client
+
+* Deux cartes réseau agrégées pour RoCE (LACP)
+* Tampons annulaires RX/TX définis sur 8192
+* PFC et DSCP configurés par carte réseau (lors de l'utilisation de RDMA)
+* Classe de trafic RoCE définie à l'aide de cma_roce_tos (lors de l'utilisation de RDMA)
+* sunrpc.rdma_slot_table_entries défini sur 200
+
+
+
+
+[[additional-ontap-feature-considerations]]
+== Considérations supplémentaires relatives aux fonctionnalités d'ONTAP
+
+La section suivante traite des modifications spécifiques de la configuration des fonctionnalités ONTAP qui ne sont pas abordées dans <<Configuration des règles d'export NFS>>, <<Configuration du volume>>, <<Options de montage>>, <<Configuration du client>> ou <<Configuration réseau>>.
+
+
+
+[[disable-storage-efficiencies]]
+=== Désactiver les efficacités de stockage
+
+En général, les efficacités de stockage sont l’un des arguments de vente pour une charge de travail en production, car elles peuvent générer d’importantes économies d’espace sur une variété de charges de travail. Cependant, lors des tests de performance, elles offrent moins de valeur (car de nombreuses charges de travail simulées sont soit incompressibles, soit des charges de travail de taille nulle et toujours dédupliquées). Par conséquent, nous recommandons de désactiver toutes les efficacités de stockage lors de l’exécution des tests de performance.
+
+Pour savoir comment fonctionne l'efficacité du stockage sur AFX, y compris la déduplication globale, voir link:afx-architecture-storage-efficiency.html#deduplication-domains["domaines de déduplication"], link:https://docs.netapp.com/us-en/ontap-technical-reports/storage-efficiency.html["Rapports techniques sur l'efficacité du stockage ONTAP"^] et link:https://docs.netapp.com/us-en/ontap-afx/release-notes/whats-new-9191.html["Efficacité dynamique du stockage dans ONTAP 9.19.1"^].
+
+[listing]
+----
+vol efficiency off -volume [name] -vserver [SVM]
+
+aggr efficiency modify -aggregate data* -cross-volume-background-dedupe false -cross-volume-inline-dedupe false
+
+aggr efficiency wise-tsse modify -aggregate data* -enable-workload-informed-tsse false
+----
+
+
+[[aggressive-readahead]]
+=== Lecture anticipée agressive
+
+La lecture anticipée agressive peut améliorer les performances de lecture pour certaines charges de travail (comme les fichiers nommés séquentiellement). La configuration de la fonctionnalité, les mises en garde et les statistiques sont abordées dans link:afx-performance.html#aggressive-read-ahead["Lecture anticipée agressive"]. Voir aussi link:https://docs.netapp.com/us-en/ontap-afx/administer/additional-ontap-svm.html#cross-file-sequential-read["Lecture séquentielle inter-fichiers dans l'administration AFX SVM"^].
+
+[cols="1,1"]
+|===
+
+
+| link:afx-performance.html["Précédent"] | link:afx-management.html["Suite : Gestion"] 
+|===

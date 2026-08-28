@@ -25,11 +25,15 @@ Pour obtenir les informations les plus récentes sur le matériel pris en charge
 [[nodes]]
 == Nœuds
 
-NetApp Les nœuds AFX sont basés sur le modèle AFF A1K de nœuds fourni pour les clusters ONTAP unifiés. Ces nœuds n'ont pas de disque interne pour le stockage et sont conçus pour être modulaires afin d'ajouter ou de retirer facilement des nœuds en fonction des exigences de performance. Chaque nœud utilise 2U d'espace rack et les performances augmentent de façon linéaire à mesure qu'ils sont ajoutés à un cluster AFX.
+NetApp AFX comprend les nœuds AFX 1K (basé sur l'AFF A1K) et AFX 2K. Ces nœuds ne disposent pas de disque intégré pour le stockage et sont conçus pour être modulaires afin de permettre d’ajouter et de retirer facilement des nœuds en fonction des exigences de performance. Chaque nœud occupe 2U d’espace rack et les performances augmentent de façon linéaire à mesure qu’ils sont ajoutés à un cluster AFX.
 
 *NetApp Détails du nœud AFX 1K*
 
 image:image42.png["Image"]
+
+*NetApp Détails du nœud AFX 2K*
+
+image:image46.png["Image"]
 
 
 
@@ -41,6 +45,13 @@ NetApp AFX 1K utilise les affectations d'emplacements suivantes.
 * L'emplacement 1 est dédié à la réplication HA
 * L'emplacement 7 est dédié à la réplication du cluster
 * Les emplacements 10 et 11 sont dédiés à la communication avec les étagères de stockage
+
+
+NetApp AFX 2K utilise les affectations d'emplacements suivantes.
+
+* L'emplacement 1 est dédié à la réplication HA
+* L'emplacement 2 est dédié à la réplication du cluster
+* Les emplacements 8B et 10A sont dédiés à la communication avec les étagères de stockage
 
 
 
@@ -80,11 +91,75 @@ image:image44.png["Image"]
 [[cluster-switch-connectivity]]
 === connectivité du commutateur de cluster
 
-NetApp AFX s'appuie fortement sur les commutateurs de cluster backend pour nombre de ses concepts architecturaux majeurs. Par exemple, les interfaces de cluster, les adaptateurs de stockage, les baies de stockage et les cartes NVRAM se connectent tous aux commutateurs de cluster. Actuellement, toutes ces interfaces ne prennent en charge que les communications à 100GB, tandis que les commutateurs supportent le 400GB. Par conséquent, les interfaces 100GB sont connectées aux interfaces 400GB du commutateur via 4 câbles de dérivation 100GB. Cette approche réduit le nombre de ports utilisés sur les commutateurs. Par exemple, 16 ports de module de baie de stockage 100GB n'utiliseront que 4 ports sur les commutateurs, tandis que les 8 ports au total sur les nœuds utiliseront 2 ports de commutateur.
+NetApp AFX s'appuie fortement sur les commutateurs de cluster backend pour de nombreux concepts architecturaux majeurs. Par exemple, les interfaces de cluster, les adaptateurs de stockage, les baies de stockage et les cartes NVRAM sont tous connectés aux commutateurs de cluster. Les commutateurs de cluster sont compatibles 400GB. Les ports réseau du cluster backend prennent uniquement en charge des connexions 100GB vers les commutateurs de cluster sur la plateforme AFX 1K et prennent en charge des connexions 400GB sur l'AFX 2K. Par conséquent, les connexions des nœuds backend de l'AFX 1K utilisent 4 câbles breakout 100GB afin de réduire le nombre de ports utilisés sur les commutateurs. L'AFX 2K utilise une connexion 1:1 de 400GB vers les commutateurs, avec 6 ports par nœud (2 HA, 2 cluster, 2 stockage). Les modules de baies de stockage utilisent toujours des interfaces 100GB ; par exemple, 16 ports de module de baie de stockage 100GB n'utilisent que 4 ports sur les commutateurs, tandis que les 8 ports totaux des nœuds AFX 1K utilisent 2 ports de commutateur.
 
 *NetApp Câblage du commutateur AFX*
 
 image:image45.png["Image"]
+
+
+
+[[switch-selection-guidance]]
+=== Guide de sélection des commutateurs
+
+Additionnez le nombre de ports 400GbE requis sur chaque commutateur, puis sélectionnez la classe de commutateur la plus petite permettant de couvrir ce total. NetApp AFX utilise une paire de commutateurs en cluster ; dimensionnez chaque commutateur indépendamment. Deux ports sur chaque commutateur sont réservés à l’ISL (9332 : ports 31–32 ; 9364 : ports 63–64), ce qui laisse 30 ports utilisables sur le 9332 et 62 ports utilisables sur le 9364.
+
+Nombre de ports par commutateur :
+
+* AFX 1K : 1 port 400 GbE par nœud (quatre ports de nœud de 100 Gb sur une sortie 4 x 100 Gb)
+* AFX 2K : 3 ports 400 GbE par nœud et par commutateur (6 ports par nœud à 1:1 400 GbE : 2 HA, 2 cluster, 2 stockage)
+* Étagères : 2 ports 400 GbE par étagère (huit ports d’étagère de 100 Gb par commutateur sur 4 modules de dérivation de 100 Gb)
+
+
+|===
+| Ports 400GbE combinés requis (par commutateur) | Commutateur 
+
+
+| S'adapte à 32 ports (30 utilisables après ISL) | Cisco Nexus 9332D-GX2B (1U, 32 x 400GbE) 
+
+
+| Tient dans 64 ports (62 utilisables après ISL) | Cisco Nexus 9364D-GX2A (2U, 64 x 400GbE) 
+
+
+| Plus de 64 ports | Cisco Nexus 9808, ou tel que spécifié dans link:https://hwu.netapp.com["Hardware Universe"^] 
+|===
+
+
+==== clusters de 32 nœuds
+
+Un cluster de 32 nœuds (le maximum actuel de nœuds ; voir link:afx-limits.html["Maximums et limites"]) consomme 32 × 400GbE ports par commutateur sur AFX 1K et 96 × 400GbE ports par commutateur sur AFX 2K (32 × 3), avant les étagères.
+
+|===
+| Commutateur | AFX 1K (32 nœuds) | AFX 2K (32 nœuds) 
+
+
+| Cisco Nexus 9332D-GX2B | Non pris en charge (32 ports de nœud dépassent 30 ports utilisables) | Non pris en charge 
+
+
+| Cisco Nexus 9364D-GX2A | 32 nœuds et 8 à 12 étagères (4:1 à 8:3) | Non pris en charge (96 ports de nœud dépassent 62 ports utilisables) 
+
+
+| Cisco Nexus 9808 | 32 nœuds et 8 à 12 étagères (4:1 à 8:3) | 32 nœuds et 8 à 12 étagères (4:1 à 8:3) 
+|===
+
+
+==== Nombre maximal de nœuds par commutateur
+
+Dimensionnez le système en respectant un ratio nœud/étagère compris entre 4:1 et 8:3 (voir link:afx-performance.html#node-to-shelf-ratios["Ratios nœud/étagère"]), un nombre pair de nœuds (paires HA) et un minimum de 2 étagères. Les combinaisons suivantes correspondent au nombre maximal de nœuds pouvant être installés dans chaque commutateur dans cette plage.
+
+|===
+| Commutateur | AFX 1K (nœuds max + étagères) | AFX 2K (nœuds max + étagères) 
+
+
+| Cisco Nexus 9332D-GX2B | 20 nœuds + 5 étagères (4:1 ; 8:3 ne correspond pas aux ports restants) | 8 nœuds + 2 à 3 étagères 
+
+
+| Cisco Nexus 9364D-GX2A | 32 nœuds + 8 à 12 étagères | 16 nœuds + 4 à 6 étagères 
+
+
+| Cisco Nexus 9808 | 32 nœuds + 8 à 12 étagères | 32 nœuds + 8 à 12 étagères 
+|===
+Pour connaître les derniers modèles de commutateurs pris en charge et les limites, consultez link:https://hwu.netapp.com["Hardware Universe"^] et le link:https://docs.netapp.com/us-en/ontap-afx/install-setup/afx-cable-overview.html["Documentation de câblage AFX"^].
 
 
 
@@ -93,7 +168,6 @@ image:image45.png["Image"]
 
 NetApp AFX ne prend actuellement en charge que les SSD NVMe connectés dans les tailles suivantes :
 
-* 7,6 To
 * 15,3 To
 * 30,1 To
 * 60,6 To
@@ -104,10 +178,17 @@ NetApp AFX ne prend actuellement en charge que les SSD NVMe connectés dans les 
 [[tlc-vs-qlc]]
 === TLC vs QLC
 
-NetApp AFX peut exploiter à la fois les types de mémoire flash TLC et QLC. Les disques de 7,6 et 15,3 To sont des modèles TLC, tandis que les disques de plus de 30,1 To seront des modèles QLC. Quel que soit le type de support, les normes de performance de certification NVIDIA SuperPod peuvent être respectées.
+NetApp AFX peut exploiter les types de flash TLC et QLC. Les disques de 15,3 To sont des modèles TLC, tandis que les disques de plus de 30,1 To seront de type QLC. Quel que soit le type de support, les normes de performance de la certification NVIDIA SuperPod peuvent être respectées.
 
 Tous les disques utilisés avec NetApp AFX sont des disques hautes performances, et les technologies QLC et TLC offrent des performances quasi identiques en lecture. Les performances en écriture des disques QLC sont légèrement inférieures à celles des disques TLC, et l’usure peut être légèrement plus importante lors de charges de travail intensives en écriture.
 
 Pour les chiffres de performance, voir link:afx-performance.html#per-shelf-performance["Performance par étagère"].
 
 Lors du choix du type de disque utilisé, tenez compte des charges de travail que le stockage hébergera et des compromis entre performances et densité de capacité.
+
+[cols="1,1"]
+|===
+
+
+| link:afx-capabilities.html["Précédent"] | link:afx-limits.html["Ensuite : maximums et limites"] 
+|===

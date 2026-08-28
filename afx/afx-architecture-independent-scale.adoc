@@ -1,0 +1,43 @@
+---
+sidebar: sidebar 
+permalink: afx/afx-architecture-independent-scale.html 
+keywords: netapp afx, independent scale, linear scale, compute, capacity, performance 
+summary: Découvrez comment NetApp AFX fait évoluer indépendamment la puissance de calcul et la capacité tout en offrant des performances de nœud linéaires. 
+---
+= Échelle linéaire indépendante
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx/
+
+
+[role="lead"]
+L’architecture AFX désagrégée de NetApp permet aux ressources de capacité et de calcul de s’adapter indépendamment et aux performances des nœuds de s’adapter linéairement.
+
+
+
+[[independent-scale-of-capacity-and-compute-nodes]]
+== Échelle indépendante de capacité et de nœuds de calcul
+
+Grâce au découplage des ressources matérielles dans l’architecture NetApp AFX, les nœuds n’ont plus besoin d’être associés à des disques ajoutés ensemble. Lorsqu’un cluster manque de ressources liées aux performances telles que la RAM, le processeur ou le débit réseau, seuls des nœuds de stockage doivent être ajoutés au cluster et peuvent exploiter la zone de disponibilité de stockage existante. Inversement, si le besoin concerne la capacité, seuls des châssis doivent être ajoutés au groupe. Cette flexibilité garantit que vous n’achetez que les ressources dont vous aurez besoin, évitant ainsi le surprovisionnement.
+
+*NetApp AFX – Échelle indépendante*
+
+image:image12.png["Image"]
+
+
+
+[[linear-scaling-of-node-performance]]
+== Évolution linéaire des performances des nœuds
+
+L'ajout de nœuds à un cluster AFX augmente les ressources CPU, RAM et réseau allouées à la charge de travail. À mesure que ces ressources sont intégrées à l'environnement, l'augmentation des performances est de nature linéaire. Le graphique ci-dessous montre comment ces performances augmenteraient à mesure que des nœuds sont ajoutés.
+
+*Les performances augmentent linéairement avec l’ajout de nœuds NetApp AFX*
+
+image:image13.png["Image"]
+
+[cols="1,1"]
+|===
+
+
+| link:afx-architecture-nvram-ha.html["Précédent : NVRAM répliquée et comportement de basculement HA"] | link:afx-architecture-raid.html["Suite : modifications RAID"] 
+|===

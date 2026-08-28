@@ -144,3 +144,10 @@ Dans NetApp AFX, un nœud de calcul désigne un nœud de contrôleur de stockage
 === Zone de disponibilité de stockage
 
 Une zone de disponibilité de stockage (SAZ) est un pool unique de capacité au sein d'un cluster NetApp AFX, où tous les disques sont partagés entre tous les nœuds. La SAZ permet des fonctionnalités telles que le partage de capacité, des performances améliorées, la déduplication globale, et plus encore.
+
+[cols="1,1"]
+|===
+
+
+|  | link:afx-whats-new.html["Ensuite : Nouveautés"] 
+|===

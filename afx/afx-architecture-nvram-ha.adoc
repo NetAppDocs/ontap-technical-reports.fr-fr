@@ -1,0 +1,73 @@
+---
+sidebar: sidebar 
+permalink: afx/afx-architecture-nvram-ha.html 
+keywords: netapp afx, nvram replication, high availability, ha failover, volume rebalance 
+summary: 'Découvrez comment NetApp AFX réplique NVRAM sur le réseau dorsal et rééquilibre les volumes lors d"un basculement HA.' 
+---
+= Comportement de basculement HA et NVRAM répliquée
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx/
+
+
+[role="lead"]
+NetApp AFX déplace la réplication NVRAM vers le réseau du cluster backend et utilise la mobilité des volumes sans copie pour rééquilibrer la charge de travail après une panne de nœud.
+
+
+
+[[nvram-moved-from-direct-connection-to-switched-replication]]
+== NVRAM est passée d'une connexion directe à une réplication commutée
+
+ONTAP utilise NVRAM comme zone de transit pour protéger les écritures entrantes sur un cluster. Chaque nœud dans un cluster ONTAP possède une carte NVRAM avec batterie de secours. Lorsqu'une écriture est envoyée à un volume depuis un client, elle est d'abord stockée dans la NVRAM. Le contenu de la NVRAM est ensuite transféré sur le disque lorsque la NVRAM est pleine ou lorsqu'un délai de 10 secondes expire (selon la première éventualité). Ce processus est appelé point de cohérence.
+
+Le contenu de la NVRAM est également répliqué en permanence entre les paires haute disponibilité, ce qui contribue à protéger la cohérence des données, car en cas de défaillance d'un nœud, le contenu de la NVRAM sera préservé sur le nœud survivant et enregistré sur le disque.
+
+Dans les clusters ONTAP unifiés, les cartes NVRAM des paires haute disponibilité sont directement connectées entre elles. NetApp AFX déplace la réplication NVRAM vers le réseau du cluster dorsal. Par conséquent, les nœuds partenaires de la paire haute disponibilité ne sont plus soumis à une contrainte de distance aussi stricte pour les nœuds. À la place, les paires haute disponibilité peuvent être séparées jusqu'à la distance maximale autorisée par Ethernet.
+
+*NetApp Réplication NVRAM AFX*
+
+image:image10.png["Image"]
+
+
+
+[[ha-failover-behavior]]
+== Comportement de basculement HA
+
+Dans unified ONTAP, les nœuds possèdent des disques et des agrégats, où les données sont servies via des volumes. Les écritures sont effectuées à l'aide de la NVRAM locale d'un nœud pour vider sur les disques dont le nœud est propriétaire. Lorsqu'un nœud est redémarré ou tombe en panne, ONTAP déclenche une prise en charge des ressources du nœud défaillant, où la propriété des disques et des agrégats est transférée au nœud partenaire. Les interfaces réseau sont également basculées vers des ports dans l'espace IP, et comme le contenu de la NVRAM est constamment répliqué entre la paire haute disponibilité, le nœud vide le contenu de la NVRAM pour valider les écritures du nœud défaillant sur les disques. Après cela, le nœud survivant possédera les agrégats et les volumes du nœud défaillant jusqu'à la restitution du nœud. Cela signifie que tout le trafic vers ces volumes – ainsi que vers les volumes déjà détenus par le nœud survivant – sera traité sur un seul nœud jusqu'à ce que le problème de basculement soit résolu.
+
+Dans le cadre du déploiement initial d'un cluster ONTAP unifié, il est recommandé d'anticiper les basculements afin d'éviter la surcharge d'un nœud par son partenaire. Cela représente un défi en soi, car il est difficile de prévoir quels volumes pourraient être des sources de surcharge de performance, mais des fonctionnalités telles que le déplacement non disruptif de volumes et les politiques de qualité de service des volumes peuvent aider à atténuer ce risque.
+
+Les images ci-dessous montrent comment les clusters ONTAP unifiés peuvent présenter un équilibre de performances inégal entre les nœuds, ainsi que comment un basculement peut entraîner une dégradation des performances dans certains cas.
+
+*Unified ONTAP – déséquilibres potentiels dans l’utilisation des nœuds*
+
+image:image25.png["Image"]
+
+Lorsqu'un déséquilibre apparaît entre les nœuds d'une paire haute disponibilité en termes de nombre de volumes et d'utilisation des performances, les basculements de nœuds impactent les performances globales, car le nœud survivant prend alors en charge tous les volumes du nœud défaillant. Parallèlement, d'autres nœuds du cluster peuvent avoir la capacité de prendre en charge du travail supplémentaire.
+
+*Unified ONTAP – Impact du basculement sur l'utilisation des nœuds*
+
+image:image26.png["Image"]
+
+Dans le cas décrit ci-dessus, lorsqu'un partenaire paire haute disponibilité doit prendre en charge une charge supplémentaire, il peut être surchargé et impacter les performances de tous les volumes sur ce nœud. Le déplacement de volumes peut atténuer ce problème, mais il nécessite des copies entre les nœuds (ce qui requiert de l'espace libre disponible), et le temps nécessaire peut dépasser le temps de restauration des nœuds en cas de retour arrière. De plus, si vous déplacez un volume, celui-ci ne sera pas restauré sur le nœud d'origine. Il restera sur le nœud sur lequel vous l'avez déplacé.
+
+Avec NetApp AFX, les basculements de nœuds adoptent des comportements différents.
+
+* Comme les nœuds ne possèdent pas de disques et qu'il n'existe pas d'agrégats physiques, un basculement de nœud ne nécessite pas le transfert de ces ressources. Seules les interfaces réseau et la propriété des volumes sont transférées aux autres nœuds.
+* Les opérations d'écriture dans la NVRAM ont toujours lieu, mais via le réseau HA au lieu d'une connexion directe.
+* Une fois le basculement initial des volumes vers le nœud partenaire effectué, AFX redistribuera les volumes sur les autres nœuds restants du cluster. Ceci est rendu possible grâce aux déplacements de volumes sans copie.
+* Une fois le nœud récupéré, les volumes seront replacés sur le nœud d'origine.
+
+
+NetApp AFX maintient déjà un équilibre des performances entre les nœuds du cluster afin de garantir une utilisation relativement uniforme, donc lorsqu'un basculement se produit et que les volumes sont rééquilibrés, l'utilisation des nœuds devrait être sensiblement la même dans l'ensemble du cluster.
+
+*NetApp AFX - Rééquilibrage des volumes après basculement*
+
+image:image27.png["Image"]
+
+[cols="1,1"]
+|===
+
+
+| link:afx-architecture-capacity-pool.html["Précédent : Pool de capacité unique"] | link:afx-architecture-independent-scale.html["Suite : Échelle linéaire indépendante"] 
+|===

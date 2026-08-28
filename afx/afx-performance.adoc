@@ -18,9 +18,15 @@ NetApp AFX a été conçu en privilégiant la performance et l'évolutivité –
 [[per-node-performance]]
 == Performances par nœud
 
-Chaque nœud de stockage NetApp AFX offre un débit spécifique en lecture et en écriture. L'ajout de nœuds au cluster augmente linéairement ces performances, comme expliqué dans la section « Évolution linéaire des performances des nœuds » de ce document.
+Chaque nœud de stockage NetApp AFX offre un débit spécifique en lecture et en écriture. Lorsque des nœuds sont ajoutés au cluster, ils augmentent linéairement ces performances, comme expliqué dans link:afx-architecture-independent-scale.html#linear-scaling-of-node-performance["Évolution linéaire des performances des nœuds"].
 
-Actuellement, les types de nœuds sont link:https://www.netapp.com/media/142853-ds-3466-netapp-afx-datasheet.pdf["AFX 1K"^] et offrent un débit de lecture et d'écriture approximativement conforme aux valeurs ci-dessous. À mesure que de nouveaux matériels sont disponibles pour NetApp AFX, ces limites peuvent changer. REMARQUE : Les performances maximales ont été atteintes en utilisant plusieurs clients lisant et écrivant plusieurs fichiers, comme indiqué dans la section « Benchmark results » ci-dessous.
+Actuellement, les types de nœuds sont link:https://www.netapp.com/media/142853-ds-3466-netapp-afx-datasheet.pdf["AFX 1K"^] et link:https://www.netapp.com/media/142853-ds-3466-netapp-afx-datasheet.pdf["AFX 2K"^] et offrent un débit de lecture et d'écriture approximativement conforme aux valeurs ci-dessous*. À mesure que de nouveaux matériels sont disponibles pour NetApp AFX, ces limites peuvent évoluer.
+
+* Résultats de performance obtenus à l'aide de l'outil de test link:https://github.com/breuner/elbencho["ElBencho"^] benchmark et de la lecture/écriture séquentielle.
+
+
+
+NOTE: Les performances maximales ont été atteintes en utilisant plusieurs clients lisant et écrivant plusieurs fichiers, comme indiqué dans la section link:#benchmark-results["Résultats de référence"] ci-dessous.
 
 *Estimations des performances par nœud*
 
@@ -29,6 +35,9 @@ Actuellement, les types de nœuds sont link:https://www.netapp.com/media/142853-
 
 
 | AFX 1K | ~35 Go/s | ~10 Go/s 
+
+
+| AFX 2K | ~35 Go/s | ~17 Go/s (+70 % d'augmentation) 
 |===
 
 NOTE: Pour obtenir les estimations de performance les plus récentes, veuillez contacter votre équipe commerciale NetApp.
@@ -60,17 +69,17 @@ Le découplage des nœuds de stockage des étagères dans l'architecture ONTAP d
 
 Ce concept de « densité de performance » permet aux administrateurs de stockage de tirer le meilleur parti du matériel dont ils disposent sans jamais avoir à surdimensionner leur environnement de stockage.
 
-Par exemple, dans un cluster ONTAP unifié, étant donné que chaque nœud possède son propre ensemble de disques, les performances sont uniquement dirigées vers les disques appartenant au nœud, et comme un seul nœud peut accéder à un ensemble de disques, il ne peut pas nécessairement saturer les disques disponibles et atteindre ses performances maximales.
-
 *Unified ONTAP – Répartition des performances*
 
 image:image32.png["Image"]
 
-NetApp AFX regroupe tous les disques dans une seule Storage Availability Zone, permettant ainsi à tous les nœuds d'exploiter l'ensemble des disques. Et parce que les disques et les nœuds sont découplés, vous n'aurez pas besoin d'autant de baies pour obtenir les mêmes performances. Cela condense les performances et maximise le potentiel de performance maximal de la baie.
+Par exemple, dans un cluster ONTAP unifié, chaque nœud dispose de son propre ensemble de disques dédiés. En conséquence, les performances sont dirigées uniquement vers les disques appartenant au nœud. Puisqu’un seul nœud peut accéder à un ensemble de disques, les performances sont limitées aux disques auxquels il peut accéder directement.
 
 *NetApp AFX – Densité de performance*
 
 image:image33.png["Image"]
+
+NetApp AFX regroupe tous les disques disponibles dans un pool de capacité unique appelé Storage Availability Zone (SAZ). Ainsi, tous les nœuds peuvent exploiter tous les disques disponibles pour les opérations de lecture et d'écriture. Puisque les disques et les nœuds sont découplés, vous n'aurez pas nécessairement besoin d'autant de tiroirs disques pour obtenir les mêmes (ou de meilleures) performances de débit par rapport à l'architecture ONTAP unifiée. NetApp AFX dispose d'une architecture désagrégée qui maximise le potentiel de performance d'un tiroir disque.
 
 
 
@@ -81,7 +90,7 @@ Les nœuds Unified ONTAP nécessitent au moins un ensemble de disques par nœud 
 
 NetApp AFX met à disposition toutes les baies de disques pour tous les nœuds. Chaque baie contient des modules dotés de 16 interfaces RoCE de 100 Go afin d’augmenter la quantité totale de performances autorisée par baie. De ce fait, il est possible de saturer une seule baie avec plusieurs nœuds qui liront et écriront sur le même ensemble de disques.
 
-À partir de ONTAP 9.19.1, le rapport de saturation nœud:étagère est d'environ 4:1.
+À partir d'ONTAP 9.19.1, le rapport de saturation nœud:tiroir disque est d'au moins 4:1, et 8:3 est possible.
 
 
 
@@ -91,8 +100,8 @@ NetApp AFX met à disposition toutes les baies de disques pour tous les nœuds. 
 La section suivante présente les résultats de tests de performance obtenus avec un cluster NetApp AFX doté des paramètres de configuration suivants.
 
 * 4 nœuds, 4 interfaces de données
-* 2 étagères (disques durs de 7,6 To)
-* ONTAP 9.19.1
+* 2 tiroirs disques
+* ONTAP 9.19.1GA
 * NFSv4.2 (pNFS, agrégation de sessions)
 * Volume FlexGroup
 * link:https://github.com/breuner/elbencho["ElBencho"^]point de référence
@@ -103,6 +112,9 @@ La section suivante présente les résultats de tests de performance obtenus ave
 
 
 La configuration ci-dessus a atteint très près du nombre maximal de lectures disponibles pour le cluster à 4 nœuds (~134 Go/s) et était exactement au nombre maximal d'écritures autorisées par nœud (40 Go/s).
+
+
+NOTE: Consultez la section link:afx-performance-benchmarks.html["Conseils pour l'évaluation des performances"] pour obtenir des instructions sur la reproduction de ces résultats.
 
 *NetApp AFX – ElBencho performances de lecture, 4 nœuds*
 
@@ -146,7 +158,8 @@ La version 3 de NFS fait figure de référence pour les applications NFS depuis 
 
 Cependant, NFSv3 présente certaines limitations. L'absence d'état du protocole, bien qu'avantageuse pour les performances et la minimisation des interruptions lors d'un basculement de stockage, est moins favorable à la cohérence des données et à la gestion des verrous. Un serveur NFS ne conserve pas réellement l'historique des états de verrouillage, donc en cas de panne, il se peut que le serveur NFS libère ou non les verrous, et le client NFS peut ne pas savoir si un fichier est verrouillé ou non.
 
- Security for NFSv3 is also a bit lacking. The protocol requires multiple open firewall ports to function properly and numeric IDs are sent in plaintext over the wire. Furthermore, NFS does not have robust ACL support, and does not include native file and folder auditing. As a result of these limitations, NFSv4 was created in 2003 via link:https://datatracker.ietf.org/doc/html/rfc3530[RFC-3530^] (obsoleted in 2015 by link:https://datatracker.ietf.org/doc/html/rfc7530[RFC-7530^]).
+La sécurité de NFSv3 présente également quelques lacunes. Le protocole nécessite l'ouverture de plusieurs ports de pare-feu pour fonctionner correctement et les identifiants numériques sont transmis en clair sur le réseau. De plus, NFS ne dispose pas d'une gestion robuste des ACL et n'intègre pas d'audit natif des fichiers et des dossiers. En raison de ces limitations, NFSv4 a été créé en 2003 via link:https://datatracker.ietf.org/doc/html/rfc3530["RFC-3530"^] (devenu obsolète en 2015 par link:https://datatracker.ietf.org/doc/html/rfc7530["RFC-7530"^]).
+
 Bien que NFSv4.x existe depuis plus de 20 ans, son adoption reste limitée pour plusieurs raisons.
 
 * Complexité de la gestion des identités : de nombreux environnements ne disposent pas d’une infrastructure de service de noms en place pour tirer pleinement parti des exigences de sécurité des chaînes de noms et de Kerberos dans NFSv4.x.
@@ -212,6 +225,13 @@ Avec les modifications apportées à AFX ONTAP 9.18.1, les performances NFSv4.x 
 
 Nos équipes d'ingénierie de la performance ont comparé les performances des benchmarks standard d'imagerie IA, d'EDA et de compilation logicielle et ont constaté des gains considérables par rapport à la version précédente d'ONTAP.
 
-*NetApp AFX – Performances d'E/S des métadonnées NFSv4.1 dans ONTAP 9.18.1*
+*NetApp AFX – Performances d'E/S des métadonnées NFSv4.1 dans NetApp AFX*
 
 image:image37.png["Image"]
+
+[cols="1,1"]
+|===
+
+
+| link:afx-architecture-root-volume.html["Précédent : Modifications du volume racine"] | link:afx-performance-benchmarks.html["Suite : Conseils pour l’analyse comparative des performances"] 
+|===

@@ -1,0 +1,69 @@
+---
+sidebar: sidebar 
+permalink: afx/afx-architecture-raid.html 
+keywords: netapp afx, raid-tec, raid groups, parity, disk rebuild 
+summary: Découvrez comment les groupes RAID plus importants dans NetApp AFX améliorent la capacité utilisable et permettent des reconstructions de disque plus rapides. 
+---
+= Modifications RAID
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx/
+
+
+[role="lead"]
+NetApp AFX utilise des groupes RAID-TEC plus importants avec moins de disques de parité proportionnelle et répartit le travail de reconstruction des disques sur l'ensemble du cluster.
+
+
+
+[[larger-raid-groups-fewer-parity-drives]]
+== Groupes RAID plus importants, moins de disques de parité
+
+ONTAP offre un équilibre optimal entre protection des données et performances des disques grâce aux groupes RAID, et plus particulièrement RAID-TEC qui assure une triple protection par parité en cas de panne de disque. RAID-TEC peut supporter jusqu'à trois pannes simultanées de disques au sein d'un même groupe RAID. Dans ONTAP unifié, les groupes RAID sont limités à 28 disques, dont 3 disques sont dédiés à la parité et 1 disque est réservé comme disque de secours. Ainsi, 24 des 28 disques sont utilisés pour les opérations de données/stripes RAID.
+
+*Groupes RAID unifiés ONTAP*
+
+image:image14.png["Image"]
+
+NetApp AFX exploite toujours RAID-TEC, mais augmente la taille des groupes RAID à 96 disques tout en ne nécessitant que 3 disques de parité et 1 disque de secours. Les groupes RAID plus importants offrent de meilleures performances globales, tandis que l'exposition à la panne disque est minimisée grâce à une combinaison de faibles taux de défaillance des SSD, d'opérations mieux réparties sur un plus grand nombre de disques, ainsi que d'améliorations apportées à la reconstruction des disques de données à partir de la parité dans NetApp AFX.
+
+*NetApp Groupe RAID de zone de disponibilité de stockage AFX*
+
+image:image15.png["Image"]
+
+Le tableau suivant donne une estimation de la capacité brute utilisable pour 84 disques dans Unified ONTAP et NetApp AFX avec des tailles de disque variables.
+
+*Comparaison approximative de la capacité brute, 84 disques – Unified ONTAP et NetApp AFX*
+
+|===
+| Taille du disque | Capacité brute approximative (unifiée) | Capacité brute approximative (AFX) 
+
+
+| 15,3 To | ~1101,6 To | ~1224 To (+122,4 To) 
+
+
+| 30,6 To | ~2203,2 To | ~2448 To (+244,7 To) 
+
+
+| 60,1 To | ~4327,2 To | ~4808 To (+480,8 To) 
+|===
+De plus, la gestion des groupes RAID est automatisée par ONTAP, où les disques nouvellement ajoutés sont intégrés aux groupes RAID existants ou nouveaux sans intervention de l’administrateur. ONTAP gère également les déplacements de volumes entre les nœuds sans nécessiter de copie de données.
+
+
+
+[[faster-disk-failure-rebuild-times]]
+== Temps de reconstruction plus rapides en cas de défaillance de disques
+
+Dans Unified ONTAP, chaque nœud gère un sous-ensemble de disques dans la pile de stockage. Cela signifie que ce nœud n'écrit que sur ces disques, mais aussi que la reconstruction des disques est gérée par un seul nœud en cas de défaillance de disques.
+
+NetApp AFX s'affranchit de la notion de propriété des disques. Par conséquent, tous les disques peuvent être écrits depuis un seul nœud si nécessaire. Cela signifie également que lorsqu'un disque doit être reconstruit à partir de la parité, tous les nœuds du cluster participent, ce qui permet des reconstructions plus rapides que si un seul nœud devait effectuer l'opération.
+
+*Reconstruction du disque dans NetApp AFX*
+
+image:image16.png["Image"]
+
+[cols="1,1"]
+|===
+
+
+| link:afx-architecture-independent-scale.html["Précédent : Échelle linéaire indépendante"] | link:afx-architecture-storage-efficiency.html["Ensuite : efficacité du stockage"] 
+|===

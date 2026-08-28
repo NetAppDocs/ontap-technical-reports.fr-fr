@@ -33,8 +33,8 @@ La pile réseau dans NetApp AFX est identique à celle de unified ONTAP.
 
 Voici quelques différences réseau clés :
 
-* Les ports réseau du cluster backend ne prennent désormais en charge que les connexions 100GB aux commutateurs du cluster.
-* Étant donné que les commutateurs du cluster sont compatibles 400 Go, les connexions des nœuds backend utilisent 4 câbles de dérivation de 100 Go pour réduire le nombre de ports utilisés sur les commutateurs.
+* Les ports réseau du cluster backend ne prennent en charge que les connexions de 100GB aux commutateurs du cluster sur la plateforme AFX 1K et prennent en charge les connexions de 400GB sur l'AFX 2K.
+* Les commutateurs du cluster étant compatibles avec un débit de 400GB, les connexions des nœuds principaux utilisent 4 câbles de dérivation de 100GB sur l'AFX 1K afin de réduire le nombre de ports utilisés sur les commutateurs. L'AFX 2K utilisera une connexion 1:1 de 400GB avec les commutateurs.
 * NVRAM est désormais dupliquée entre les paires HA sur le réseau du cluster backend via une nouvelle configuration VLAN HA sur les commutateurs.
 * Un nouveau réseau DCN est ajouté par défaut pour le AI Data Engine. Ces adresses IP sont générées automatiquement et peuvent être modifiées au besoin.
 
@@ -101,4 +101,11 @@ Unified ONTAP prend en charge plusieurs types de volumes différents, tels que :
 
 NetApp AFX assure une prise en charge complète de chacun de ces types de volumes, ainsi qu'une interopérabilité totale pour les volumes FlexCache avec les systèmes ONTAP unifiés.
 
-Pour plus d'informations sur la façon dont les volumes FlexGroup bénéficient de l'architecture AFX, voir link:afx-architecture.html#flexgroup-volume-management-improvements["Améliorations de la gestion des volumes FlexGroup"].
+Pour plus d'informations sur la façon dont les volumes FlexGroup bénéficient de l'architecture AFX, voir link:afx-architecture-flexgroup.html#flexgroup-volume-management-improvements["Améliorations de la gestion des volumes FlexGroup"].
+
+[cols="1,1"]
+|===
+
+
+| link:afx-management.html["Précédent"] | link:afx-hardware.html["Suite : Matériel"] 
+|===

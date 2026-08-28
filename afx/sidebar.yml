@@ -7,9 +7,35 @@ entries:
 - title: Quoi de neuf
   url: "/afx/afx-whats-new.html"
 - title: Architecture
-  url: "/afx/afx-architecture.html"
+  entries:
+  - title: Présentation
+    url: "/afx/afx-architecture.html"
+  - title: Relations nœud-disque
+    url: "/afx/afx-architecture-node-disk.html"
+  - title: Pool de capacité unique
+    url: "/afx/afx-architecture-capacity-pool.html"
+  - title: Comportement de basculement HA et NVRAM répliquée
+    url: "/afx/afx-architecture-nvram-ha.html"
+  - title: Échelle linéaire indépendante
+    url: "/afx/afx-architecture-independent-scale.html"
+  - title: Modifications RAID
+    url: "/afx/afx-architecture-raid.html"
+  - title: efficacité de stockage
+    url: "/afx/afx-architecture-storage-efficiency.html"
+  - title: Modifications apportées à la prise en charge des fonctionnalités ONTAP
+    url: "/afx/afx-architecture-feature-support.html"
+  - title: Améliorations de la gestion FlexGroup
+    url: "/afx/afx-architecture-flexgroup.html"
+  - title: Mouvements de volume
+    url: "/afx/afx-architecture-volume-moves.html"
+  - title: Échelle du cluster
+    url: "/afx/afx-architecture-cluster-scale.html"
+  - title: modifications du volume racine
+    url: "/afx/afx-architecture-root-volume.html"
 - title: Performances
   url: "/afx/afx-performance.html"
+- title: Conseils pour l'évaluation des performances
+  url: "/afx/afx-performance-benchmarks.html"
 - title: Gestion
   url: "/afx/afx-management.html"
 - title: Capacités

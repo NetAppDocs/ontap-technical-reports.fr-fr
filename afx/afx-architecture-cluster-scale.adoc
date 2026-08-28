@@ -1,0 +1,69 @@
+---
+sidebar: sidebar 
+permalink: afx/afx-architecture-cluster-scale.html 
+keywords: netapp afx, cluster scale, node addition, node removal, 32 nodes, 32PB 
+summary: 'Découvrez comment NetApp AFX automatise l"ajout et la suppression de nœuds et met à l"échelle les clusters jusqu"à 32 nœuds et 32 PB.' 
+---
+= Échelle du cluster
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx/
+
+
+[role="lead"]
+L’architecture NetApp AFX simplifie l’ajout et la suppression de nœuds et permet une plus grande échelle du cluster sans perte de capacité ni de performance.
+
+
+
+[[node-additions-and-removals]]
+== Ajouts et suppressions de nœuds
+
+Les solutions unified ONTAP et NetApp AFX permettent toutes deux d’ajouter et de supprimer des nœuds du cluster. Cependant, en raison de certaines différences architecturales, le processus d’ajout et de suppression de nœuds diffère légèrement.
+
+
+
+[[node-additionremoval-in-unified-ontap]]
+=== Ajout/suppression de nœuds dans unified ONTAP
+
+Nous avons déjà vu que ONTAP unifié établit une relation directe entre les nœuds et les disques, et que chaque nœud doit posséder des disques et au moins un agrégat. Par conséquent, les règles suivantes s'appliquent aux ajouts et aux suppressions.
+
+* L'ajout de nœuds dans unified ONTAP ne nécessite aucune étape supplémentaire, mais pour garantir des performances équilibrées sur l'ensemble des nœuds (y compris les nouveaux), il est nécessaire de déplacer les volumes vers les nouveaux nœuds. Cela nécessite une analyse préalable des volumes existants et de leurs charges de travail, des décisions sur les volumes à déplacer, puis le déplacement effectif des volumes, ce qui, là encore, requiert une copie de ces données sur le réseau principal du cluster.
+* La suppression de nœuds dans unified ONTAP nécessite une évacuation manuelle des volumes existants sur le nœud, ce qui signifie que vous devez identifier quels nœuds peuvent héberger quels volumes pour maintenir des performances homogènes, et vous devez disposer d'une capacité libre suffisante pour permettre le déplacement de ces volumes. Si la capacité libre pose problème, des déplacements de volumes supplémentaires peuvent être nécessaires pour redistribuer les charges de travail dans le cluster. La suppression de nœuds implique également la suppression de la paire haute disponibilité, ce qui double la charge de travail. Comme les nœuds possèdent les disques, une réinitialisation complète des disques serait également requise pour ces nœuds. Chacune de ces étapes ajoute du temps et des efforts à ce qui devrait être une tâche relativement simple.
+
+
+
+
+[[node-additionremoval-in-netapp-afx]]
+=== Ajout/suppression de nœuds dans NetApp AFX
+
+Nous avons également constaté que NetApp AFX n'utilise pas le modèle standard d'association nœud-disque et n'a pas recours aux agrégats physiques pour présenter la capacité au cluster. De ce fait, l'ajout et la suppression de nœuds se comportent un peu différemment.
+
+* L'ajout de nœuds dans NetApp AFX ne nécessite pas d'analyse préalable des volumes ni d'intervention administrative pour garantir une répartition équilibrée des volumes entre les nœuds. À la place, ONTAP répartit automatiquement le nombre de volumes entre les nouveaux nœuds afin de maintenir des profils de performance relativement homogènes. ONTAP déplacera automatiquement les volumes entre les nœuds sans rien copier, réduisant ainsi le temps, la capacité et les efforts nécessaires à l'ajout de nœuds à un cluster.
+* La suppression de nœuds dans NetApp AFX ne nécessite également que très peu, voire aucune, intervention manuelle. Lorsqu’un nœud est marqué pour suppression, ONTAP déplace automatiquement les volumes entre les nœuds (là encore, sans copie) afin d’évacuer les nœuds supprimés. Et comme aucun disque n’est détenu par les nœuds, il n’est pas nécessaire de réinitialiser les disques après la suppression des nœuds. Cela rend les nœuds dans AFX modulaires par nature et faciles à faire évoluer à la hausse ou à la baisse.
+
+
+
+
+[[cluster-scale-and-expansion]]
+== Échelle et expansion du cluster
+
+Les clusters ONTAP unifiés prennent en charge jusqu'à 24 nœuds et chaque nœud ajouté doit également être ajouté avec des disques (à la fois pour la fonctionnalité du système et les services de données). Des baies de disques peuvent être ajoutées au cluster, mais elles sont toujours connectées à une seule paire haute disponibilité et appartiennent uniquement à un seul nœud, même si le cluster compte 24 nœuds. Cela signifie que de la capacité est ajoutée à un cluster même lorsque seules les performances sont requises, et que cette augmentation de performance est principalement limitée à un ensemble spécifique de disques appartenant aux nouveaux nœuds. Par conséquent, vous risquez de vous retrouver avec une capacité supplémentaire dont vous n'avez pas nécessairement besoin.
+
+*Unified ONTAP – prise en compte de l'échelle ajoutée*
+
+image:image30.png["Image"]
+
+NetApp AFX prend en charge une plus grande échelle pour les clusters. À partir de la version 9.19.1, les clusters AFX peuvent atteindre 32 nœuds dans un seul cluster. Et parce que tous les nœuds peuvent voir et accéder à tous les disques, ils peuvent tous partager les performances et la capacité (jusqu'à 32 Po avec ONTAP 9.19.1) de ces disques, de sorte qu'il n'y ait jamais de ressource inutilisée. Les déplacements de volumes ne nécessitent pas de copies, donc ONTAP peut déplacer automatiquement les volumes vers les nouveaux nœuds afin d'assurer une utilisation homogène des nœuds, tandis que la capacité est répartie uniformément via la Storage Availability Zone.
+
+*NetApp AFX – prise en compte de l'échelle*
+
+image:image31.png["Image"]
+
+Pour plus d'informations sur la taille maximale des clusters, consultez la link:afx-limits.html["Limites"] page.
+
+[cols="1,1"]
+|===
+
+
+| link:afx-architecture-volume-moves.html["Précédent : Mouvements de volume"] | link:afx-architecture-root-volume.html["Suivant : Modifications du volume racine"] 
+|===

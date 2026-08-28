@@ -11,7 +11,7 @@ summary: Cette page présente les dernières mises à jour pour NetApp AFX et se
 
 
 [role="lead"]
-Cette section présente les dernières mises à jour pour NetApp AFX et sera actualisée à chaque nouvelle version. Consultez-la régulièrement pour obtenir les dernières informations, mais consultez également les notes de version.
+Cette section présente les dernières mises à jour de NetApp AFX et sera mise à jour à chaque nouvelle version. Consultez cette page régulièrement pour obtenir de nouvelles informations, et consultez également le link:https://docs.netapp.com/us-en/ontap-afx/release-notes/whats-new-9191.html["Notes de version d'ONTAP 9.19.1 AFX"^].
 
 
 
@@ -20,16 +20,16 @@ Cette section présente les dernières mises à jour pour NetApp AFX et sera act
 
 Dernière version :
 
-ONTAP 9.19.1RC1 (à partir de mai 2026)
+ONTAP 9.19.1GA (à partir d'août 2026)
 
 Nouvelles fonctionnalités dans NetApp AFX :
 
-* Déduplication globale
-* Efficacité de stockage dynamique
-* Lecture anticipée avancée
-* Prise en charge de 32 nœuds
-* Prise en charge de 32PB
-* 512 volumes constituants par FlexGroup volume
+* link:afx-architecture-storage-efficiency.html#deduplication-domains["Déduplication globale"] (voir aussi link:https://docs.netapp.com/us-en/ontap-afx/administer/additional-ontap-svm.html#global-deduplication["Administration SVM AFX"^])
+* link:https://docs.netapp.com/us-en/ontap-afx/release-notes/whats-new-9191.html["Efficacité de stockage dynamique"^]
+* link:afx-performance.html#aggressive-read-ahead["Lecture anticipée avancée"] (Lecture séquentielle inter-fichiers ; voir aussi link:https://docs.netapp.com/us-en/ontap-afx/administer/additional-ontap-svm.html#cross-file-sequential-read["Administration SVM AFX"^])
+* link:afx-architecture-cluster-scale.html#cluster-scale-and-expansion["Prise en charge de 32 nœuds"] (voir aussi link:afx-limits.html["Maximums et limites"])
+* link:afx-limits.html["Prise en charge de 32PB"]
+* link:afx-limits.html["512 volumes constituants par FlexGroup volume"]
 
 
 
@@ -41,5 +41,14 @@ Nouvelles fonctionnalités dans NetApp AFX :
 | Version | Date | Historique des versions du document 
 
 
+| Version 1.1 | Août 2026 | Ce rapport technique a été mis à jour pour ONTAP 9.19.1GA. Il couvre les nouvelles fonctionnalités AFX, l'évolutivité à 32 nœuds et 32 PB, les performances et le matériel AFX 1K et AFX 2K, le dimensionnement des commutateurs et des tiroirs disques de cluster, les limites de plateforme mises à jour, une page de conseils sur les benchmarks de performance et des liens supplémentaires vers la documentation produit. 
+
+
 | Version 1.0 | Juin 2026 | Version initiale 
+|===
+[cols="1,1"]
+|===
+
+
+| link:afx-learn-about.html["Précédent"] | link:afx-architecture.html["Ensuite : Architecture"] 
 |===

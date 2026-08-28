@@ -1,0 +1,44 @@
+---
+sidebar: sidebar 
+permalink: afx/afx-architecture-flexgroup.html 
+keywords: netapp afx, flexgroup, advanced capacity balancing, volume management, storage availability zone 
+summary: Découvrez comment l’architecture de capacité NetApp AFX simplifie la gestion des volumes FlexGroup. 
+---
+= Améliorations de la gestion FlexGroup
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx/
+
+
+[role="lead"]
+La zone de disponibilité de stockage unique dans NetApp AFX réduit la gestion de l'infrastructure requise pour les volumes FlexGroup.
+
+De manière générale, la gestion NetApp AFX ne modifie pas les mécanismes utilisés pour gérer un cluster. Les administrateurs peuvent toujours utiliser l'interface de ligne de commande (CLI), l'interface graphique (GUI) et les API REST pour se connecter et configurer un cluster. Mais NetApp AFX a offert l'opportunité d'améliorer certains aspects de la façon dont les opérations de gestion du stockage sont réalisées.
+
+
+
+[[flexgroup-volume-management-improvements]]
+== Améliorations de la gestion des volumes FlexGroup
+
+Un volume FlexGroup est composé de plusieurs volumes FlexVol sous-jacents créés sur plusieurs nœuds et agrégats du cluster et présentés comme un espace de noms unique et étendu aux clients NAS. Les volumes FlexGroup offrent des avantages en termes de performances, d’évolutivité, d’équilibrage de charge et de capacité de fichiers pour les charges de travail à haute performance. Cependant, comme ils se coordonnent entre les nœuds et les agrégats, ils rencontrent parfois certaines limitations physiques lorsque la capacité commence à se remplir, car les systèmes de fichiers indépendants fournis par les agrégats ont également une utilisation et des limites de capacité indépendantes. Par exemple, si un agrégat avec des volumes constituants FlexGroup commence à se remplir avant les autres agrégats du cluster, alors l’ensemble du FlexGroup lui-même pourrait être sujet à des problèmes de capacité ou de performances.
+
+De ce fait, les administrateurs de stockage peuvent se préoccuper excessivement de l'infrastructure FlexGroup sous-jacente et se concentrer moins sur la maintenance d'autres aspects de l'environnement.
+
+*Disposition du volume FlexGroup - Agrégats ONTAP unifiés*
+
+image:image22.png["Image"]
+
+NetApp AFX présente la capacité dans une seule zone de disponibilité de stockage, ce qui correspond davantage à la façon dont les volumes FlexGroup sont conçus pour fonctionner. Au lieu de plusieurs volumes constitutifs répartis dans différents agrégats de tailles potentiellement variables, tous les volumes résident dans le même pool de capacité, ce qui simplifie considérablement la gestion globale de l'utilisation d'un volume FlexGroup.
+
+De plus, AFX active par défaut l'équilibrage de capacité avancé pour les volumes FlexGroup, ce qui permet une meilleure répartition des fichiers volumineux au sein du volume. Désormais, les constituants du volume FlexGroup deviennent moins un concept de gestion et effectuent plutôt leur travail discrètement en arrière-plan.
+
+*Disposition du volume FlexGroup - NetApp AFX*
+
+image:image23.png["Image"]
+
+[cols="1,1"]
+|===
+
+
+| link:afx-architecture-feature-support.html["Précédent : Modifications apportées à la prise en charge des fonctionnalités ONTAP"] | link:afx-architecture-volume-moves.html["Suite : déplacements de volumes"] 
+|===

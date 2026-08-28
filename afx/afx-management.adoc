@@ -1,8 +1,8 @@
 ---
 sidebar: sidebar 
 permalink: afx/afx-management.html 
-keywords: netapp afx, cli, system manager, rest api, management tools, gui 
-summary: 'Bien qu"il existe des différences architecturales assez importantes dans la manière dont le stockage est présenté dans NetApp AFX, l"ensemble des fonctionnalités et la manière dont ONTAP est géré restent pratiquement inchangés.' 
+keywords: netapp afx, capacity management, storage availability zone, cli, system manager, rest api, management tools, gui 
+summary: Découvrez comment la NetApp AFX Storage Availability Zone simplifie la gestion de la capacité, tandis que les outils de gestion ONTAP habituels restent disponibles. 
 ---
 = Outils de gestion
 :allow-uri-read: 
@@ -61,6 +61,33 @@ image:image41.png["Image"]
 
 
 
+[[capacity-management]]
+== Gestion de la capacité
+
+La NetApp AFX Storage Availability Zone réduit les points de gestion d'une approche basée sur les nœuds et les agrégats à un pool unique de capacité disponible pour l'ensemble du cluster. À mesure que les volumes augmentent ou diminuent, ONTAP emprunte et restitue automatiquement de la capacité à la Storage Availability Zone.
+
+Grâce à cela, les administrateurs de stockage n'ont plus à se soucier de la localisation et de la gestion de l'espace libre disponible sur jusqu'à 24 nœuds et potentiellement des centaines d'agrégats. Désormais, la capacité est gérée et visualisée depuis un seul et même endroit.
+
+Par exemple, dans l'interface de ligne de commande de unified ONTAP, si vous souhaitez afficher les informations de capacité physique totale d'un cluster, vous devez utiliser « aggregate show-space », ce qui affichera alors chaque entrée d'agrégat. Dans NetApp AFX, vous avez « cluster space show », qui n'affichera que la seule Storage Availability Zone.
+
+*Comparaison côte à côte des commandes CLI de capacité dans ONTAP unifié et NetApp AFX*
+
+image:image19.png["Image"]
+
+Dans l'interface graphique Unified ONTAP System Manager, les niveaux servent à afficher la capacité. En fait, l'interface tente d'afficher la capacité globale du cluster en additionnant les totaux, mais elle présente néanmoins l'utilisation globale par agrégat.
+
+*Vues de capacité de System Manager – Unified ONTAP*
+
+image:image20.png["Image"]
+
+Dans NetApp AFX System Manager, l'affichage est quasiment identique pour l'espace du cluster, mais comme il n'y a pas d'agrégats, aucun calcul supplémentaire n'est nécessaire. La capacité affichée est la capacité réelle.
+
+*Vues de capacité du gestionnaire système – NetApp AFX*
+
+image:image21.png["Image"]
+
+
+
 [[rest-apis]]
 == API REST
 
@@ -83,3 +110,10 @@ NetApp AFX ne prend actuellement pas en charge :
 
 * NetApp ActiveIQ Unified Manager
 
+
+[cols="1,1"]
+|===
+
+
+| link:afx-performance-benchmarks.html["Précédent"] | link:afx-capabilities.html["Ensuite : Capacités"] 
+|===

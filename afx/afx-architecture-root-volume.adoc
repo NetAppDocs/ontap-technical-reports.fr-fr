@@ -1,0 +1,39 @@
+---
+sidebar: sidebar 
+permalink: afx/afx-architecture-root-volume.html 
+keywords: netapp afx, root volume, boot media, nvme, m.2, cluster database 
+summary: Découvrez comment NetApp AFX virtualise les volumes racine et déplace les images de démarrage et les bases de données de cluster vers le support de démarrage intégré. 
+---
+= modifications du volume racine
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/afx/
+
+
+[role="lead"]
+NetApp AFX supprime les agrégats racine physiques et utilise un support de démarrage NVMe intégré pour les images de démarrage et les bases de données de cluster répliquées.
+
+
+
+[[root-volume-changes]]
+== modifications du volume racine
+
+Dans NetApp ONTAP, chaque nœud se voit attribuer un volume racine, utilisé pour les fichiers et fonctions spécifiques au système, tels que les fichiers journaux, les images de démarrage, les fichiers core, les bases de données du cluster, et plus encore.
+
+Dans Unified ONTAP, ces volumes racine résidaient sur des agrégats racine physiques. Pour réduire la capacité utilisée par les agrégats racine, ils ont été créés sur des partitions de disques de données via Advanced Disk Partitioning (ADP).
+
+NetApp AFX élimine les agrégats physiques de l'équation, supprimant ainsi le besoin d'agrégats racine et d'ADP. Les volumes racine restent un concept, mais ils résident désormais dans des zones virtualisées du pool de capacité et ne nécessitent aucune configuration supplémentaire. De plus, la fonctionnalité du volume racine change. Les images de démarrage et les bases de données de cluster répliquées sont déplacées de la pile de stockage vers un support de démarrage intégré à chaque nœud AFX. Désormais, si l'accès à la pile de stockage est perdu, les nœuds peuvent toujours démarrer et conserver leur éligibilité au cluster, ce qui simplifie la complexité du dépannage.
+
+
+
+[[onboard-boot-media]]
+== Support de démarrage embarqué
+
+NetApp Les nœuds AFX utilisent un support de démarrage intégré, qui est un périphérique M.2 NVMe d'environ 3,8 To. Ces supports de démarrage contiennent des fichiers image de démarrage et des bases de données répliquées, distincts des baies de stockage, ce qui offre une redondance supplémentaire en cas de problème d'accès disque. Si le support de démarrage tombe en panne, le nœud sera pris en charge par son partenaire de paire haute disponibilité et le support de démarrage pourra être remplacé. Une fois remplacé, une nouvelle image ONTAP sera chargée sur le périphérique par un administrateur de stockage et ONTAP reconstruira automatiquement la base de données du cluster pour rétablir la pleine fonctionnalité.
+
+[cols="1,1"]
+|===
+
+
+| link:afx-architecture-cluster-scale.html["Précédent : Échelle de cluster"] | link:afx-performance.html["Ensuite : Performance"] 
+|===
