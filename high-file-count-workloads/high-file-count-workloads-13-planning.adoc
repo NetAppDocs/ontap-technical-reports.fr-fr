@@ -1,0 +1,133 @@
+---
+sidebar: sidebar 
+permalink: high-file-count-workloads/high-file-count-workloads-13-planning.html 
+keywords: ONTAP, NAS, high file count, planning, maxfiles, maxdir-size, maxdirsize, inodes, metadata, XCP 
+summary: 'Rassemblez les estimations d"inodes, de répertoires, de débit d"opérations et de capacité avant de dimensionner une charge de travail NAS à grand nombre de fichiers sur ONTAP.' 
+---
+= Approche de planification
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/high-file-count-workloads/
+
+
+[role="lead"]
+Commencez la planification d’un NAS à grand nombre de fichiers par quatre estimations distinctes plutôt que par un seul chiffre concernant le nombre de fichiers ou la capacité.
+
+. Nombre total d'objets du système de fichiers sur l'ensemble du cycle de vie de la charge de travail
+. Nombre maximal d'entrées dans le plus grand répertoire
+. Taux de création, de recherche, d'énumération et de suppression de pointe
+. Capacité pour les données utilisateur, les inodes, les répertoires, les index de répertoires, les copies Snapshot et la croissance
+
+
+Utilisez les méthodes suivantes pour recueillir ces données :
+
+
+
+[[find-total-objects-and-inode-headroom]]
+== Rechercher le nombre total d'objets et la marge disponible des inodes
+
+Comparez l'inventaire des applications avec les compteurs d'inodes publics d'ONTAP :
+
+[listing]
+----
+volume show -vserver <svm> -volume <volume> -fields files,files-used
+
+set -privilege advanced
+volume show -vserver <svm> -volume <volume> -fields files-maximum-possible,inodefile-public-capacity
+----
+Pour FlexGroup, examinez à la fois le total configuré et l’utilisation de chaque constituant :
+
+[listing]
+----
+volume show -vserver <svm> -volume-style-extended flexgroup-constituent -fields files,files-used
+----
+* Incluez dans l'estimation totale les fichiers projetés, les répertoires, les flux, les ACL, les index de répertoires publics, les objets temporaires et le chevauchement de migration.
+* Lorsque les listes de contrôle d'accès (ACL) sont courantes, utilisez jusqu'à deux fois le nombre projeté de fichiers et de répertoires comme estimation initiale prudente pour `files`. Chaque ACL NTFS ou NFSv4 peut consommer un inode public supplémentaire, mais link:high-file-count-workloads-09-maxfiles.html#acl-inodes["Partage des ACL"] peut réduire l'utilisation réelle. Validez avec des données représentatives.
+* Utilisez l'inventaire de l'application ou une évaluation de migration pour prévoir la croissance. `files-used` Il s'agit de l'utilisation actuelle, et non du pic futur.
+
+
+NetApp XCP peut compter les fichiers et les répertoires dans l’espace de noms actuel. Sur XCP 1.5 et versions ultérieures :
+
+[listing]
+----
+xcp scan -stats <host>:/<export>
+xcp scan -stats \\<server>\<share>
+----
+Le `-stats` rapport inclut le nombre de fichiers et de répertoires. Il n'inclut pas les inodes ACL ni les flux nommés qui n'apparaissent jamais comme entrées de répertoire, alors ajoutez-les à partir du profil d'application. Prévoyez un délai pour les jeux de données contenant un grand nombre de fichiers ; XCP analyse l'arborescence avant d'afficher les totaux. Pour la note de sous-commande XCP 1.5 et les analyses associées, consultez link:high-file-count-workloads-03-maxdirsize-view.html#scan-directory-sizes-with-xcp["Analyser la taille des répertoires avec XCP"].
+
+
+
+[[find-the-largest-directories]]
+== Recherchez les plus grands répertoires
+
+* Utilisez l'inventaire des applications, les outils de migration ou une analyse contrôlée de l'espace de noms pour identifier les répertoires contenant le plus d'entrées.
+* Examinez `wafl.dir.size.warning` et les événements EMS connexes pour les répertoires qui approchent déjà de la limite.
+* Mesurez l’objet répertoire lui-même comme décrit dans link:high-file-count-workloads-03-maxdirsize-view.html["Afficher la taille maximale du répertoire et la taille du répertoire actuel"].
+* Longueurs des noms de fichiers de modèle et noms alternatifs, tels que décrits dans link:high-file-count-workloads-02-maxdirsize.html["Maxdir-size et grands répertoires ONTAP"].
+
+
+XCP peut classer les répertoires par nombre d'entrées ou par taille répertoire-fichier. Le `-stats` rapport inclut le nombre d'entrées du plus grand répertoire comme `Dirsize`. Pour répertorier chaque répertoire avec sa taille métadonnées-fichier, du plus grand au plus petit :
+
+[listing]
+----
+xcp scan -match "type == d" -fmt "'{} {}'.format(used, x)" <host>:/<export> | sort -rn
+----
+Pour lister les répertoires au-dessus d’un nombre d’entrées choisi (2 000 dans cet exemple) :
+
+[listing]
+----
+xcp diag find --branch-match True -fmt "'{size} {name}'.format(size=x.digest, name=x)" <host>:/<export> 2>/dev/null | awk '{if ($1 > 2000) print $1 " " $2}'
+----
+Ces analyses permettent de trouver les répertoires les plus utilisés. Elles ne remplacent pas la modélisation de la longueur des noms et de l’encodage pour `maxdir-size`.
+
+
+
+[[measure-metadata-operation-rates]]
+== Mesurez les taux d’opérations des métadonnées
+
+* Utilisez la télémétrie des applications, les outils de charge de travail client, les traces de paquets, les statistiques de performance ONTAP ou un outil de surveillance tel que Harvest pour mesurer les taux de création, de recherche, d'ouverture, de fermeture, d'attributs, d'énumération, de renommage et de suppression.
+* Testez une concurrence représentative ainsi que le comportement du cache chaud et du cache froid.
+* Les mesures de débit ne caractérisent pas nécessairement une charge de travail riche en métadonnées. Les compteurs d'opérations peuvent fournir un indice, en particulier `other_ops`.
+
+
+
+
+[[find-metadata-and-snapshot-capacity]]
+== Recherchez les métadonnées et la capacité Snapshot
+
+* Utilisez `volume show-space` pour séparer les données utilisateur, les métadonnées du système de fichiers, les inodes et la réserve de Snapshot.
+* Utilisez  `volume show-footprint` pour examiner l'encombrement de l'agrégat du volume.
+* Estimez le nombre d'enregistrements d'inodes bruts ONTAP 9 comme `peak allocated inodes × 288 bytes`, puis ajoutez la taille du fichier de répertoire.
+* Sur ONTAP unifié, consultez les métadonnées de l’agrégat avec  `storage aggregate show-space`.
+* Sur AFX, consultez les métadonnées de la zone de disponibilité du stockage avec  `storage availability-zone show`.
+* Prévoyez environ 1 % de la capacité pour les autres métadonnées système qui ne peuvent pas être inventoriées à partir de l'hôte.
+
+
+
+
+[[dont-conflate-maxdir-size-with-maxfiles]]
+== Ne confondez pas maxdir-size avec maxfiles
+
+* `files` (maxfiles) est le plafond d'inodes publics pour un FlexVol ou un constituant FlexGroup.
+* `maxdir-size` correspond à la limite en octets de chaque fichier de répertoire dans le volume. Le nombre de noms pouvant y tenir dépend de leur longueur et de leur encodage, et non du nombre de fichiers dans le volume.
+* Ne déduisez pas `maxdir-size` du nombre total de fichiers du volume, et n'utilisez pas `maxfiles` pour estimer combien de noms tiennent dans un répertoire.
+
+
+Pour des recommandations de conception et d’exploitation, voir link:high-file-count-workloads-14-best-practices.html["Meilleures pratiques pour les charges de travail NAS à grand nombre de fichiers"].
+
+[cols="<,>"]
+|===
+
+
+| link:high-file-count-workloads-12-maxfiles-monitoring.html["← Précédent : Surveiller maxfiles, les événements EMS et les améliorations de ONTAP"] | link:high-file-count-workloads-14-best-practices.html["Suite : Bonnes pratiques pour les charges de travail NAS avec un grand nombre de fichiers →"] 
+|===
+
+
+[[related-information]]
+== Informations associées
+
+* link:high-file-count-workloads-09-maxfiles.html["Types d'inodes ONTAP"]
+* link:high-file-count-workloads-03-maxdirsize-view.html["Afficher la taille maximale du répertoire et la taille du répertoire actuel"]
+* link:https://docs.netapp.com/us-en/ontap/volumes/display-file-inode-usage-task.html["Déterminer l'utilisation des fichiers et des inodes pour un volume ONTAP"^]
+* link:https://www.netapp.com/pdf.html?item=/media/12385-tr4571.pdf["TR-4571: Volumes FlexGroup NetApp ONTAP"^]
+

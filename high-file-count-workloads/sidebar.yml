@@ -1,0 +1,36 @@
+---
+section: high-file-count-workloads
+title: Charges de travail NAS à grand nombre de fichiers
+entries:
+- title: Présentation
+  url: "/high-file-count-workloads/high-file-count-workloads-01-overview.html"
+- title: Taille maximale des répertoires et grands répertoires
+  entries:
+  - title: Présentation
+    url: "/high-file-count-workloads/high-file-count-workloads-02-maxdirsize.html"
+  - title: Afficher la taille maximale du répertoire et la taille du répertoire actuel
+    url: "/high-file-count-workloads/high-file-count-workloads-03-maxdirsize-view.html"
+  - title: Indexation des répertoires dans ONTAP
+    url: "/high-file-count-workloads/high-file-count-workloads-04-maxdirsize-indexing.html"
+  - title: Impact de maxdir-size
+    url: "/high-file-count-workloads/high-file-count-workloads-05-maxdirsize-impact.html"
+  - title: Considérations relatives au volume
+    url: "/high-file-count-workloads/high-file-count-workloads-06-maxdirsize-volume-types.html"
+  - title: Fonctionnalités, EMS et surveillance
+    url: "/high-file-count-workloads/high-file-count-workloads-07-maxdirsize-features-ems.html"
+- title: Nombre élevé de fichiers et capacité d'inodes
+  entries:
+  - title: Présentation
+    url: "/high-file-count-workloads/high-file-count-workloads-08-maxfiles-high-file-counts.html"
+  - title: Types d'inodes
+    url: "/high-file-count-workloads/high-file-count-workloads-09-maxfiles.html"
+  - title: Informations sur les inodes Maxfiles et ONTAP
+    url: "/high-file-count-workloads/high-file-count-workloads-10-maxfiles-limits.html"
+  - title: Contrôle de maxfiles
+    url: "/high-file-count-workloads/high-file-count-workloads-11-maxfiles-controlling.html"
+  - title: Surveillance, EMS et améliorations
+    url: "/high-file-count-workloads/high-file-count-workloads-12-maxfiles-monitoring.html"
+- title: Approche de planification
+  url: "/high-file-count-workloads/high-file-count-workloads-13-planning.html"
+- title: Meilleures pratiques
+  url: "/high-file-count-workloads/high-file-count-workloads-14-best-practices.html"

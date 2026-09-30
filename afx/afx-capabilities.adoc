@@ -59,7 +59,7 @@ De plus, NetApp AFX prend en charge de nombreuses fonctionnalités de sécurité
 
 Pour plus d'informations sur les certifications obtenues par unified ONTAP (ainsi que sur d'autres informations relatives au renforcement de la sécurité), voir :
 
-* link:https://security.netapp.com/certifications["NetApp Sécurité des produits"^]
+* link:https://security.netapp.com/resources/["NetApp Sécurité des produits"^]
 * link:https://docs.netapp.com/us-en/ontap-technical-reports/ontap-security-hardening/security-hardening-overview.html["Présentation du renforcement de la sécurité ONTAP"^]
 
 

@@ -1,0 +1,130 @@
+---
+sidebar: sidebar 
+permalink: high-file-count-workloads/high-file-count-workloads-06-maxdirsize-volume-types.html 
+keywords: ONTAP, NAS, maxdir-size, maxdirsize, FlexVol, FlexGroup, volume language, utf8mb4, volume options 
+summary: Comprenez comment le type de volume, les options de volume et la langue du volume affectent le comportement de maxdir-size dans ONTAP. 
+---
+= Considérations relatives au volume
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/high-file-count-workloads/
+
+
+[role="lead"]
+`maxdir-size`Il s'agit d'une limite par répertoire, mais le volume autour de ce répertoire a également son importance. Le type de volume, les options du volume et la langue du volume influent sur la vitesse à laquelle un fichier de répertoire augmente et sur la façon dont vous gérez cette limite.
+
+
+
+[[volume-type]]
+== Type de volume
+
+`maxdir-size` s'applique à chaque répertoire dans les volumes FlexVol® et FlexGroup. Les entrées de répertoire et la structure des composants FlexGroup modifient la vitesse à laquelle un fichier de répertoire peut croître.
+
+
+
+[[flexvol-volumes]]
+=== Volumes FlexVol®
+
+Un volume FlexVol® possède un système de fichiers et une réserve d'inodes publics. `maxdir-size` s'applique toujours indépendamment à chaque répertoire. Un répertoire actif unique est traité sous la propriété de ce volume et ne bénéficie pas d'un parallélisme accru simplement parce que le cluster contient des nœuds supplémentaires.
+
+
+
+[[flexgroup-volumes]]
+=== Volumes FlexGroup
+
+Un FlexGroup présente un espace de noms unique pris en charge par plusieurs composants FlexVol. Cela améliore le nombre total de fichiers et l’évolutivité de la capacité, tout en permettant la distribution des données sur les nœuds et les disques, mais sans multiplier la limite d’un répertoire logique (`maxdir-size` par le nombre de composants.
+
+La figure suivante montre comment un fichier de répertoire reste sur un constituant tandis que les objets de fichier nommés par ce répertoire peuvent résider sur d'autres constituants.
+
+[link=../media/high-file-count-workloads/flexgroup-directory-placement.png]
+image::flexgroup-directory-placement.png[Diagramme d’un FlexGroup avec un inode de répertoire et un fichier de répertoire sur un seul constituant,700,and remote links counting against maxdir-size]
+
+Considérez les différences suivantes :
+
+* Les entrées de répertoire peuvent pointer vers des fichiers situés sur des constituants distants et nécessiter une représentation sur disque plus importante que les entrées FlexVol® locales.
+* Les mêmes noms de fichiers visibles peuvent donc consommer l'espace du fichier de répertoire à un rythme différent de celui d'un FlexVol.
+* La capacité des fichiers et des inodes est maintenue par constituant, de sorte que la distribution et la pression des constituants sont importantes.
+* `maxdir-size` est modifié au niveau du FlexGroup, et non directement sur un constituant.
+* Le partitionnement d'une application sur plusieurs répertoires à l'aide de volumes FlexGroup offre à ONTAP davantage de possibilités pour répartir le travail et les fichiers.
+
+
+En résumé, le même  `maxdir-size` paramètre sur un FlexGroup contient souvent moins de noms que sur un FlexVol, car les entrées de répertoire distant occupent plus d'espace. L'ampleur de cet écart dépend de l'organisation du jeu de données et de l'importance du placement à distance effectué.
+
+FlexGroup les liens physiques distants du volume augmentent la valeur par répertoire d’un montant qui évolue en fonction de la fraction d’entrées stockées à distance. Prévoyez une limite supérieure d’environ 2× pour les grands répertoires plats (environ 85 % d’entrées distantes), ce qui abaisse le plafond pratique à environ 2 à 2,6 millions link:high-file-count-workloads-02-maxdirsize.html#estimating-the-number-of-names-per-directory-file["noms ordinaires"] avec la valeur par défaut de 320 MB, contre jusqu’à environ 4,3 millions sur un FlexVol. Les structures de répertoires larges ou profondes maintiennent le ratio — et l’augmentation due aux liens physiques distants — à un niveau plus faible. Validez sur un répertoire représentatif avec  `stat`, `ls -ld`, ou XCP.
+
+
+
+[[volume-options]]
+== Options de volume
+
+Les champs de volume suivants sont ceux qui reviennent le plus souvent lors de la planification ou du dépannage de grands répertoires.
+
+|===
+| Champ | Définissable et privilège | But 
+
+
+| `maxdir-size` | Oui, avancé | Autorise un fichier par répertoire plus volumineux afin de contenir davantage de fichiers par répertoire. 
+
+
+| `is-dir-index-transfer-enabled` | Oui, admin | Déplace les index de répertoire dans l'espace d'inodes public pour la portabilité de la réplication et de la restauration prises en charge. 
+
+
+| `has-dir-index-public` | Non, avancé | Indique si des inodes d’index de répertoire public existent. 
+
+
+| `has-optimized-sparse-directories` | Non, avancé | Indique si le volume contient des répertoires clairsemés optimisés avec suppression de blocs. 
+
+
+| `language` | Limité, admin | Contrôle l'interprétation des noms. Les noms non ASCII et les caractères UTF-8 de 4 octets (`utf8mb4` peuvent contenir moins de noms par répertoire ; voir <<volume-language>>. 
+
+
+| `analytics-state` | Oui, admin | Active l'analyse du système de fichiers. Ses analyses d'espace de noms peuvent augmenter la charge de travail sur les volumes contenant un grand nombre de fichiers, mais ne la modifient pas `maxdir-size`. 
+|===
+
+
+[[volume-language]]
+== Langue du volume
+
+Le paramètre de volume `-language` contrôle la façon dont NFS convertit les noms entre l’encodage du client et les noms Unicode stockés sur le disque. Les volumes héritent de la valeur par défaut du SVM, sauf si vous définissez `-language` lors de la création. La valeur par défaut de ONTAP est `C.UTF-8`. À partir de ONTAP 9.5, `utf8mb4` stocke les noms UTF-8 sur 4 octets (émojis et autres caractères Unicode supplémentaires) au lieu de placer les octets supplémentaires dans bag-of-bits.
+
+Le code de langue lui-même ne modifie pas le nombre de noms ASCII pouvant tenir dans un répertoire `C.UTF-8`, `en_US.UTF-8`, `de.UTF-8`, `ja.UTF-8` et `utf8mb4` utilisent tous le même empaquetage de répertoire Unicode pour les mêmes caractères. Ce qui modifie le nombre, ce sont les caractères dans les noms que cette langue est censée prendre en charge : le texte non ASCII est stocké dans un format plus large, et les caractères supplémentaires de 4 octets sur un volume  `utf8mb4` sont plus larges encore. Les clients NFSv3 qui ne peuvent pas représenter un nom dans l’encodage du volume peuvent également amener ONTAP à stocker un nom alternatif NFS de 8 caractères, ce qui utilise encore plus d’espace de répertoire.
+
+Les exemples suivants utilisent des noms de 32 caractères à 320 Mo `maxdir-size` et incluent les entrées `.` et `..`. Il s'agit de chiffres de planification, et non de garanties.
+
+[cols="2,3,3,1,2,2"]
+|===
+| Langue du volume | Utilisation typique | Exemple de style de nom sur 32 caractères | Noms par bloc de 4 KiB | Noms dans un répertoire à 320 Mo | Comparé à l'ASCII par défaut 
+
+
+| `C.UTF-8` (ONTAP par défaut) | Paramètres régionaux POSIX C avec UTF-8. Les nouveaux SVM et volumes en héritent, sauf si `-language` est défini. | ASCII, comme `project-alpha-run0142-input1.dat` | 53 | 4 341 758 | Référence 
+
+
+| `en_US.UTF-8` | Anglais américain UTF-8 | Les mêmes noms ASCII ou latins de base | 53 | 4 341 758 | Aucune réduction par rapport à la valeur par défaut pour les noms ASCII 
+
+
+| `de.UTF-8` | UTF-8 allemand, y compris les umlauts (`ä`, `ö`, `ü`, `ß`) | Le latin accentué, tel que `Geschäftsbericht-2026-Q3-v03.docx` | 26 | 2 129 918 | Environ 49 % du nombre de caractères ASCII par défaut 
+
+
+| `ja.UTF-8` | Japonais UTF-8 (CJK dans le plan multilingue de base) | Noms japonais de la même longueur de 32 caractères | 26 | 2 129 918 | Environ 49 % du nombre de caractères ASCII par défaut 
+
+
+| `utf8mb4` | UTF-8 sur 4 octets (ONTAP 9.5 et versions ultérieures). À utiliser lorsque les noms contiennent des émojis ou d'autres caractères supplémentaires. | Le texte allemand ou japonais ordinaire se présente toujours comme les lignes UTF-8 ci-dessus. Un nom de 32 caractères incluant des caractères supplémentaires (par exemple un emoji) se présente de manière plus large. | 22 | 1 802 238 | Environ 41 % du nombre de caractères ASCII par défaut lorsque des caractères supplémentaires sont présents 
+|===
+Si les noms restent en ASCII de base, le passage de  `C.UTF-8` à  `en_US.UTF-8`,  `de.UTF-8`,  `ja.UTF-8` ou  `utf8mb4` ne réduit pas le nombre par répertoire. L’accès mixte NFS et SMB peut ajouter des noms alternatifs NFS ou des alias SMB 8.3 à ces chiffres.
+
+Pour les règles de conditionnement derrière le tableau, voir link:high-file-count-workloads-02-maxdirsize.html#estimating-the-number-of-names-per-directory-file["Estimation du nombre de noms par fichier de répertoire"].
+
+[cols="<,>"]
+|===
+
+
+| link:high-file-count-workloads-05-maxdirsize-impact.html["← Précédent : Impact de maxdir-size"] | link:high-file-count-workloads-07-maxdirsize-features-ems.html["Suite : fonctionnalités, EMS et surveillance de maxdir-size →"] 
+|===
+
+
+[[related-information]]
+== Informations associées
+
+* link:https://docs.netapp.com/us-en/ontap/smb-admin/multi-byte-file-directory-qtree-names-concept.html["Noms SMB multi-octets de fichiers, de répertoires et de qtrees"^]
+* link:https://docs.netapp.com/us-en/ontap/flexgroup/index.html["gestion des volumes FlexGroup"^]
+

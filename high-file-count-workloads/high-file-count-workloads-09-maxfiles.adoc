@@ -1,0 +1,170 @@
+---
+sidebar: sidebar 
+permalink: high-file-count-workloads/high-file-count-workloads-09-maxfiles.html 
+keywords: ONTAP, NAS, maxfiles, files, inode, files-used, public inode, private inode 
+summary: 'Comprendre les inodes ONTAP, les types d"inodes publics et privés, les inodes ACL et les flux nommés.' 
+---
+= Types d'inodes ONTAP
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/high-file-count-workloads/
+
+
+[role="lead"]
+ONTAP utilise des inodes publics pour représenter les objets du système de fichiers présents dans les volumes FlexVol® et FlexGroup. Chaque volume a une limite haute définie (voir link:high-file-count-workloads-10-maxfiles-limits.html["Informations sur les inodes Maxfiles et ONTAP"]), et les inodes publics sont comptabilisés dans cette limite au niveau du système de fichiers.
+
+
+
+[[what-is-an-inode]]
+== Qu'est-ce qu'un inode ?
+
+De manière générale, un inode est l'enregistrement du système de fichiers associé à un objet. Il stocke l'identité et les métadonnées telles que le type, le propriétaire, les horodatages et les autorisations, et pointe vers les données de l'objet. Le nom de l'objet est stocké dans un répertoire, et non dans l'inode lui-même.
+
+Dans ONTAP, WAFL stocke ces enregistrements dans un fichier d'inodes masqué au niveau du volume sur chaque constituant FlexVol ou FlexGroup. Les inodes publics sont pris en compte dans le paramètre de volume  `files`, communément appelé maxfiles. La création d'un objet public augmente l'utilisation des inodes publics ; ce n'est pas le cas des inodes privés. La capacité et la croissance du fichier d'inodes sont décrites dans link:high-file-count-workloads-08-maxfiles-high-file-counts.html#capacity-impact["Impact sur la capacité"].
+
+La figure suivante montre comment le fichier inode public est lié à `files-used`, `inodefile-public-capacity`, au `files` plafond et à la capacité consommée dans le volume.
+
+[link=../media/high-file-count-workloads/ontap-inode-file.png]
+image::ontap-inode-file.png[Schéma du fichier inode du volume ONTAP montrant files-used imbriqué dans inodefile-public-capacity,400,and files-maximum-possible]
+
+
+
+[[types-of-inodes-in-ontap]]
+== Types d'inodes dans ONTAP
+
+Le *type* d'un inode décrit le type d'objet qu'il représente. ONTAP place également chaque inode dans un espace d'inodes *public* ou *private*. Les inodes publics sont comptabilisés dans maxfiles ; les inodes privés ne le sont pas. Un inode d'index de répertoire peut se trouver dans l'un ou l'autre espace selon la configuration du volume.
+
+
+
+[[public-inodes]]
+=== Inodes publics
+
+Les inodes publics sont alloués à partir du fichier d'inodes publics du volume et sont comptabilisés dans  `files` et  `files-used`. Ils comprennent les objets visibles par le client et les objets de métadonnées publiques qui n'apparaissent pas comme des entrées de répertoire.
+
+Le tableau suivant présente la liste des inodes publics trouvés dans ONTAP ainsi que des informations complémentaires les concernant. La colonne « link:high-file-count-workloads-02-maxdirsize.html[`maxdir-size`] » indique si la création de cet objet ajoute une entrée de répertoire au répertoire parent et, par conséquent, augmente la taille du fichier de répertoire de ce dernier.
+
+|===
+| Type | Ce que cela représente | Compte également pour le lien : high-file-count-workloads-02-maxdirsize.html[`maxdir-size`] 
+
+
+| Fichier régulier | Contenu et attributs de fichier par défaut | *Oui.* La création du fichier ajoute un nom dans le répertoire parent. 
+
+
+| Répertoire | Les noms d'un répertoire et l'inode du répertoire lui-même | *Oui.* La création du répertoire ajoute un nom dans le parent. Le nouveau répertoire possède également son propre fichier de répertoire, ce qui  `maxdir-size`limite indépendamment. 
+
+
+| Lien symbolique | Un pointeur de chemin d'accès plutôt que des données de fichier | *Oui.* ^{asterisk}^ La création du lien symbolique ajoute un nom dans le répertoire parent. 
+
+
+| Fichier spécial | FIFO UNIX, socket ou nœud de périphérique | *Oui.* La création du fichier spécial ajoute un nom dans le répertoire parent. 
+
+
+| Flux nommé | Données supplémentaires en plus du contenu par défaut du fichier (flux de données alternatif NTFS) | *Non.* Le flux n'est pas un nom dans le répertoire utilisateur parent. 
+
+
+| Répertoire de flux | Conteneur caché contenant les noms des flux nommés d'un fichier | *Non.* Il ne s'agit pas d'une entrée de répertoire visible par l'utilisateur. 
+
+
+| ACL (xinode) | Descripteur de sécurité NTFS ou ACL NFSv4 stocké sous forme de données d'entrée de contrôle d'accès (ACE) | *Non.* La liste de contrôle d'accès (ACL) n'est pas une entrée de répertoire. 
+
+
+| Index du répertoire (lorsqu'il est public)^{asterisk}{asterisk}^ | B+tree complémentaire utilisé pour rechercher des noms dans un grand répertoire | *Non.* L'index n'est pas une entrée de répertoire. 
+|===
+
+NOTE: ^*^ Un lien symbolique possède son propre inode public et une entrée de répertoire. Un lien physique est différent : il s'agit d'un autre nom de répertoire pour un inode de fichier ordinaire existant, et non d'un type d'inode distinct. La création d'un lien physique ajoute une entrée de répertoire et augmente la taille du fichier du répertoire parent, mais n'alloue pas d'inode public supplémentaire.
+
+
+NOTE: ^**^ Les inodes d'index de répertoire sont privés par défaut. Ils peuvent être déplacés dans l'espace d'inodes public comme décrit dans link:high-file-count-workloads-04-maxdirsize-indexing.html#about-private-and-public-index-inodes["À propos des inodes d'index privés et publics"].
+
+
+
+==== inodes de ACL
+
+Lorsqu'un fichier ou un répertoire possède un descripteur de sécurité NTFS ou une ACL NFSv4, ONTAP stocke cette ACL dans un inode ACL distinct (également appelé inode étendu ou xinode). L'inode ACL contient les ACE. ONTAP l'alloue à partir de l'espace d'inodes public, il est donc comptabilisé dans `files` et `files-used`. L'inode du fichier ou du répertoire référence son inode ACL.
+
+
+NOTE: Les bits de mode UNIX sont stockés dans l'inode propre au fichier ou au répertoire. Ils n'allouent pas d'inode public supplémentaire.
+
+L'utilisation d'un inode ACL ne correspond pas toujours à une relation 1:1 avec un fichier ou un répertoire :
+
+* Les fichiers ou répertoires possédant le même descripteur de sécurité stocké peuvent partager un inode ACL lorsque l'optimisation de partage des ACL d'ONTAP les fusionne. L'héritage produit fréquemment des descripteurs identiques susceptibles d'être partagés.
+* Le partage peut ne pas avoir lieu si les ACE, les informations sur le propriétaire ou le groupe, les indicateurs de contrôle ou les résultats d'héritage diffèrent. Même des descripteurs identiques ne sont pas garantis d'être fusionnés, par exemple s'ils sont créés ou mis à jour lors d'opérations distinctes avant que le partage ne soit reconnu.
+* Une création peut hériter de l'ACL du parent lorsque la requête ne fournit pas ses propres ACE et que l'ACL du parent possède des attributs d'héritage.
+* Les volumes de style de sécurité NTFS appliquent par défaut les listes de contrôle d'accès (ACL) NTFS. Les nouveaux fichiers et répertoires peuvent partager un inode d'ACL si leurs descripteurs stockés résultants sont identiques, mais les administrateurs ne doivent pas supposer que toutes les ACL par défaut ou héritées partageront un même inode.
+* Les objets de type sécurité UNIX qui restent sur les bits de mode ne consomment pas d'inode ACL tant qu'une ACL NFSv4 n'est pas stockée. Un style de sécurité mixte peut contenir à la fois des objets protégés uniquement par les bits de mode et des objets protégés par ACL.
+
+
+
+
+==== Flux nommés
+
+Un flux nommé correspond à des données supplémentaires associées à un fichier, en plus du contenu que les utilisateurs ouvrent normalement. Dans ONTAP, il s'agit de la représentation WAFL d'un flux de données alternatif NTFS (ADS). Les données par défaut du fichier, non nommées, résident dans l'inode de base du fichier. Chaque flux nommé supplémentaire correspond à un inode public distinct et compte dans  `files` et  `files-used`.
+
+Les flux nommés persistent avec le fichier. Il ne s'agit pas d'une zone de travail temporaire que ONTAP utilise uniquement lors de l'ouverture, de la copie ou de l'enregistrement. Un flux reste alloué jusqu'à ce que ce flux soit supprimé ou que le fichier de base soit supprimé. Une application peut créer un flux puis le supprimer, mais ONTAP n'expire pas les flux nommés de lui-même.
+
+Quelques points à noter :
+
+* Les charges de travail SMB créent et utilisent des flux nommés. Windows les désigne sous la forme `filename:stream_name`, par exemple `report.docx:Zone.Identifier`. `Zone.Identifier` correspond aux métadonnées Windows Mark of the Web. Lorsqu'un fichier est téléchargé depuis Internet, Windows ou le navigateur enregistre un ID de zone (généralement la zone Internet) afin que l'Explorateur, SmartScreen et Office puissent traiter le fichier comme non fiable jusqu'à ce qu'un utilisateur le débloque. Ce flux reste sur le fichier jusqu'à ce qu'il soit supprimé. D'autres sources courantes incluent les applications de sauvegarde et de sécurité, ainsi que les applications qui stockent des données sidecar sous forme d'ADS. Les fichiers de verrouillage et les fichiers d'enregistrement temporaire de Microsoft Office `~$` sont des fichiers et des entrées de répertoire ordinaires, et non des flux nommés. Les fichiers synchronisés par OneDrive ne reçoivent pas nécessairement un flux `Zone.Identifier` ; le comportement dépend du client et du chemin de transfert.
+* Les clients macOS accédant à SMB peuvent utiliser des flux nommés pour les métadonnées du Finder et les branches de ressources, généralement représentés par  `AFP_AfpInfo` et  `AFP_Resource`.
+* Les listes ordinaires masquent les flux nommés. L'Explorateur Windows, le Finder macOS `dir`, et NFS `ls` / `stat` affichent le fichier par défaut, de sorte que `files-used` peut dépasser le nombre visible. Énumérez les flux à partir d'un client SMB Windows avec `dir /r` ou PowerShell `Get-Item <file> -Stream *`. ONTAP ne prend pas en charge les attributs nommés NFSv4, de sorte que les clients NFS ne voient pas les flux SMB comme des noms supplémentaires, mais les inodes existent toujours.
+* Un fichier caché, un fichier d'échange ou un fichier de sauvegarde créé par `vi` (par exemple `.file.swp` ou `file~`) est un fichier ordinaire et une entrée de répertoire, et non un flux nommé.
+* Les attributs étendus NFSv4.2 (xattrs), pris en charge à partir d'ONTAP 9.12.1, constituent une fonctionnalité différente. Ce ne sont pas des inodes ACL et ils ne doivent pas être comptabilisés comme des xinodes ACL.
+
+
+
+
+==== Impact sur les sauvegardes et les restaurations NDMP
+
+Lors du traitement de vidage et de restauration NDMP, ONTAP identifie séparément les classes d'objets telles que les fichiers ordinaires, les répertoires, les flux NT, les répertoires de flux et les inodes ACL afin que les données et les métadonnées de chaque objet puissent être sérialisées, consignées dans les statistiques de vidage et reconstruites correctement. Cette classification ne crée pas de limites maxfiles distinctes ni de compteurs séparés `volume show`. `files-used` Le total combiné des inodes publics demeure.
+
+La commande NDMP dump parcourt l'espace de noms et sérialise ces objets un par un. La restauration les reconstruit de la même manière. Un nombre élevé d'inodes publics allonge donc la durée du dump et de la restauration, même si la capacité de données du volume est modeste ou que le nombre de fichiers visibles semble faible. Les flux nommés et les inodes ACL sont vidés et restaurés même si l'Explorateur Windows, le Finder `dir`, ou `ls` ne les affichent pas, de sorte que les statistiques du dump peuvent indiquer un plus grand nombre d'objets de flux et d'ACL que ne le suggère une simple liste de répertoires.
+
+Le traitement est souvent limité par les métadonnées plutôt que par le débit. La création, la recherche et la reconstruction de millions d'inodes, de listes de contrôle d'accès (ACL) et de flux consomment des ressources CPU, mémoire et d'E/S de stockage, avec relativement peu de données par objet. Les petits fichiers, l'utilisation intensive des ACL et les nombreux flux nommés augmentent cette surcharge. Les grands répertoires plats ajoutent un coût d'énumération lors de la sauvegarde, et la restauration d'un volume contenant un grand nombre de fichiers peut également prendre du temps pour reconstruire les index de répertoire une fois les objets restaurés. Mesurez la durée de la sauvegarde et de la restauration avec un nombre d'objets représentatif, y compris les flux et les ACL, plutôt que de l'estimer à partir de la seule taille des données.
+
+
+
+[[private-inodes]]
+=== Inodes privés
+
+Les inodes privés sont des enregistrements de métadonnées internes à ONTAP. Ils résident dans un espace d'inodes privés distinct, ne sont pas comptabilisés dans  `files` ou  `files-used` et ne peuvent pas être utilisés comme fichiers clients supplémentaires.
+
+Le tableau suivant présente les types d'inodes privés courants.
+
+|===
+| Type | Ce que cela représente | Compte également pour le lien : high-file-count-workloads-02-maxdirsize.html[`maxdir-size`] 
+
+
+| Index du répertoire (par défaut)^{asterisk}^ | B+tree complémentaire utilisé pour rechercher des noms dans un grand répertoire | *Non.* 
+
+
+| Métafichier privé | Métadonnées WAFL cachées utilisées par ONTAP | *Non.* 
+
+
+| Zombie | Un objet non lié conservé jusqu'à la fin des références ou de la suppression asynchrone | *Non.* 
+|===
+
+NOTE: ^*^ Les index de répertoire sont privés par défaut. Le transfert d'index publics est décrit dans link:high-file-count-workloads-04-maxdirsize-indexing.html#about-private-and-public-index-inodes["À propos des inodes d'index privés et publics"].
+
+
+NOTE: Dans la plupart des cas, vous n'avez pas besoin de surveiller l'utilisation des inodes privés, car ces derniers ne sont pas comptabilisés dans le nombre maximal de fichiers, sauf si le support NetApp vous le demande.
+
+
+
+==== Inodes zombies
+
+Un fichier non lié ne peut pas toujours être libéré immédiatement. ONTAP peut le conserver temporairement comme zombie pendant la finalisation des références ou des opérations asynchrones. Les opérations de suppression asynchrones importantes peuvent donc augmenter l'utilisation des inodes privés pendant le nettoyage. Là encore, les inodes privés ne sont pas comptabilisés dans le total `files` autorisé sur le volume.
+
+[cols="<,>"]
+|===
+
+
+| link:high-file-count-workloads-08-maxfiles-high-file-counts.html["← Précédent : Nombre élevé de fichiers et capacité des inodes"] | link:high-file-count-workloads-10-maxfiles-limits.html["Suite : Maxfiles et informations sur les inodes ONTAP →"] 
+|===
+
+
+[[related-information]]
+== Informations associées
+
+* link:https://docs.netapp.com/us-en/ontap/nfs-admin/security-styles-their-effects-concept.html["Styles de sécurité NAS ONTAP"^]
+* link:https://docs.netapp.com/us-en/ontap/nas-audit/audit-alternate-ntfs-data-streams-concept.html["Audit des flux de données NTFS alternatifs"^]
+

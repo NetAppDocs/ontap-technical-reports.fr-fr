@@ -1,0 +1,92 @@
+---
+sidebar: sidebar 
+permalink: high-file-count-workloads/high-file-count-workloads-05-maxdirsize-impact.html 
+keywords: ONTAP, NAS, maxdir-size, maxdirsize, capacity, performance, ENOSPC 
+summary: Comprendre les effets des grands répertoires ONTAP sur la capacité et les performances, et ce qui se passe lorsque maxdir-size est dépassé. 
+---
+= Impact de maxdir-size
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/high-file-count-workloads/
+
+
+[role="lead"]
+Augmenter la `maxdir-size` limite autorise l'agrandissement du fichier de répertoire. Les coûts en termes de capacité et de performances n'apparaissent que lorsque le fichier de répertoire devient effectivement volumineux, tandis que les opérations de création et de renommage échouent lorsqu'il atteint la limite.
+
+
+
+[[capacity-impact]]
+== Impact sur la capacité
+
+Modifier ce `maxdir-size` paramètre ne consomme en soi aucune capacité. L'augmentation du nombre d'entrées du répertoire, si. Les fichiers de répertoire allouent des blocs de 4 Kio à mesure que des noms sont ajoutés ; les index associés et les blocs de répertoire conservés par Snapshot en ajoutent davantage. Définir la limite ne réserve pas cet espace. La taille maximale après suppression est décrite dans link:high-file-count-workloads-02-maxdirsize.html#how-the-maxdir-size-cap-behaves["Comportement de la limite maxdir-size"].
+
+Pour estimer `maxdir-size` les valeurs, il n'est pas nécessaire d'inclure les données stockées dans les fichiers situés sous le répertoire. Au lieu de cela, tenez compte uniquement des entrées d'un seul répertoire. Bien que cette option soit définie au niveau du volume, elle s'applique répertoire par répertoire.
+
+Lors de la planification de l'utilisation de la capacité avec des répertoires contenant un grand nombre de fichiers, vous devez inclure la surcharge liée aux répertoires et aux index. Par exemple, un volume contenant 100 répertoires qui atteignent chacun la limite de 320 Mo contient environ 32 Go de métadonnées de fichiers de répertoire, qui sont comptabilisés dans la capacité utilisée du volume. Si ces répertoires sont indexés et publics, ajoutez environ 100 inodes au budget maxfiles. Prévoyez une capacité Snapshot supplémentaire lorsque les métadonnées des répertoires changent fréquemment, car les copies Snapshot conservent les blocs de répertoire et d'index remplacés.
+
+
+
+[[performance-impact]]
+== Impact sur les performances
+
+Les répertoires volumineux d'un système ONTAP peuvent avoir les conséquences suivantes :
+
+* Longueur du chemin pour la recherche de nom, la création, la suppression et le renommage
+* Énumération complète des répertoires et recherches avec caractères génériques
+* CPU et mémoire utilisés pour le traitement de l’espace de noms
+* E/S de cache froid nécessaires pour charger les blocs d’index et de répertoire
+* Latence du protocole et délais d'attente du client lors d'opérations longues
+* Analyses de l’espace de noms effectuées par les fonctions d’analyse, de sauvegarde, de réplication ou de sécurité
+
+
+L'indexation des répertoires réduit le coût des recherches ciblées, mais ne rend pas un très grand répertoire plat équivalent à une hiérarchie partitionnée. Les opérations sur un seul répertoire peuvent toujours se heurter à des limites de sérialisation et d'affinité, même si le volume ou le cluster environnant dispose de ressources inutilisées. L'indexation facilite les opérations ciblées sur les noms, telles que la recherche, l'ouverture, la création, le renommage et la suppression. Les analyses complètes de répertoires et les recherches avec caractères génériques parcourent toujours l'espace de noms du répertoire ; elles n'utilisent pas l'index comme raccourci entre les noms et les blocs. Sur les répertoires perforés, l'index peut ignorer les blocs vides lors de l `READDIR`, mais cela ne remplace pas une structure partitionnée.
+
+Il n'existe pas de taille distincte de fichier de répertoire à partir de laquelle ONTAP déclare une défaillance des performances. Le seuil d'index d'environ 2 MiB, décrit dans link:high-file-count-workloads-04-maxdirsize-indexing.html#why-directory-indexing-exists["Pourquoi l’indexation de répertoires existe-t-elle"], modifie la manière dont les recherches ciblées sont traitées. En dessous de cette taille, la recherche d'un nom peut analyser les blocs de répertoire et créer un hachage temporaire en mémoire. Le coût augmente donc avec le répertoire, mais ONTAP ne crée pas d'index persistant. Au-dessus de cette taille, les opérations ciblées sur les noms utilisent l'index. Ce qui continue de devenir plus coûteux à mesure qu'un répertoire grandit, c'est l'énumération complète et la recherche avec caractères génériques, le chargement à froid des blocs de répertoire et d'index en cache, ainsi que la sérialisation des opérations sur ce répertoire.
+
+Les clients peuvent observer des listes de répertoires plus longues, des recherches avec caractères génériques et des analyses d'applications, une latence de protocole plus élevée et des délais d'attente pendant ces opérations. Le nœud propriétaire du répertoire peut allouer des ressources CPU et mémoire aux métadonnées, tandis que le débit de données reste faible. Cet effet dépend de la fréquence des opérations, de la concurrence, de l'état du cache et du nombre de noms concentrés dans ce répertoire `wafl.dir.size.warning`, généralement à environ 90 % de  `maxdir-size`, avertit que le répertoire approche de sa limite de taille. Il ne s'agit pas d'un seuil de latence mesuré.
+
+Par exemple, l'ouverture d'un fichier connu dans ce répertoire reste rapide, car l'index permet la recherche par nom. Lister le même répertoire avec  `ls``ls`, le parcourir avec  `find``find`, ou exécuter une application, une sauvegarde ou une analyse de sécurité qui lit chaque nom de fichier peut prendre beaucoup de temps, sembler bloqué ou atteindre un délai d'attente du client ou de l'application. Pendant ce temps, le client transfère très peu de données. La lecture ou l'écriture d'un fichier déjà ouvert n'est généralement pas affectée.
+
+N'augmentez la taille  `maxdir-size`que lorsque la charge de travail exige un répertoire unique plus volumineux et qu'une restructuration n'est pas envisageable. Privilégiez une hiérarchie large ou profonde lorsque l'application le permet.
+
+
+
+[[what-happens-when-maxdir-size-is-exceeded]]
+== Que se passe-t-il lorsque la taille maximale du répertoire est dépassée ?
+
+Lorsqu'un fichier de répertoire atteint sa limite :
+
+* ONTAP rejette les opérations qui nécessitent l’ajout d’un autre nom à ce répertoire (telles que les créations ou les renommages).
+* Le client peut signaler ENOSPC, « fichier trop volumineux », l'erreur NFS 27, `STATUS_CANNOT_MAKE` ou un autre échec de création ou de renommage spécifique à l'application.
+* D'autres répertoires peuvent continuer à accepter des entrées s'ils ont de la capacité et des inodes.
+* Le volume peut encore disposer d’une capacité de données libre et d’inodes publics.
+* La lecture de fichiers existants n'est pas équivalente à l'ajout d'une nouvelle entrée de répertoire et n'est généralement pas affectée.
+
+
+Le dépassement de  `maxfiles` ou de  `maxdir-size` peut ressembler à un problème de capacité. Consultez les messages EMS ; les erreurs client se chevauchent avec l’épuisement des inodes. Voir link:high-file-count-workloads-01-overview.html#maxfiles-compared-with-maxdir-size["Maxfiles comparé à maxdir-size"].
+
+Si un espace de noms plat ne peut pas être modifié, évaluez une augmentation contrôlée `maxdir-size` :
+
+[listing]
+----
+set -privilege advanced
+volume modify -vserver <svm> -volume <volume> -maxdir-size 327MB
+----
+Pour une croissance moyenne, augmentez le plafond actuel par paliers d'environ 2 %. Pour une migration avec un besoin mesuré et connu, fixez le plafond à environ 2 % au-dessus de ce besoin. La modification est immédiate et sans interruption de service.
+
+Vous pourrez ultérieurement réduire cette limite, mais pas en dessous du seuil maximal existant de fichier de répertoire ; la réduction de cette limite ne compacte pas les répertoires existants. Vérifiez la valeur prise en charge pour la version et la plateforme ONTAP, et surveillez les performances après la modification.
+
+[cols="<,>"]
+|===
+
+
+| link:high-file-count-workloads-04-maxdirsize-indexing.html["← Précédent : Indexation des répertoires dans ONTAP"] | link:high-file-count-workloads-06-maxdirsize-volume-types.html["Suite : Considérations relatives au volume →"] 
+|===
+
+
+[[related-information]]
+== Informations associées
+
+* link:high-file-count-workloads-07-maxdirsize-features-ems.html["Fonctionnalités, EMS et surveillance pour maxdir-size"]
+* link:high-file-count-workloads-14-best-practices.html["Meilleures pratiques pour les charges de travail NAS à grand nombre de fichiers"]
+

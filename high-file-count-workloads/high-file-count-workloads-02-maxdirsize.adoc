@@ -1,0 +1,172 @@
+---
+sidebar: sidebar 
+permalink: high-file-count-workloads/high-file-count-workloads-02-maxdirsize.html 
+keywords: ONTAP, NAS, maxdir-size, maxdirsize, directory file, filename 
+summary: Comprenez ce que mesure la propriété maxdir-size dans ONTAP et comment la taille des fichiers de répertoire est calculée. 
+---
+= Maxdir-size et grands répertoires ONTAP
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/high-file-count-workloads/
+
+
+[role="lead"]
+`maxdir-size`Cette fonction limite la taille de chaque fichier de répertoire dans un volume ONTAP en plafonnant la capacité pouvant être allouée aux noms de ce répertoire. Elle est indépendante de la limite d'inodes du volume `maxfiles`, et il n'existe pas de limite statique définissable pour le nombre de noms dans un même répertoire, car cette valeur est variable et dépend de plusieurs facteurs, tels que la longueur du nom, les types de caractères, etc. Pour plus de détails, consultez link:high-file-count-workloads-02-maxdirsize.html#estimating-the-number-of-names-per-directory-file["Estimation du nombre de noms par fichier de répertoire"].
+
+
+
+[[what-is-a-directory-in-ontap]]
+== Qu'est-ce qu'un répertoire dans ONTAP ?
+
+Un répertoire WAFL est un fichier de métadonnées qui associe des noms à des numéros d'inode. Sa taille ne correspond pas à la somme des données stockées dans les fichiers situés sous ce répertoire, mais dépend du nombre de noms qu'il contient et de l'espace de répertoire dont chacun de ces noms a besoin. Un répertoire nouvellement créé commence à 4 Kio et augmente par blocs de répertoire de 4 Kio à mesure que des entrées y sont ajoutées.
+
+Le répertoire utilise un inode, dont l'enregistrement est stocké dans le fichier d'inodes au niveau du volume (dont le concept et la fonction sont distincts). Les noms du répertoire sont stockés dans les propres blocs de données de ce répertoire. L'ajout de noms augmente la taille du fichier de répertoire individuel et peut approcher la  `maxdir-size` limite, tandis que la création d'autres objets du système de fichiers (tels que des fichiers, des répertoires, des ACL et des flux nommés) alloue davantage d'enregistrements d'inodes et peut faire croître le fichier d'inodes au niveau du volume jusqu'aux limites  `maxfiles`. Le nombre d'entrées de nom dans un seul bloc de répertoire de 4 KiB est déterminé par la façon dont chaque nom doit être stocké, ce qui dépend de sa longueur et de son encodage de caractères.
+
+
+
+[[directory-block-layout]]
+=== Disposition des blocs de répertoire
+
+Un fichier de répertoire ONTAP s'agrandit par blocs de 4 KiB, chaque bloc étant limité à un nombre variable d'enregistrements d'entrée et de segments de nom en fonction de la taille de chacun. Un segment de nom dans ONTAP est un emplacement de 16 octets qui stocke une partie d'un nom de fichier ; chaque nom occupe un enregistrement d'entrée plus autant de segments de 16 octets que sa longueur encodée l'exige.
+
+Exemple de répartition des segments de nom sur un nom de 48 octets :
+
+[link=../media/high-file-count-workloads/directory-name-chunks-48-byte.png]
+image::directory-name-chunks-48-byte.png[Diagramme d'un nom de fichier de 48 octets stocké sous forme de trois segments de nom de 16 octets plus un segment de surcharge Unicode en forme courte de 16 octets]
+
+
+
+[[max-number-of-directory-blocks-and-maximum-number-of-names]]
+=== Nombre maximal de blocs de répertoires et nombre maximal de noms
+
+Le nombre maximal de blocs de répertoires autorisés est déterminé par la valeur `maxdir-size`.
+
+Avec une taille de répertoire de 320 Mo, jusqu'à 81 920 blocs de répertoire peuvent être alloués (320 Mo / 4 Kio, où 320 Mo correspondent à 335 544 320 octets, car ONTAP indique ces valeurs en unités binaires). Ainsi, le nombre total de noms autorisés dans le fichier de répertoire dépend du nombre d'entrées autorisées par bloc de répertoire.
+
+
+
+==== Comment les blocs de répertoire sont construits
+
+Chaque bloc de répertoire de 4 KiB est divisé de la même manière :
+
+* Jusqu'à 128 enregistrements d'entrée de 12 octets chacun (1536 octets)
+* Un pool partagé de 160 blocs de noms de 16 octets chacun (2560 octets)
+
+
+Ensemble, ces éléments occupent un bloc de 4 KiB. Chaque nom stocké nécessite un enregistrement d’entrée et un ou plusieurs segments de nom, et la première ressource qui s’épuise — les 128 enregistrements d’entrée ou les 160 segments de nom — détermine le nombre de noms que ce bloc peut contenir. Avec les noms ASCII, ce sont les segments de nom qui s’épuisent en premier. Par conséquent, ni  `maxdir-size / filename-length`ni un ratio fixe de fichiers par mégaoctet ne sont exacts.
+
+Dans le graphique ci-dessous, nous voyons le nom de 48 octets de l'exemple précédent. Ce seul nom occupe un enregistrement d'entrée unique de 12 octets, plus les quatre segments de nom de 16 octets (64 octets) présentés précédemment.
+
+[link=../media/high-file-count-workloads/directory-block-4kib-layout.png]
+image::directory-block-4kib-layout.png[Diagramme d'un bloc de répertoire de 4 KiB montrant le nom court Unicode de 48 octets à l'aide d'un enregistrement d'entrée de 12 octets et de quatre segments de nom de 16 octets]
+
+{nbsp}
+
+Le pool de 160 segments sera saturé avant que les enregistrements d’entrée ne soient consommés. 160 segments au total / 4 segments donnent 40 de ces noms par bloc. Autrement dit, 88 des 128 enregistrements d’entrée ne sont pas utilisés. Un nom courant plus court n’aurait besoin que de trois segments, de sorte que le même bloc de répertoire de 4 Kio peut contenir environ 53 de ces noms à la place. Cela illustre comment la taille d’un nom peut avoir un impact direct sur le nombre de noms autorisés dans un seul répertoire.
+
+
+
+[[estimating-the-number-of-names-per-directory-file]]
+=== Estimation du nombre de noms par fichier de répertoire
+
+Pour estimer approximativement le nombre de noms pouvant tenir dans un répertoire, commencez par calculer le nombre de noms pouvant tenir dans un bloc de 4 Kio, puis multipliez ce nombre par le nombre de blocs autorisés par la limite. (Rappel : avec une limite de 320 Mo, cela correspond à 81 920 blocs.)
+
+Le nombre de noms pouvant tenir dans un bloc dépend de l'espace occupé par chaque nom. Les noms courts et simples prennent moins de place et peuvent donc être plus nombreux ; les noms plus longs, ou ceux qu’ONTAP doit stocker dans un format plus large, prennent plus de place et laissent moins d'espace pour les autres.
+
+* Les noms courants jusqu'à environ 32 caractères (par exemple, `report-2026.csv`) se regroupent tous de la même manière, et environ 53 tiennent dans un seul bloc.
+* Les noms plus longs tiennent en moins grand nombre — par exemple, un nom de 48 caractères tient à raison d’environ 40 par bloc.
+* Les noms qui doivent être stockés dans un format plus large occupent environ deux fois plus d'espace, de sorte qu'un plus petit nombre peut tenir. Cela s'applique aux noms contenant des caractères non ASCII (comme des caractères accentués ou du texte d'Asie de l'Est), aux noms qui comportent également un nom alternatif NFS, ainsi qu'aux entrées distantes FlexGroup. Un nom de 32 caractères de ce type tient à raison d'environ 26 par bloc en raison de l'espace requis par les caractères spéciaux. Si SMB génère également un alias court « 8.3 » en plus du nom long, cet alias occupe également de l'espace.
+
+
+Les volumes plus anciens qui stockent des noms de type DOS « 8.3 » peuvent contenir jusqu'à 128 entrées par bloc, car ces noms sont très courts (moins d'octets). Cependant, vous n'observerez pas ce comportement sur les volumes modernes utilisant des noms normaux. En effet, les volumes ONTAP actuels stockent les noms au format Unicode (C.UTF-8 par défaut) afin de prendre en charge les noms de fichiers longs et les caractères internationaux sur NFS et SMB, plutôt que les noms de type DOS à huit caractères sur lesquels s'appuyaient des systèmes beaucoup plus anciens. Pour plus de détails sur les langues de volume, consultez <insert link here>.
+
+Comme les noms peuvent beaucoup varier, il n’existe pas de nombre fixe de fichiers autorisés dans un répertoire. À titre indicatif, on peut prévoir jusqu’à environ 4,3 millions de noms courants avec un paramètre de 320 Mo pour un volume FlexVol. Ici, les noms courants correspondent à un maximum d’environ 32 caractères ASCII. Il s’agit d’un exemple approximatif, et non d’une garantie, et il n’exige pas que les noms aient une longueur particulière. Le tableau ci-dessous présente quelques cas courants et le nombre approximatif de noms que chacun permet dans un seul répertoire avec un paramètre de 320 Mo.
+
+[cols="3,3,1,2"]
+|===
+| Nom du profil | Exemple de nom de fichier | Noms par bloc de 4 KiB | Noms dans un répertoire à 320 Mo 
+
+
+| Nom usuel court (8 caractères) | `f0001.db` | 53 | 4 341 758 
+
+
+| Nom usuel (32 caractères) | `project-alpha-run0142-input1.dat` | 53 | 4 341 758 
+
+
+| Nom plus long (48 caractères) | `run-2026-09-21-node07-sensor-array-01423.parquet` | 40 | 3 276 798 
+
+
+| Nom avec des caractères non ASCII, ou une entrée FlexGroup (32 caractères) | `résumé-final-2026-09-21-v03.docx` | 26 | 2 129 918 
+
+
+| Nom qui porte également un autre nom NFS (32 caractères) | `Marketing-Overview-2026Q3v2.pptx`avec alternative `MARKET~1.PPT` | 22 | 1 802 238 
+|===
+*Remarque :* Les décomptes supposent que les entrées  `.` et  `..` sont présentes, c’est pourquoi chaque valeur est légèrement inférieure à ce que le calcul donnerait.
+
+En résumé, la même limite de 320 Mo permet de stocker environ 4,3 millions de noms courts et courants, mais moins de la moitié de ce nombre lorsque les noms sont stockés sous une forme plus large. Si chaque nom atteint la limite maximale de 255 caractères du protocole, seuls 737 000 noms environ seraient autorisés.
+
+
+
+[[filename-length-compared-with-path-length]]
+=== Longueur du nom de fichier comparée à la longueur du chemin
+
+ `maxdir-size` prend en compte le nom de base stocké dans un répertoire parent particulier. Il ne stocke pas l’ensemble du chemin absolu avec chaque entrée. Chaque composant de chemin d’accès est une entrée dans son propre répertoire parent. Ainsi, des structures de répertoires plus profondes n’augmenteraient pas l’utilisation `maxdir-size`.
+
+Une hiérarchie plus profonde ajoute des répertoires et des inodes publics au volume, mais réduit le nombre de noms stockés dans chaque répertoire. Ce compromis améliore généralement l'évolutivité et les performances globales.
+
+*Remarque :* Les limites de longueur de chemin du protocole et du client s’appliquent toujours indépendamment.
+
+
+
+[[how-the-maxdir-size-cap-behaves]]
+== Comportement de la limite maxdir-size
+
+La limite s'applique à chaque répertoire du volume indépendamment, et il s'agit d'une limite plutôt que d'une réservation. Un paramétrage de 320 Mo ne réserve pas instantanément 320 Mo de capacité du volume ; il permet simplement à un répertoire donné d'atteindre cette taille.
+
+Voici quelques éléments à prendre en compte :
+
+* Si un fichier de répertoire atteint 320 Mo de blocs, ces blocs utilisent 320 Mo de capacité réelle du volume.
+* Une fois qu’un fichier de répertoire grossit, sa taille reste à ce niveau maximal, même si des entrées sont supprimées ultérieurement.
+* La suppression de fichiers ou de répertoires rend ces emplacements d'entrée réutilisables, mais elle ne compacte pas le fichier de répertoire.
+* Les répertoires indexés peuvent perforer des blocs de 4 KiB entièrement vides (fonctionnalité disponible dans ONTAP 9.5 et versions ultérieures) et récupérer ces blocs physiques sur le disque, mais la taille signalée du fichier de répertoire ne diminue généralement pas.
+
+
+*Remarque :* L’index de répertoire associé créé par ONTAP pour les répertoires volumineux utilise sa propre capacité de métadonnées et un inode, mais il ne fait pas partie du fichier de répertoire et n’est jamais comptabilisé dans `maxdir-size`. Si l’index est configuré pour occuper de l’espace d’inodes publics à des fins de réplication SnapMirror, il est comptabilisé dans `maxfiles` à la place (la limite d’inodes publics).
+
+Pour plus d’informations, consultez link:high-file-count-workloads-04-maxdirsize-indexing.html["Indexation des répertoires dans ONTAP"].
+
+
+
+[[raising-the-maxdir-size-value]]
+=== Augmenter la valeur de maxdir-size
+
+* S'applique à tous les répertoires du volume
+* Permet aux fichiers de répertoire de dépasser l’ancienne limite
+* Ne préalloue ni ne réserve le nouveau maximum
+* N'ajoute pas d'inodes publics et ne modifie pas `maxfiles`
+* Ne fait pas qu’un répertoire existant consomme immédiatement de l’espace
+
+
+Pour savoir comment inspecter la limite configurée et la taille actuelle d'un répertoire, consultez link:high-file-count-workloads-03-maxdirsize-view.html["Afficher la taille maximale du répertoire et la taille du répertoire actuel"].
+
+
+
+[[do-flexgroup-volumes-bypass-maxdir-size-limitations]]
+== Les volumes FlexGroup permettent-ils de contourner les limitations de taille maxdir ?
+
+Non. Un FlexGroup ne multiplie pas la taille d'un répertoire `maxdir-size` par le nombre de constituants. Le fichier de répertoire reste sur un seul constituant, et les entrées distantes peuvent faire croître ce fichier plus rapidement que les mêmes noms sur un FlexVol. Pour le placement, l'augmentation due aux entrées distantes et les chiffres de planification, consultez link:high-file-count-workloads-06-maxdirsize-volume-types.html#flexgroup-volumes["Volumes FlexGroup"].
+
+[cols="<,>"]
+|===
+
+
+| link:high-file-count-workloads-01-overview.html["← Précédent : NetApp Charges de travail ONTAP à grand nombre de fichiers pour les volumes NAS"] | link:high-file-count-workloads-03-maxdirsize-view.html["Suivant : Afficher maxdir-size et la taille du répertoire actuel →"] 
+|===
+
+
+[[related-information]]
+== Informations associées
+
+* link:high-file-count-workloads-06-maxdirsize-volume-types.html["Considérations relatives au volume"]
+* link:https://docs.netapp.com/us-en/ontap/volumes/cautions-increasing-maximum-directory-size-concept.html["Taille maximale des répertoires pour les volumes FlexVol"^]
+

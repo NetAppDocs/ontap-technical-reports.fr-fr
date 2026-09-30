@@ -1,0 +1,104 @@
+---
+sidebar: sidebar 
+permalink: high-file-count-workloads/high-file-count-workloads-04-maxdirsize-indexing.html 
+keywords: ONTAP, NAS, directory indexing, sparse directory, hole punching, SnapMirror 
+summary: Comprenez l’indexation des répertoires ONTAP, les inodes d’index publics par rapport aux inodes d’index privés, et le poinçonnage de trous dans les répertoires clairsemés. 
+---
+= Indexation des répertoires dans ONTAP
+:allow-uri-read: 
+:icons: font
+:imagesdir: ../media/high-file-count-workloads/
+
+
+[role="lead"]
+ONTAP indexe automatiquement les répertoires volumineux afin que les recherches ciblées n'aient pas à lire l'intégralité du fichier de répertoire en une seule fois. L'indexation est distincte de  `maxdir-size` et ne modifie pas la limite maximale de taille du fichier de répertoire.
+
+
+
+[[why-directory-indexing-exists]]
+== Pourquoi l’indexation de répertoires existe-t-elle
+
+En informatique, un index est une structure secondaire dont le rôle est de répondre à la question « Où se trouve ceci ? » sans avoir à parcourir chaque enregistrement. La version la plus familière est l’index d’un livre : vous recherchez un terme et accédez directement à une page au lieu de lire le livre en entier. Les bases de données, les moteurs de recherche et les systèmes de fichiers utilisent la même idée afin qu’une recherche reste peu coûteuse à mesure que la collection s’agrandit. L’index n’est pas une seconde copie des données. C’est une correspondance entre une clé, comme un nom, et l’emplacement de cet élément.
+
+Un répertoire est une liste de noms. Sans index, trouver un nom peut nécessiter de parcourir une grande partie de cette liste. L'index de répertoire d'ONTAP est l'équivalent, pour le système de fichiers, de ce raccourci.
+
+Sans index persistant, la recherche d'un nom peut nécessiter la lecture de nombreux blocs de répertoire et la création d'un hachage en mémoire. À partir d'ONTAP 9.2, ONTAP crée automatiquement un inode d'index de répertoire associé lorsqu'un fichier de répertoire atteint environ 2 Mio.
+
+L'index persistant correspond à l'emplacement des entrées dans le fichier de répertoire. Une recherche ciblée peut ainsi lire l'index requis et des blocs de répertoire spécifiques au lieu de charger l'intégralité du fichier de répertoire en mémoire. L'indexation réduit généralement l'utilisation du processeur, de la mémoire et des E/S pour les opérations de recherche sur de grands répertoires, ce qui peut libérer davantage de ressources de nœud pour d'autres charges de travail, en plus du contenu du grand répertoire.
+
+[link=../media/high-file-count-workloads/directory-file-index.png]
+image::directory-file-index.png[Diagramme de flux illustrant une opération de nom de client sur un fichier de répertoire de moins de 2 Mio répondue par une analyse complète]
+
+Aucune option d’administrateur n’est requise pour activer l’indexation des répertoires; elle est activée par défaut. Un répertoire devient admissible à un index persistant uniquement lorsque son fichier de répertoire dépasse le seuil d’environ 2 MiB. Une fois cette condition remplie, la création de l’index peut être lancée par l’opération qui fait dépasser ce seuil au répertoire, par un scanner d’indexation ou par une opération de nom front-end admissible telle que LOOKUP, ACCESS, une ouverture ou une création basée sur un chemin, un renommage ou une suppression. Ces déclencheurs du scanner et du front-end ne remplacent pas le seuil de taille et ne créent pas d’index persistants pour les répertoires plus petits. Le seuil d’environ 2 MiB modifie la manière dont les recherches ciblées sont traitées. Il ne s’agit pas d’un seuil de latence lié à la taille du répertoire. La façon dont les répertoires en expansion se manifestent dans le comportement du client et du nœud est décrite dans link:high-file-count-workloads-05-maxdirsize-impact.html#performance-impact["Impact sur les performances"].
+
+
+
+[[what-indexing-does-not-change]]
+== Ce que l'indexation ne change pas
+
+L'index du répertoire est distinct du fichier de répertoire. Les affirmations suivantes restent valables malgré la présence d'un index de répertoire :
+
+* `maxdir-size` limite toujours la taille des fichiers de répertoire.
+* L'index compagnon consomme des métadonnées supplémentaires et un inode, mais n'a pas d'impact sur la taille du répertoire.
+* L'indexation améliore la recherche ciblée par rapport à l'énumération complète des répertoires.
+* Les analyses avec caractères génériques  `READDIR` traitent toujours l'intégralité de l'espace de noms du répertoire.
+* La perte ou la reconstruction de l'index ne supprime pas les noms du répertoire ; ONTAP peut les reconstruire à partir du fichier de répertoire.
+
+
+
+
+[[about-private-and-public-index-inodes]]
+== À propos des inodes d'index privés et publics
+
+Chaque répertoire indexé possède son propre index; les index de répertoires ne sont pas partagés. Un volume peut donc contenir un index pour chaque répertoire qui dépasse le seuil d’environ 2 Mio. Les répertoires en dessous de ce seuil restent sur le chemin de recherche non persistant et ne reçoivent pas d’inode d’index de répertoire compagnon, même lorsque des opérations de scanner ou de front-end y accèdent. La question de savoir si les index des répertoires éligibles sont comptabilisés dans `maxfiles` dépend du fait qu’ils soient privés ou publics, comme décrit ici.
+
+Par défaut, les index de répertoire résident historiquement dans l'espace d'inodes privés. Les inodes d'index de répertoire privés sont exclus des transferts SnapMirror, de sorte que ONTAP reconstruit les index à la destination à la demande après l'activation ou la restauration.
+
+À partir de ONTAP 9.17.1, l’option au niveau du volume `-is-dir-index-transfer-enabled true` déplace les index de répertoire dans l’espace d’inodes public afin que les workflows SnapMirror et SnapMirror Cloud pris en charge puissent les transférer. Lorsque l’option est `true`, de nouveaux index sont créés dans l’espace d’inodes public et un scanner migre les index privés existants. Cela peut réduire la création d’index après restauration, mais les index publics consomment des inodes publics et doivent être inclus dans la planification `maxfiles`.
+
+Vous pouvez vérifier s'il existe un index de répertoire public avec l'option `volume show` `-has-dir-index-public true`. Cette option ne peut pas être définie manuellement ; elle affiche « true » uniquement s'il existe un index de répertoire public.
+
+Les index des répertoires publics sont comptabilisés `files` et peuvent augmenter `files-used` d'environ un inode pour chaque répertoire indexé.
+
+Les index privés ne consomment pas l’allocation publique `files`.
+
+
+
+[[when-to-enable-public-directory-index-transfers]]
+=== Quand activer les transferts d'index de répertoires publics
+
+L'activation des transferts d'index préserve les index pour la réplication ou les restaurations afin d'éviter des reconstructions coûteuses pour les répertoires contenant un grand nombre de fichiers. Lorsque le transfert d'index est désactivé, SnapMirror omet les index privés. Après l'activation ou une restauration, ONTAP peut reconstruire les index manquants pour les répertoires éligibles au moyen d'un analyseur d'indexation ou d'une opération front-end admissible, ce qui peut avoir un impact sur les performances après le basculement vers une destination SnapMirror. L'activation des transferts d'index n'améliore pas les performances de recherche locale ; l'indexation locale se produit déjà lorsque l'option est `false`. Cette fonctionnalité est strictement destinée à être utilisée avec des volumes qui font partie d'une relation SnapMirror.
+
+
+
+[[sparse-directories-and-hole-punching]]
+== Répertoires clairsemés et perforation de trous
+
+Un fichier de répertoire peut devenir volumineux, puis devenir clairsemé après la suppression de nombreux noms (c'est-à-dire lorsque des fichiers sont retirés du répertoire). La taille du fichier de répertoire restera alors à son niveau maximal, de sorte qu’un `READDIR` pourrait consacrer d’importantes ressources CPU et d’E/S à parcourir des blocs vides.
+
+Pour les répertoires indexés, ONTAP peut créer un trou lorsqu'un bloc de répertoire de 4 KiB devient complètement vide.
+
+L'index suit le trou de sorte que :
+
+* `READDIR`peut ignorer le bloc vide.
+* Le bloc physique peut être récupéré.
+* Une création peut ensuite réutiliser cet emplacement logique.
+
+
+Le champ avancé `-has-optimized-sparse-directories` est une option d’affichage du volume en lecture seule. Une valeur de `true` signifie que le volume contient des blocs de répertoires sous cette forme optimisée et perforée.
+
+Si la taille du répertoire d'une application reste problématique après sa suppression, la copie des entrées restantes dans un répertoire nouvellement créé permet d'obtenir une structure de fichier-répertoire plus compacte. La réduction `maxdir-size` ne compacte pas un répertoire creux.
+
+[cols="<,>"]
+|===
+
+
+| link:high-file-count-workloads-03-maxdirsize-view.html["← Précédent : Afficher la taille maximale du répertoire et la taille du répertoire actuel"] | link:high-file-count-workloads-05-maxdirsize-impact.html["Suite : Impact de maxdir-size →"] 
+|===
+
+
+[[related-information]]
+== Informations associées
+
+* link:high-file-count-workloads-09-maxfiles.html["Types d'inodes ONTAP"]
+
