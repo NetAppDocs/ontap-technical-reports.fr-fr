@@ -37,7 +37,7 @@ NOTE: Les performances maximales ont été atteintes en utilisant plusieurs clie
 | AFX 1K | ~35 Go/s | ~10 Go/s 
 
 
-| AFX 2K | ~35 Go/s | ~17 Go/s (+70 % d'augmentation) 
+| AFX 2K | ~35 Go/s | ~16 Go/s (+60% d'augmentation) 
 |===
 
 NOTE: Pour obtenir les estimations de performance les plus récentes, veuillez contacter votre équipe commerciale NetApp.
@@ -223,7 +223,7 @@ Plus impressionnantes encore sont les améliorations apportées à l'un des prin
 
 Avec les modifications apportées à AFX ONTAP 9.18.1, les performances NFSv4.x pour ces types de charges de travail se sont considérablement améliorées et ont comblé l'écart avec les performances NFSv3 (à moins de 15%).
 
-Nos équipes d'ingénierie de la performance ont comparé les performances des benchmarks standard d'imagerie IA, d'EDA et de compilation logicielle et ont constaté des gains considérables par rapport à la version précédente d'ONTAP.
+Nos équipes d'ingénierie de la performance ont comparé les performances des benchmarks standard d'IA, d'EDA et de compilation logicielle et ont constaté des gains considérables par rapport à la version précédente d'ONTAP.
 
 *NetApp AFX – Performances d'E/S des métadonnées NFSv4.1 dans NetApp AFX*
 
