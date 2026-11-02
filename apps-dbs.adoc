@@ -98,11 +98,4 @@ NOTE: Cette documentation remplace le rapport technique _TR-4770 : base de donn�
 link:https://docs.netapp.com/us-en/netapp-solutions-sap/["Solutions de base de données SAP HANA sur ONTAP"^] Les bonnes pratiques de configuration, de gestion et d'automatisation des solutions SAP sont disponibles sur la page Solutions SAP de NetApp.
 
 
-
-[[epic]]
-== Epic
-
-link:https://docs.netapp.com/us-en/ontap-apps-dbs/epic/epic-overview.html["Meilleures pratiques Epic sur ONTAP"^] Guide pour comprendre les bonnes pratiques de déploiement d'Epic sur site et dans le cloud, tout en respectant les normes de configuration et en vue d'un déploiement correct sur ONTAP.
-
-
 NOTE: Cette documentation remplace le rapport technique _TR-3923 : meilleures pratiques NetApp pour Epic_.
